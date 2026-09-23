@@ -96,10 +96,43 @@ types/                       أنواع TypeScript مطابقة لشكل بيا�
 
 ---
 
-## 🚀 النشر على Vercel
+## 🚀 النشر على Vercel (Deployment)
 
-1. ادفعي المشروع على GitHub repo منفصل عن الباك إند.
-2. من Vercel: New Project → اختاري الـ repo → Framework Preset: **Next.js** (بيتكتشف أوتوماتيك، من غير أي تعديلات زي الباك إند).
-3. ضيفي Environment Variable: `NEXT_PUBLIC_API_URL` = رابط الباك إند بتاعك + `/api/v1`.
-4. Deploy.
-5. ارجعي لمشروع الباك إند على Vercel وضيفي رابط الفرونت إند الجديد في متغير `CORS_ORIGINS` (وافصليه بفاصلة عن أي روابط تانية موجودة).
+المشروع جاهز ومُهيأ بالكامل للنشر على Vercel بملفات الإعدادات الرسمية:
+- [`vercel.json`](./vercel.json): إعدادات إطار العمل (Next.js)، مسارات البناء، ترويسات الأمان (Security Headers)، وإعدادات التخزين المؤقت للأصول الثابتة (Caching).
+- [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml): أتمتة الـ CI/CD للفحص الآلي (ESLint + TypeScript + Build) والنشر التلقائي عبر GitHub Actions.
+
+---
+
+### الطريقة الأولى: الربط المباشر من لوحة تحكم Vercel (الأسهل والموصى بها)
+
+1. توجه إلى [Vercel Dashboard](https://vercel.com/dashboard) واضغط **Add New...** -> **Project**.
+2. اختر مستودع GitHub الخاص بالمشروع: `quran-sms`.
+3. سيتعرف Vercel تلقائيًا على الإعدادات:
+   - **Framework Preset**: `Next.js`
+   - **Root Directory**: `./`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `.next`
+   - **Install Command**: `npm install`
+4. في قسم **Environment Variables**، أضف المتغير التالي:
+   - **Name**: `NEXT_PUBLIC_API_URL`
+   - **Value**: رابط الباك إند الخاص بك (مثال: `https://quran-school-nest-js.vercel.app/api/v1`)
+5. اضغط **Deploy**.
+6. بعد اكتمال النشر، انسخ رابط موقعك من Vercel وضعه في متغير `CORS_ORIGINS` في إعدادات الباك إند (NestJS) للسماح بطلبات الـ API.
+
+---
+
+### الطريقة الثانية: النشر التلقائي عبر GitHub Actions (`deploy.yml`)
+
+إذا كنت تفضل إدارة النشر بالكامل عبر الـ CI/CD في GitHub Actions، قم بإضافة الـ Secrets التالية في إعدادات المستودع على GitHub:
+- مسار الإعدادات: **GitHub Repo** -> **Settings** -> **Secrets and variables** -> **Actions** -> **New repository secret**
+
+| Secret Name | الوصف |
+|---|---|
+| `VERCEL_TOKEN` | توكن الوصول الشخصي من Vercel (من إعدادات حسابك: Account Settings -> Tokens) |
+| `VERCEL_ORG_ID` | معرّف الفريق أو الحساب (موجود في `.vercel/project.json` أو Project Settings) |
+| `VERCEL_PROJECT_ID` | معرّف المشروع في Vercel (موجود في Project Settings -> General) |
+| `NEXT_PUBLIC_API_URL` | رابط الباك إند للإنتاج (اختياري، القيمة الافتراضية محددة بالفعل) |
+
+بمجرد رفع أي تعديلات على فرع `main` أو فتح Pull Request، سيقوم الـ Action تلقائيًا بفحص جودة الكود، فحص الأنواع (TypeScript)، التأكد من سلامة البناء، ومن ثم النشر على Vercel فورًا.
+
