@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   نظام الألوان: تدرج بين الكريمي (خلفيات دافئة) والأخضر (هوية إسلامية هادئة)
+   ============================================================================ */
+@theme {
+  --font-tajawal: var(--font-tajawal-var), sans-serif;
+  --font-amiri: var(--font-amiri-var), serif;
+
+  /* الأخضر — اللون الأساسي للهوية */
+  --color-emerald-50: #f0f9f4;
+  --color-emerald-100: #dbf0e3;
+  --color-emerald-200: #b8e0c9;
+  --color-emerald-300: #86c8a7;
+  --color-emerald-400: #52a97e;
+  --color-emerald-500: #2f8961;
+  --color-emerald-600: #206e4d;
+  --color-emerald-700: #1b5840;
+  --color-emerald-800: #184735;
+  --color-emerald-900: #143a2d;
+  --color-emerald-950: #0a2019;
+
+  /* الكريمي — لون الخلفيات الدافئة */
+  --color-cream-50: #fefdfb;
+  --color-cream-100: #fbf7ef;
+  --color-cream-200: #f6eddc;
+  --color-cream-300: #eee0c2;
+  --color-cream-400: #e0cb9c;
+  --color-cream-500: #cfb377;
+  --color-cream-600: #b6975a;
+  --color-cream-700: #94794a;
+  --color-cream-800: #78613f;
+  --color-cream-900: #635036;
+
+  /* لون ذهبي مساعد للتفاصيل والحدود */
+  --color-gold-400: #d4af6a;
+  --color-gold-500: #c19a4f;
+
+  --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-fade-in: fade-in 0.6s ease-out both;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-cream-50);
+  color: var(--color-emerald-950);
+  font-family: var(--font-tajawal);
+}
+
+/* شريط تمرير هادئ يتماشى مع الهوية */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-cream-100); }
+::-webkit-scrollbar-thumb { background: var(--color-emerald-300); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-emerald-400); }
+
+/* فقرات النصوص القرآنية / المقتبسة */
+.quran-text {
+  font-family: var(--font-amiri);
+  line-height: 2.2;
+}
+
+/* زخرفة هندسية إسلامية بسيطة تستخدم كفاصل بين الأقسام */
+.islamic-divider {
+  background-image: radial-gradient(circle, var(--color-gold-400) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  opacity: 0.35;
+}
