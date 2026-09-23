@@ -135,20 +135,3 @@ types/                       أنواع TypeScript مطابقة لشكل بيا�
 | `NEXT_PUBLIC_API_URL` | رابط الباك إند للإنتاج (اختياري، القيمة الافتراضية محددة بالفعل) |
 
 بمجرد رفع أي تعديلات على فرع `main` أو فتح Pull Request، سيقوم الـ Action تلقائيًا بفحص جودة الكود، فحص الأنواع (TypeScript)، التأكد من سلامة البناء، ومن ثم النشر على Vercel فورًا.
-
----
-
-### 🌐 النشر على GitHub Pages (`pages.yml`)
-
-تم تجهيز المشروع ليدعم النشر أيضاً على **GitHub Pages** عبر Static Export تلقائي:
-- سير العمل: [`.github/workflows/pages.yml`](./.github/workflows/pages.yml)
-- الرابط المتوقع للموقع: `https://3bdduo.github.io/quran-sms/`
-
-#### خطوات التفعيل على مستودع GitHub:
-1. اذهب إلى مستودع المشروع على GitHub: `https://github.com/3bdduo/quran-sms`
-2. اضغط على **Settings** -> **Pages** (في القائمة الجانبية).
-3. في خيار **Build and deployment** -> **Source**:
-   - اختر **GitHub Actions** (بدلاً من Deploy from a branch).
-4. بمجرد دفع الكود (Push) إلى فرع `main`، سيعمل الأكشن `pages.yml` تلقائياً لتصدير الصفحات كـ Static HTML ونشرها على GitHub Pages.
-
-
