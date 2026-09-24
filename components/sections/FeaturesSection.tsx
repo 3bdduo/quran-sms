@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Stagger, StaggerItem } from "@/components/ui/Reveal";
 
 const features = [
-  { icon: BookMarked, title: "منهج متكامل", desc: "تحفيظ، تفسير وتجويد، علوم شرعية، ولغة عربية — في مسار تعليمي واحد متدرج." },
+  { icon: BookMarked, title: "منهج متكامل", desc: "تحفيظ، تفسير وتجويد، وعلوم شرعية — في مسار تعليمي واحد متدرج." },
   { icon: GraduationCap, title: "معلمون مؤهلون", desc: "نخبة من المعلمين أصحاب الإجازات القرآنية والخبرة التربوية الطويلة." },
   { icon: ClipboardCheck, title: "متابعة مستمرة", desc: "تقارير دورية عن الحفظ والحضور والتقدم، تصل لولي الأمر أولًا بأول." },
   { icon: CalendarClock, title: "مرونة في المواعيد", desc: "حلقات ومجموعات تعليمية بمواعيد متعددة تناسب جدول الطالب وأسرته." },

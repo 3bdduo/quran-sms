@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Instagram, Youtube, Phone, Mail, MapPin } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { Reveal } from "@/components/ui/Reveal";
@@ -13,11 +13,7 @@ const quickLinks = [
   { href: "/contact", label: "تواصل معنا" },
 ];
 
-const socials = [
-  { icon: Facebook, label: "فيسبوك" },
-  { icon: Instagram, label: "إنستجرام" },
-  { icon: Youtube, label: "يوتيوب" },
-];
+
 
 export function Footer() {
   return (
@@ -26,7 +22,7 @@ export function Footer() {
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-gold to-transparent" />
       <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.05]" />
 
-      <Container className="relative py-14 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <Container className="relative py-14 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         <Reveal>
           <div className="mb-4">
             <Logo size="md" tone="onDeep" />
@@ -57,34 +53,16 @@ export function Footer() {
           <ul className="space-y-3.5 text-sm text-on-deep-soft">
             <li className="flex items-center gap-2.5">
               <Phone size={16} className="text-gold shrink-0" />
-              <span dir="ltr">01000000000</span>
-            </li>
-            <li className="flex items-center gap-2.5 min-w-0">
-              <Mail size={16} className="text-gold shrink-0" />
-              <span className="truncate">info@quran-school.com</span>
+              <span dir="ltr">01120449993</span>
             </li>
             <li className="flex items-center gap-2.5">
               <MapPin size={16} className="text-gold shrink-0" />
-              جمهورية مصر العربية
+              مصر , بني سويف , اهناسيا , قرية النويرة
             </li>
           </ul>
         </Reveal>
 
-        <Reveal delay={0.24}>
-          <p className="font-bold mb-4 text-on-deep text-lg">تابعونا</p>
-          <div className="flex gap-3">
-            {socials.map(({ icon: Icon, label }) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={label}
-                className="h-11 w-11 grid place-items-center rounded-full bg-deep-2 border border-deep-line text-on-deep hover:bg-gold hover:text-on-gold hover:border-gold hover:-translate-y-1.5 hover:rotate-[-6deg] transition-all duration-[1000ms] shadow-[0_8px_18px_-6px_rgba(0,0,0,0.6)]"
-              >
-                <Icon size={18} />
-              </a>
-            ))}
-          </div>
-        </Reveal>
+
       </Container>
 
       <div className="relative border-t border-deep-line py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">

@@ -25,6 +25,7 @@ import {
   Mail,
   Settings,
   BookMarked,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader } from "@/components/ui/Loader";
@@ -47,6 +48,7 @@ const navItemsByRole: Record<string, NavItem[]> = {
   admin: [
     { href: "/dashboard/admin", label: "نظرة عامة", icon: LayoutDashboard },
     { href: "/dashboard/admin/students", label: "إدارة الطلاب", icon: Users },
+    { href: "/dashboard/admin/waiting", label: "قائمة الانتظار", icon: Clock },
     { href: "/dashboard/admin/teachers", label: "المعلمين", icon: UserRound },
     { href: "/dashboard/admin/groups", label: "الحلقات والمجموعات", icon: Layers },
     { href: "/dashboard/admin/attendance", label: "التحضير والغياب", icon: CalendarCheck },

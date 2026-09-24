@@ -7,26 +7,21 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { useToast } from "@/components/ui/Toast";
-import { contactApi } from "@/lib/resources";
-import { ApiError } from "@/lib/api";
+
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const { showToast } = useToast();
-
-  async function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await contactApi.submit(form);
-      showToast(res.message, "success");
-      setForm({ name: "", email: "", phone: "", message: "" });
-    } catch (err) {
-      showToast(err instanceof ApiError ? err.message : "حدث خطأ، حاول مرة أخرى", "error");
-    } finally {
-      setLoading(false);
+    if (!form.name || !form.message) {
+      showToast("يرجى إكمال البيانات المطلوبة", "error");
+      return;
     }
+    const text = `الاسم: ${form.name}\nرقم الهاتف: ${form.phone || "بدون"}\n\nالرسالة:\n${form.message}`;
+    const url = `https://wa.me/201120449993?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+    setForm({ name: "", phone: "", message: "" });
   }
 
   return (
@@ -37,9 +32,8 @@ export default function ContactPage() {
         <div className="mt-12 sm:mt-16 grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10 max-w-5xl mx-auto">
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-4 sm:gap-5 content-start">
             {[
-              { icon: Phone, title: "الهاتف", value: "01000000000", ltr: true },
-              { icon: Mail, title: "البريد الإلكتروني", value: "info@quran-school.com", ltr: true },
-              { icon: MapPin, title: "العنوان", value: "جمهورية مصر العربية", ltr: false },
+              { icon: Phone, title: "الهاتف", value: "01120449993", ltr: true },
+              { icon: MapPin, title: "العنوان", value: "مصر , بني سويف , اهناسيا , قرية النويرة", ltr: false },
             ].map(({ icon: Icon, title, value, ltr }, i) => (
               <Reveal key={title} delay={i * 0.1} from="start">
                 <div className="group card-interactive flex items-center gap-4 p-5 !rounded-2xl">
@@ -85,19 +79,6 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label className="field-label">البريد الإلكتروني</label>
-                <input
-                  required
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="field"
-                  placeholder="example@email.com"
-                  autoComplete="email"
-                />
-              </div>
-
-              <div>
                 <label className="field-label">رسالتك</label>
                 <textarea
                   required
@@ -109,9 +90,9 @@ export default function ContactPage() {
                 />
               </div>
 
-              <Button type="submit" loading={loading} className="w-full">
-                {!loading && <Send size={18} />}
-                {loading ? "جاري الإرسال..." : "إرسال الرسالة"}
+              <Button type="submit" className="w-full">
+                <Send size={18} />
+                إرسال عبر واتساب
               </Button>
             </form>
           </Reveal>

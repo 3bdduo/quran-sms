@@ -10,7 +10,6 @@ const tracks = [
   { icon: BookOpen, title: "تحفيظ القرآن الكريم", desc: "برنامج تحفيظ متدرج بمتابعة يومية وتسميع منتظم." },
   { icon: Mic2, title: "التفسير والتجويد", desc: "فهم معاني الآيات وإتقان أحكام التلاوة الصحيحة." },
   { icon: Scale, title: "علوم شرعية", desc: "أساسيات الفقه والسيرة والعقيدة بأسلوب مبسط." },
-  { icon: Languages, title: "اللغة العربية", desc: "تقوية النحو والصرف والتعبير لخدمة فهم القرآن." },
 ];
 
 export function CurriculumPreview() {
@@ -24,7 +23,7 @@ export function CurriculumPreview() {
         <SectionHeading
           tone="onDeep"
           eyebrow="مناهجنا"
-          title="أربعة مسارات تعليمية متكاملة"
+          title="ثلاثة مسارات تعليمية متكاملة"
           description="كل مسار مصمم ليكمل الآخر، ويشكل معًا رحلة تربوية متوازنة لطالب القرآن"
         />
 

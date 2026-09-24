@@ -90,7 +90,7 @@ export function Hero() {
           transition={{ duration: 1.2, delay: 1.08, ease: EASE }}
           className="mt-6 text-base sm:text-lg text-ink-soft max-w-2xl mx-auto leading-relaxed font-medium"
         >
-          منهج متكامل يجمع بين تحفيظ القرآن الكريم، والتفسير والتجويد، والعلوم الشرعية، واللغة العربية —
+          منهج متكامل يجمع بين تحفيظ القرآن الكريم، والتفسير والتجويد، والعلوم الشرعية —
           بمتابعة مستمرة من معلمين مؤهلين لكل طالب.
         </m.p>
 

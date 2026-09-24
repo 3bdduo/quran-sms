@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     template: "%s | مدرسة التربية بالقرآن الكريم",
   },
   description:
-    "منصة تعليمية شاملة لتحفيظ القرآن الكريم والتفسير والتجويد والعلوم الشرعية واللغة العربية، مع متابعة مستمرة لتقدم الطلاب.",
+    "منصة تعليمية شاملة لتحفيظ القرآن الكريم والتفسير والتجويد والعلوم الشرعية، مع متابعة مستمرة لتقدم الطلاب.",
   applicationName: "مدرسة التربية بالقرآن الكريم",
   appleWebApp: { capable: true, title: "مدرسة التربية", statusBarStyle: "default" },
   formatDetection: { telephone: false, email: false, address: false },

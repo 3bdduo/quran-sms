@@ -128,7 +128,7 @@ export default function AdminMessagesPage() {
                 </span>
               </div>
 
-              <p className="text-xs text-brand-ink font-mono mb-1">{msg.email}</p>
+
               {msg.phone && (
                 <p className="text-xs text-ink-mute flex items-center gap-1 mb-3">
                   <Phone size={12} /> {msg.phone}
@@ -168,7 +168,7 @@ export default function AdminMessagesPage() {
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
                 <h3 className="font-extrabold text-lg text-ink">{activeMessage.name}</h3>
-                <p className="text-xs text-brand-ink font-mono mt-0.5">{activeMessage.email}</p>
+
               </div>
               <button
                 onClick={() => setActiveMessage(null)}

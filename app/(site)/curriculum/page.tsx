@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BookOpen, Mic2, Scale, Languages, CheckCircle2 } from "lucide-react";
+import { BookOpen, Mic2, Scale, CheckCircle2 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
@@ -28,13 +28,6 @@ const tracks = [
     ages: "من 7 سنوات فأكثر",
     points: ["أساسيات الفقه الميسّر", "السيرة النبوية بأسلوب قصصي", "مبادئ العقيدة الصحيحة", "آداب وأخلاق إسلامية تطبيقية"],
   },
-  {
-    icon: Languages,
-    title: "اللغة العربية",
-    duration: "مستويات حسب الفئة العمرية",
-    ages: "من 6 سنوات فأكثر",
-    points: ["أساسيات النحو والصرف", "تقوية الإملاء والخط", "التعبير والمحادثة", "ربط اللغة بفهم النصوص القرآنية"],
-  },
 ];
 
 export default function CurriculumPage() {
@@ -43,9 +36,10 @@ export default function CurriculumPage() {
       <Container>
         <SectionHeading
           eyebrow="مناهجنا"
-          title="أربعة مسارات تعليمية متكاملة"
+          title="ثلاثة مسارات تعليمية متكاملة"
           description="منهج شامل يبني الطالب حفظًا وفهمًا وسلوكًا، بمستويات متدرجة تناسب كل الأعمار"
         />
+
 
         <div className="mt-12 sm:mt-16 space-y-6 sm:space-y-8">
           {tracks.map(({ icon: Icon, title, duration, ages, points }, i) => (

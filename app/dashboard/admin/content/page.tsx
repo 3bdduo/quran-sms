@@ -641,7 +641,6 @@ export default function AdminContentPage() {
                     <option value="تحفيظ">تحفيظ</option>
                     <option value="تفسير وتجويد">تفسير وتجويد</option>
                     <option value="علوم شرعية">علوم شرعية</option>
-                    <option value="لغة عربية">لغة عربية</option>
                   </select>
                 </div>
                 <div>

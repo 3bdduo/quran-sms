@@ -37,8 +37,12 @@ export const authApi = {
 export const studentsApi = {
   list: (groupId?: string) => api.get<Student[]>("/students", { groupId }, true),
   listMine: () => api.get<Student[]>("/students", undefined, true),
+  listWaiting: () => api.get<Student[]>("/students/waiting", undefined, true),
   byId: (id: string) => api.get<Student>(`/students/${id}`, undefined, true),
   byNationalId: (nationalId: string) => api.get<Student>(`/students/by-national-id/${nationalId}`),
+  publicRegister: (body: {
+    name: string; parentName: string; phone: string; age: string; nationalId: string; notes?: string;
+  }) => api.post<{ message: string; studentId: string }>("/students/public-register", body),
   create: (body: {
     groupId?: string;
     name: string;
@@ -57,11 +61,14 @@ export const studentsApi = {
       memorizedAmount?: string;
       currentSurah?: string;
       groupId?: string;
+      parentName?: string;
     }
   ) => api.put<Student>(`/students/${id}`, body, true),
   remove: (id: string) => api.delete(`/students/${id}`, true),
   updateMonthlyFee: (id: string, fee: number) =>
     api.patch<Student>(`/students/${id}/monthly-fee`, { fee }, true),
+  moveFromWaiting: (id: string, groupId: string) =>
+    api.patch<Student>(`/students/${id}/move-to-group`, { groupId }, true),
 };
 
 // 2.5 المعلمين
@@ -363,7 +370,7 @@ export const teacherProfilesApi = {
 
 // 19. رسائل التواصل
 export const contactApi = {
-  submit: (body: { name: string; email: string; phone?: string; message: string }) =>
+  submit: (body: { name: string; phone?: string; message: string }) =>
     api.post<{ message: string }>("/contact", body),
   listForAdmin: (status?: string) =>
     api.get<ContactMessageItem[]>("/contact", { status }, true),

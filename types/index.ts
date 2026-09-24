@@ -44,7 +44,7 @@ export interface MediaItem {
   description?: string;
   video_url: string;
   thumbnail_url?: string;
-  track: "تحفيظ" | "تفسير وتجويد" | "علوم شرعية" | "لغة عربية" | string;
+  track: "تحفيظ" | "تفسير وتجويد" | "علوم شرعية" | string;
   level?: string;
   teacher_name?: string;
   is_live: boolean;
@@ -71,11 +71,13 @@ export interface Student {
   date_of_birth: string;
   age: number;
   phone?: string;
+  parent_name?: string;
   memorized_amount: string;
   current_surah: string;
   group_id: string;
   notes?: string;
   monthly_fee: number;
+  is_waiting?: boolean;
   attendanceRecords?: { date: string; status: string }[];
   memorizationLog?: MemorizationEntry[];
   payment?: { monthlyFee: number; months: Record<string, PaymentMonth> };
@@ -199,7 +201,6 @@ export interface ActivityLogItem {
 export interface ContactMessageItem {
   id: string;
   name: string;
-  email: string;
   phone?: string;
   message: string;
   status: "unread" | "read";

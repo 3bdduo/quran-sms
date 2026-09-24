@@ -11,7 +11,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { mediaApi } from "@/lib/resources";
 import type { MediaItem } from "@/types";
 
-const tracks = ["تحفيظ", "تفسير وتجويد", "علوم شرعية", "لغة عربية"];
+const tracks = ["تحفيظ", "تفسير وتجويد", "علوم شرعية"];
 
 const chip = (active: boolean) =>
   `relative px-4 min-h-11 inline-flex items-center rounded-full text-sm font-bold transition-all duration-[1000ms] active:scale-95 ${
