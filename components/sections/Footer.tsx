@@ -7,7 +7,6 @@ import { Reveal } from "@/components/ui/Reveal";
 const quickLinks = [
   { href: "/about", label: "عن المدرسة" },
   { href: "/curriculum", label: "المناهج" },
-  { href: "/teachers", label: "المعلمون" },
   { href: "/blog", label: "المدونة" },
   { href: "/media", label: "المكتبة" },
   { href: "/contact", label: "تواصل معنا" },

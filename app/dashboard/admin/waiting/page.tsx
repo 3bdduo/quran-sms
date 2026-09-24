@@ -5,14 +5,13 @@ import {
   Clock,
   UserCheck,
   Phone,
-  Calendar,
-  User,
   Users,
   Search,
   ChevronDown,
   Loader2,
   Trash2,
   ArrowLeftRight,
+  BookOpen,
 } from "lucide-react";
 import { studentsApi, groupsApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
@@ -176,18 +175,15 @@ export default function WaitingListPage() {
                       <h3 className="font-bold text-ink text-base leading-snug truncate">
                         {student.name}
                       </h3>
-                      {(student as any).parent_name && (
-                        <p className="text-ink-soft text-sm flex items-center gap-1.5 mt-0.5">
-                          <User size={13} />
-                          ولي الأمر: {(student as any).parent_name}
-                        </p>
-                      )}
+                      <p className="text-ink-muted text-xs font-mono mt-0.5" dir="ltr">
+                        {student.national_id}
+                      </p>
                     </div>
                     <button
                       onClick={() => handleDelete(student)}
                       disabled={isDeleting || isMoving}
                       className="h-8 w-8 flex items-center justify-center rounded-xl text-ink-muted hover:text-danger-solid hover:bg-danger-soft transition-colors shrink-0"
-                      title="حذف الطلب"
+                      title="حذف الطالب"
                     >
                       {isDeleting ? (
                         <Loader2 size={16} className="animate-spin" />
@@ -198,27 +194,22 @@ export default function WaitingListPage() {
                   </div>
 
                   {/* Details grid */}
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    {student.phone && (
-                      <div className="flex items-center gap-2 text-ink-soft">
-                        <Phone size={14} className="text-brand shrink-0" />
-                        <span dir="ltr">{student.phone}</span>
-                      </div>
-                    )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm bg-surface-2/60 p-3.5 rounded-xl border border-line/60">
                     <div className="flex items-center gap-2 text-ink-soft">
-                      <Calendar size={14} className="text-brand shrink-0" />
-                      <span>السن: {student.age} سنة</span>
+                      <Phone size={14} className="text-brand shrink-0" />
+                      <span className="font-medium text-ink">الهاتف:</span>
+                      <span dir="ltr">{student.phone || "—"}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-ink-soft col-span-2">
-                      <span className="text-ink-muted text-xs font-mono" dir="ltr">
-                        {student.national_id}
-                      </span>
+                    <div className="flex items-center gap-2 text-ink-soft">
+                      <BookOpen size={14} className="text-brand shrink-0" />
+                      <span className="font-medium text-ink">عدد الأجزاء:</span>
+                      <span>{student.memorized_amount || "0"}</span>
                     </div>
-                    {student.notes && (
-                      <div className="col-span-2 text-ink-soft text-xs bg-surface-2 rounded-xl px-3 py-2">
-                        {student.notes}
-                      </div>
-                    )}
+                    <div className="sm:col-span-2 flex items-center gap-2 text-ink-soft">
+                      <BookOpen size={14} className="text-brand shrink-0" />
+                      <span className="font-medium text-ink">السورة بالضبط:</span>
+                      <span>{student.current_surah || "غير محدد"}</span>
+                    </div>
                   </div>
 
                   {/* Move to group */}

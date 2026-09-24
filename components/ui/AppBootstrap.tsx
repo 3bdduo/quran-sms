@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { prefetchForUser, prefetchPublic, ROLE_ROUTES } from "@/lib/prefetch";
 
-const PUBLIC_ROUTES = ["/about", "/curriculum", "/teachers", "/blog", "/media", "/contact", "/login", "/register"];
+const PUBLIC_ROUTES = ["/about", "/curriculum", "/blog", "/media", "/contact", "/login", "/register"];
 
 /**
  * بيشتغل أول ما الموقع يفتح (من غير ما يرسم أي حاجة):

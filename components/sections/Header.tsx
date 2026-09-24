@@ -17,7 +17,6 @@ const links = [
   { href: "/", label: "الرئيسية" },
   { href: "/about", label: "عن المدرسة" },
   { href: "/curriculum", label: "المناهج" },
-  { href: "/teachers", label: "المعلمون" },
   { href: "/blog", label: "المدونة" },
   { href: "/media", label: "المكتبة" },
   { href: "/contact", label: "تواصل معنا" },

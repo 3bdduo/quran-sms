@@ -9,7 +9,7 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { NotificationsList } from "@/components/dashboard/NotificationsList";
+
 import type { DashboardStats } from "@/types";
 
 const currentMonthKey = new Date().toISOString().slice(0, 7);
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <NotificationsList />
+
       </div>
     </div>
   );

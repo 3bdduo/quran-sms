@@ -11,7 +11,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { NotificationsList } from "@/components/dashboard/NotificationsList";
+
 import type { Student } from "@/types";
 
 type StudentReport = Student & { stats: { attendanceRate: number; present: number; total: number; paidMonths: number; unpaidMonths: number } };
@@ -126,7 +126,7 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        <NotificationsList />
+
       </div>
     </div>
   );

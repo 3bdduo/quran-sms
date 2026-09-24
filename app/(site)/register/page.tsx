@@ -14,11 +14,10 @@ import { ApiError } from "@/lib/api";
 export default function RegisterPage() {
   const [form, setForm] = useState({
     name: "",
-    parentName: "",
-    phone: "",
     nationalId: "",
-    age: "",
-    notes: "",
+    memorizedAmount: "",
+    currentSurah: "",
+    phone: "",
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -41,11 +40,10 @@ export default function RegisterPage() {
     try {
       await studentsApi.publicRegister({
         name: form.name,
-        parentName: form.parentName,
-        phone: form.phone,
         nationalId: form.nationalId,
-        age: form.age,
-        notes: form.notes || undefined,
+        memorizedAmount: form.memorizedAmount || "0",
+        currentSurah: form.currentSurah || "غير محدد",
+        phone: form.phone,
       });
       setSuccess(true);
     } catch (err) {
@@ -100,44 +98,34 @@ export default function RegisterPage() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="field-label">اسم الطالب</label>
+                <label className="field-label">الاسم رباعي *</label>
                 <input
                   required
                   value={form.name}
                   onChange={handleChange("name")}
                   className="field"
-                  placeholder="الاسم بالكامل"
+                  placeholder="الاسم رباعي بالكامل"
                 />
               </div>
               <div>
-                <label className="field-label">سن الطالب</label>
+                <label className="field-label">الرقم القومي (14 رقم) *</label>
                 <input
                   required
-                  type="number"
                   inputMode="numeric"
-                  min={3}
-                  max={25}
-                  value={form.age}
-                  onChange={handleChange("age")}
-                  className="field"
+                  maxLength={14}
+                  minLength={14}
+                  value={form.nationalId}
+                  onChange={handleChange("nationalId")}
+                  className="field font-mono"
+                  placeholder="14 رقم"
+                  dir="ltr"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="field-label">اسم ولي الأمر</label>
-                <input
-                  required
-                  value={form.parentName}
-                  onChange={handleChange("parentName")}
-                  className="field"
-                  autoComplete="name"
-                  placeholder="اسم ولي الأمر"
-                />
-              </div>
-              <div>
-                <label className="field-label">رقم الهاتف</label>
+                <label className="field-label">رقم الهاتف *</label>
                 <input
                   required
                   inputMode="tel"
@@ -145,39 +133,34 @@ export default function RegisterPage() {
                   onChange={handleChange("phone")}
                   className="field"
                   autoComplete="tel"
-                  placeholder="رقم التواصل"
+                  placeholder="مثال: 01000000000"
+                  dir="ltr"
+                />
+              </div>
+              <div>
+                <label className="field-label">عدد الأجزاء *</label>
+                <input
+                  required
+                  value={form.memorizedAmount}
+                  onChange={handleChange("memorizedAmount")}
+                  className="field"
+                  placeholder="مثال: 3 أجزاء"
                 />
               </div>
             </div>
 
             <div>
-              <label className="field-label">الرقم القومي للطالب</label>
+              <label className="field-label">السورة بالضبط *</label>
               <input
                 required
-                inputMode="numeric"
-                maxLength={14}
-                minLength={14}
-                value={form.nationalId}
-                onChange={handleChange("nationalId")}
+                value={form.currentSurah}
+                onChange={handleChange("currentSurah")}
                 className="field"
-                placeholder="14 رقم"
-                dir="ltr"
+                placeholder="مثال: سورة البقرة"
               />
-              <p className="text-xs text-ink-muted mt-1.5 text-right">
-                يُستخدم الرقم القومي كمعرّف فريد للطالب في المنظومة
-              </p>
             </div>
 
-            <div>
-              <label className="field-label">ملاحظات إضافية (اختياري)</label>
-              <textarea
-                rows={3}
-                value={form.notes}
-                onChange={handleChange("notes")}
-                className="field resize-none"
-                placeholder="أي معلومات إضافية تودّ إضافتها..."
-              />
-            </div>
+
 
             <Button type="submit" loading={loading} className="w-full">
               {!loading && <UserPlus size={18} />}

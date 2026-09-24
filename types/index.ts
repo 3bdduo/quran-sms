@@ -35,7 +35,7 @@ export interface BlogPost {
   cover_image?: string;
   published: boolean;
   published_at?: string;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface MediaItem {
@@ -49,7 +49,7 @@ export interface MediaItem {
   teacher_name?: string;
   is_live: boolean;
   published: boolean;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface TeacherProfile {
@@ -207,15 +207,6 @@ export interface ContactMessageItem {
   created_at: string;
 }
 
-export interface NotificationItem {
-  id: string;
-  title: string;
-  body: string;
-  target: string;
-  created_at: string;
-  isRead?: boolean;
-  read_by_count?: number;
-}
 
 export interface DashboardStats {
   totalGroups: number;

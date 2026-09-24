@@ -2,7 +2,7 @@ import type { AuthUser } from "@/types";
 import {
   studentsApi, groupsApi, eduGroupsApi, teachersApi, competitionsApi, blogApi, mediaApi,
   teacherProfilesApi, salariesApi, paymentsApi, settingsApi, contactApi, reportsApi,
-  notificationsApi, attendanceApi, memorizationApi, examsApi,
+  attendanceApi, memorizationApi, examsApi,
 } from "@/lib/resources";
 
 // ============================================================================
@@ -17,7 +17,7 @@ const currentMonthKey = () => new Date().toISOString().slice(0, 7);
 /** الصفحات اللي كل دور بيستخدمها — بنحمّل كودها مقدمًا كمان */
 export const ROLE_ROUTES: Record<string, string[]> = {
   admin: [
-    "/dashboard/admin", "/dashboard/admin/students", "/dashboard/admin/teachers", "/dashboard/admin/groups",
+    "/dashboard/admin", "/dashboard/admin/students", "/dashboard/admin/waiting", "/dashboard/admin/teachers", "/dashboard/admin/groups",
     "/dashboard/admin/attendance", "/dashboard/admin/payments", "/dashboard/admin/salaries",
     "/dashboard/admin/competitions", "/dashboard/admin/content", "/dashboard/admin/messages", "/dashboard/admin/settings",
   ],
@@ -36,19 +36,13 @@ function essentialCalls(user: AuthUser): Promise<unknown>[] {
     return [
       reportsApi.dashboard(currentMonthKey()),
       contactApi.listForAdmin("unread"),
-      notificationsApi.mine(),
-      notificationsApi.unreadCount(),
     ];
   }
   if (user.role === "teacher") {
-    return [studentsApi.listMine(), notificationsApi.mine(), notificationsApi.unreadCount()];
+    return [studentsApi.listMine()];
   }
   const id = user.studentId;
-  return [
-    ...(id ? [reportsApi.student(id)] : []),
-    notificationsApi.mine(),
-    notificationsApi.unreadCount(),
-  ];
+  return id ? [reportsApi.student(id)] : [];
 }
 
 /** الباقي بيتحمّل في الخلفية على دفعات صغيرة (عشان ما نضغطش على الباك إند) */

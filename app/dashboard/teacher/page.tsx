@@ -5,7 +5,7 @@ import { Users, Phone, BookMarked } from "lucide-react";
 import { studentsApi } from "@/lib/resources";
 import { Loader } from "@/components/ui/Loader";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { NotificationsList } from "@/components/dashboard/NotificationsList";
+
 import type { Student } from "@/types";
 
 export default function TeacherDashboard() {
@@ -77,7 +77,7 @@ export default function TeacherDashboard() {
           )}
         </div>
 
-        <NotificationsList />
+
       </div>
     </div>
   );

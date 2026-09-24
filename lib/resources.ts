@@ -5,7 +5,6 @@ import {
   DashboardStats,
   LoginResponse,
   MediaItem,
-  NotificationItem,
   Student,
   TeacherProfile,
   GroupItem,
@@ -41,7 +40,7 @@ export const studentsApi = {
   byId: (id: string) => api.get<Student>(`/students/${id}`, undefined, true),
   byNationalId: (nationalId: string) => api.get<Student>(`/students/by-national-id/${nationalId}`),
   publicRegister: (body: {
-    name: string; parentName: string; phone: string; age: string; nationalId: string; notes?: string;
+    name: string; phone: string; nationalId: string; memorizedAmount: string; currentSurah: string;
   }) => api.post<{ message: string; studentId: string }>("/students/public-register", body),
   create: (body: {
     groupId?: string;
@@ -264,16 +263,6 @@ export const activityLogApi = {
     api.get<{ data: ActivityLogItem[]; total: number; page: number; limit: number }>("/activity-log", params, true),
 };
 
-// 15. الإشعارات
-export const notificationsApi = {
-  adminAll: () => api.get<NotificationItem[]>("/notifications", undefined, true),
-  mine: () => api.get<NotificationItem[]>("/notifications/me", undefined, true),
-  unreadCount: () => api.get<{ count: number }>("/notifications/unread-count", undefined, true),
-  create: (body: { title: string; body: string; target: string }) =>
-    api.post<NotificationItem>("/notifications", body, true),
-  markRead: (id: string) => api.patch(`/notifications/${id}/read`, undefined, true),
-  remove: (id: string) => api.delete(`/notifications/${id}`, true),
-};
 
 // 16. المدونة
 export const blogApi = {

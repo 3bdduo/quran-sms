@@ -693,8 +693,7 @@ export default function AdminCompetitionsPage() {
             </div>
 
             <p className="text-xs text-ink-mute mb-4">
-              أدخل درجات المشاركين وسيتم احتساب الترتيب تلقائيًا حسب الدرجات ونشر إشعارات فورية
-              للفائزين.
+              أدخل درجات المشاركين وسيتم احتساب الترتيب تلقائيًا حسب الدرجات.
             </p>
 
             <div className="space-y-3">
