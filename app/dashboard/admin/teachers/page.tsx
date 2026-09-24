@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit2, Trash2, Download, Search, Users } from "lucide-react";
 import { teachersApi } from "@/lib/resources";
+import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
@@ -120,8 +121,12 @@ export default function AdminTeachersPage() {
     setShowModal(true);
   }
 
-  function handleExport() {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api"}/exports/teachers.xlsx?token=${localStorage.getItem("token")}`;
+  async function handleExport() {
+    try {
+      await downloadFile("/exports/teachers.xlsx", "تقرير-المعلمين.xlsx");
+    } catch {
+      // toast already shown by parent if needed
+    }
   }
 
   return (
