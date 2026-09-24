@@ -3,7 +3,9 @@ export type UserRole = "admin" | "teacher" | "student";
 export interface AuthUser {
   role: UserRole;
   username: string;
-  groupId?: string | null;
+  teacherId?: string | null;
+  groupIds?: string[];
+  groupId?: string | null; // For legacy
   eduGroupId?: string | null;
   studentId?: string | null;
 }
@@ -13,13 +15,22 @@ export interface LoginResponse {
   user: AuthUser;
 }
 
+export interface Teacher {
+  id: string;
+  full_name: string;
+  national_id: string;
+  username: string;
+  phone?: string;
+  groups?: { id: string; name: string }[];
+}
+
 export interface BlogPost {
   id: string;
   title: string;
   slug: string;
   content: string;
   excerpt?: string;
-  category: "فوائد قرآنية" | "تجويد" | "تربية" | "أخبار المدرسة";
+  category: "فوائد قرآنية" | "تجويد" | "تربية" | "أخبار المدرسة" | string;
   author: string;
   cover_image?: string;
   published: boolean;
@@ -33,7 +44,7 @@ export interface MediaItem {
   description?: string;
   video_url: string;
   thumbnail_url?: string;
-  track: "تحفيظ" | "تفسير وتجويد" | "علوم شرعية" | "لغة عربية";
+  track: "تحفيظ" | "تفسير وتجويد" | "علوم شرعية" | "لغة عربية" | string;
   level?: string;
   teacher_name?: string;
   is_live: boolean;
@@ -48,7 +59,9 @@ export interface TeacherProfile {
   specialty?: string;
   ijazahs: string[];
   bio?: string;
+  linked_username?: string;
   display_order: number;
+  published?: boolean;
 }
 
 export interface Student {
@@ -82,6 +95,116 @@ export interface PaymentMonth {
   note?: string;
 }
 
+export interface GroupItem {
+  id: string;
+  name: string;
+  teacherId?: string;
+  teacherName?: string;
+  teacherUsername?: string;
+  studentsCount?: number;
+  students?: Student[];
+}
+
+export interface EduGroupItem {
+  id: string;
+  name: string;
+  teacherUsername: string;
+  studentsCount?: number;
+  students?: {
+    studentId: string;
+    studentName?: string;
+    attendanceRecords?: { date: string; status: string }[];
+    examRecords?: { id: string; name: string; score: number; max_score: number; date: string }[];
+  }[];
+}
+
+export interface AttendanceGroupRecord {
+  student_id: string;
+  student_name: string;
+  status: string;
+}
+
+export interface ExamItem {
+  examId: string;
+  name: string;
+  maxScore: number;
+  date: string;
+  results: { student_id: string; student_name?: string; score: number }[];
+}
+
+export interface CompetitionItem {
+  id: string;
+  name: string;
+  description?: string;
+  year: string;
+  participantsCount?: number;
+  resultsPublished?: boolean;
+  participants?: string[];
+  results?: { student_id: string; score: number; rank: number; notes?: string }[];
+}
+
+export interface TeacherSalaryConfig {
+  username: string;
+  base_salary: number;
+  notes?: string;
+}
+
+export interface TeacherSalaryRecord {
+  id?: string;
+  username: string;
+  full_name?: string;
+  national_id?: string;
+  baseSalary: number;
+  incentiveAmount?: number;
+  incentiveReason?: string;
+  deductionAmount?: number;
+  deductionReason?: string;
+  netSalary?: number;
+  status: "paid" | "unpaid" | "advance";
+  amount: number;
+  paidDate?: string;
+  paidBy?: string;
+  note?: string;
+}
+
+export interface SalaryMonthSummary {
+  monthKey: string;
+  totalTeachers: number;
+  paidCount: number;
+  unpaidCount: number;
+  advanceCount: number;
+  totalPaidAmount: number;
+  teachers: TeacherSalaryRecord[];
+}
+
+export interface SchoolSettings {
+  schoolName: string;
+  schoolPhone: string;
+  schoolAddress: string;
+  monthlyFee: number;
+  adminPassword?: string;
+}
+
+export interface ActivityLogItem {
+  id: string;
+  actor_role: string;
+  actor_username: string;
+  action: string;
+  method?: string;
+  path?: string;
+  timestamp: string;
+}
+
+export interface ContactMessageItem {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  status: "unread" | "read";
+  created_at: string;
+}
+
 export interface NotificationItem {
   id: string;
   title: string;
@@ -89,6 +212,7 @@ export interface NotificationItem {
   target: string;
   created_at: string;
   isRead?: boolean;
+  read_by_count?: number;
 }
 
 export interface DashboardStats {

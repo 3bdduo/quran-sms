@@ -1,20 +1,71 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
   align?: "center" | "right";
+  /** "onDeep" لما العنوان يبقى فوق خلفية غامقة (deep) */
+  tone?: "default" | "onDeep";
 }
 
-export function SectionHeading({ eyebrow, title, description, align = "center" }: Props) {
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+export function SectionHeading({ eyebrow, title, description, align = "center", tone = "default" }: Props) {
+  const center = align === "center";
+  const deep = tone === "onDeep";
   return (
-    <div className={align === "center" ? "text-center max-w-2xl mx-auto" : "text-right max-w-2xl"}>
+    <div className={center ? "text-center max-w-2xl mx-auto" : "text-right max-w-2xl"}>
       {eyebrow && (
-        <span className="inline-block text-sm font-bold text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full mb-4">
+        <motion.span
+          initial={{ opacity: 0, y: 12, scale: 0.9 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className={`inline-block text-sm font-bold px-4 py-1.5 rounded-full mb-4 ${deep ? "bg-on-deep/10 text-gold border border-deep-line" : "bg-brand-soft text-brand-ink sh-soft"}`}
+        >
           {eyebrow}
-        </span>
+        </motion.span>
       )}
-      <h2 className="text-3xl sm:text-4xl font-extrabold text-emerald-950 leading-tight">{title}</h2>
-      {description && <p className="mt-4 text-emerald-800/70 text-lg leading-relaxed">{description}</p>}
+
+      <motion.h2
+        initial={{ opacity: 0, y: 22, filter: "blur(6px)" }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.08, ease: EASE }}
+        className={`font-ruqaa font-bold text-[clamp(2rem,5.2vw,3.4rem)] leading-[1.65] text-balance ${deep ? "text-on-deep" : "text-ink"}`}
+      >
+        {title}
+      </motion.h2>
+
+      <motion.span
+        aria-hidden="true"
+        initial={{ scaleX: 0, opacity: 0 }}
+        whileInView={{ scaleX: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.9, delay: 0.25, ease: EASE }}
+        className={`mt-2 flex items-center gap-2 ${center ? "justify-center" : "justify-start"} text-gold`}
+      >
+        <span className="h-px w-10 bg-linear-to-l from-transparent to-gold" />
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+        </svg>
+        <span className="h-px w-10 bg-linear-to-r from-transparent to-gold" />
+      </motion.span>
+
+      {description && (
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.3, ease: EASE }}
+          className={`mt-5 text-base sm:text-lg leading-relaxed ${deep ? "text-on-deep-soft" : "text-ink-soft"}`}
+        >
+          {description}
+        </motion.p>
+      )}
     </div>
   );
 }

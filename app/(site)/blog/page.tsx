@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "المدونة" };
 
 export default function BlogPage() {
   return (
-    <div className="py-16 sm:py-24">
+    <div className="py-14 sm:py-24">
       <Container>
         <SectionHeading eyebrow="المدونة" title="مقالات وفوائد" />
         <Suspense fallback={<Loader />}>

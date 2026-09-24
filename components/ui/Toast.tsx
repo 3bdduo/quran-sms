@@ -15,33 +15,45 @@ interface ToastContextValue {
 }
 
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
+const DURATION = 4000;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const showToast = useCallback((message: string, type: "success" | "error" = "success") => {
-    const id = Date.now();
+    const id = Date.now() + Math.random();
     setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), DURATION);
   }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 items-center">
+      <div
+        aria-live="polite"
+        className="fixed inset-x-4 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-[100] flex flex-col gap-2 items-center pointer-events-none"
+      >
         <AnimatePresence>
           {toasts.map((t) => (
             <motion.div
               key={t.id}
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              layout
+              role="status"
+              initial={{ opacity: 0, y: 40, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.9 }}
-              className={`flex items-center gap-2 px-5 py-3 rounded-2xl shadow-lg text-sm font-bold text-white ${
-                t.type === "success" ? "bg-emerald-600" : "bg-red-500"
+              exit={{ opacity: 0, y: 20, scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              className={`relative overflow-hidden pointer-events-auto flex items-center gap-2.5 px-5 py-3.5 rounded-2xl sh-float text-sm font-bold max-w-md w-full sm:w-auto ${
+                t.type === "success" ? "bg-brand text-on-brand" : "bg-danger-solid text-white"
               }`}
             >
-              {t.type === "success" ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-              {t.message}
+              {t.type === "success" ? <CheckCircle2 size={20} className="shrink-0" /> : <XCircle size={20} className="shrink-0" />}
+              <span className="leading-snug">{t.message}</span>
+              <span
+                aria-hidden="true"
+                className="absolute bottom-0 right-0 h-[3px] w-full origin-right bg-current opacity-40"
+                style={{ animation: `toast-bar ${DURATION}ms linear forwards` }}
+              />
             </motion.div>
           ))}
         </AnimatePresence>

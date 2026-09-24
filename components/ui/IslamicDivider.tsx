@@ -1,14 +1,16 @@
+/** فاصل زخرفي: خطين ذهبيين ونجمة ثمانية بتلف ببطء. */
 export function IslamicDivider() {
   return (
-    <div className="flex items-center justify-center gap-3 py-2" aria-hidden="true">
-      <span className="h-px w-16 bg-gradient-to-l from-transparent to-gold-400" />
-      <svg width="20" height="20" viewBox="0 0 20 20" className="text-gold-500">
-        <path
-          fill="currentColor"
-          d="M10 0l2.35 6.18L18.5 6.5l-4.9 4.02L15.5 17 10 13.3 4.5 17l1.9-6.48L1.5 6.5l6.15-.32L10 0z"
-        />
+    <div className="flex items-center justify-center gap-3 py-3" aria-hidden="true">
+      <span className="h-px w-16 sm:w-24 bg-linear-to-l from-transparent to-gold" />
+      <svg width="22" height="22" viewBox="0 0 24 24" className="text-gold animate-spin-slow">
+        <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+          <rect x="5" y="5" width="14" height="14" />
+          <rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)" />
+        </g>
+        <circle cx="12" cy="12" r="1.8" fill="currentColor" />
       </svg>
-      <span className="h-px w-16 bg-gradient-to-r from-transparent to-gold-400" />
+      <span className="h-px w-16 sm:w-24 bg-linear-to-r from-transparent to-gold" />
     </div>
   );
 }

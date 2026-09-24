@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { IslamicDivider } from "@/components/ui/IslamicDivider";
+import { Reveal } from "@/components/ui/Reveal";
 import { Target, Eye, HeartHandshake } from "lucide-react";
 
 export const metadata: Metadata = { title: "عن المدرسة" };
@@ -14,11 +15,11 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="py-16 sm:py-24">
+    <div className="py-14 sm:py-24">
       <Container>
         <SectionHeading eyebrow="من نحن" title="عن مدرسة التربية بالقرآن الكريم" />
 
-        <div className="max-w-3xl mx-auto mt-10 text-center text-emerald-900/70 leading-loose text-lg">
+        <Reveal delay={0.1} className="max-w-3xl mx-auto mt-10 text-center text-ink-soft leading-loose text-base sm:text-lg">
           <p>
             انطلقت مدرستنا من إيمان راسخ بأن القرآن الكريم هو أعظم وسيلة لتربية الأجيال، فجمعنا نخبة من المعلمين
             والمعلمات أصحاب الإجازات القرآنية والخبرة التربوية، لنقدّم منهجًا متكاملًا يوازن بين الحفظ المتقن،
@@ -28,19 +29,23 @@ export default function AboutPage() {
             نؤمن أن كل طالب له طريقته الخاصة في التعلم، لذلك تقوم فلسفتنا التربوية على المتابعة الفردية المستمرة،
             والتواصل الدائم مع أولياء الأمور، ليكونوا شركاء حقيقيين في رحلة أبنائهم مع كتاب الله.
           </p>
+        </Reveal>
+
+        <div className="mt-6">
+          <IslamicDivider />
         </div>
 
-        <IslamicDivider />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          {values.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="bg-white rounded-3xl p-8 border border-emerald-900/5 text-center">
-              <div className="h-14 w-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mx-auto mb-5">
-                <Icon size={26} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mt-10">
+          {values.map(({ icon: Icon, title, text }, i) => (
+            <Reveal key={title} delay={i * 0.12} className="h-full">
+              <div className="group card-interactive h-full p-7 sm:p-8 text-center">
+                <div className="h-16 w-16 rounded-2xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand mx-auto mb-5 transition-all duration-500 sh-soft group-hover:rotate-[-6deg] group-hover:scale-110">
+                  <Icon size={28} />
+                </div>
+                <h3 className="font-ruqaa font-bold text-ink text-2xl leading-[1.6] mb-2">{title}</h3>
+                <p className="text-sm text-ink-soft leading-relaxed">{text}</p>
               </div>
-              <h3 className="font-extrabold text-emerald-950 text-lg mb-2">{title}</h3>
-              <p className="text-sm text-emerald-900/60 leading-relaxed">{text}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </Container>

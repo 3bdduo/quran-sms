@@ -2,9 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { GraduationCap, ShieldCheck, UserRound, LogIn } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/ui/Logo";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { ApiError } from "@/lib/api";
@@ -39,63 +41,84 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="py-16 sm:py-24 min-h-[70vh] flex items-center">
-      <Container className="max-w-md">
-        <div className="bg-white rounded-3xl border border-emerald-900/5 p-8 sm:p-10 shadow-sm">
-          <div className="text-center mb-8">
-            <div className="h-14 w-14 rounded-full bg-emerald-600 text-cream-50 flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-              ق
-            </div>
-            <h1 className="text-2xl font-extrabold text-emerald-950">تسجيل الدخول</h1>
-            <p className="text-sm text-emerald-900/50 mt-1">اختر صفتك وسجّل دخولك للمنصة</p>
+    <div className="relative py-12 sm:py-24 min-h-[70dvh] flex items-center overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.07] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+      <div aria-hidden="true" className="absolute top-10 right-[8%] h-64 w-64 rounded-full bg-glow-1 blur-3xl animate-float-slow" />
+      <div aria-hidden="true" className="absolute bottom-6 left-[6%] h-64 w-64 rounded-full bg-glow-2 blur-3xl animate-float" />
+
+      <Container className="relative max-w-md">
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          style={{ boxShadow: "var(--sh-float)" }}
+          className="card p-6 xs:p-8 sm:p-10 !rounded-[2rem]"
+        >
+          <div className="text-center mb-8 flex flex-col items-center">
+            <Logo size="lg" showText={false} className="mb-4" />
+            <h1 className="font-ruqaa font-bold text-4xl leading-[1.6] text-ink">تسجيل الدخول</h1>
+            <p className="text-sm text-ink-mute mt-1">اختر صفتك وسجّل دخولك للمنصة</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mb-6">
-            {roles.map(({ value, label, icon: Icon }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setRole(value)}
-                className={`flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-all ${
-                  role === value ? "bg-emerald-600 text-cream-50" : "bg-cream-100 text-emerald-900/60 hover:bg-emerald-50"
-                }`}
-              >
-                <Icon size={20} />
-                {label}
-              </button>
-            ))}
+          <div className="grid grid-cols-3 gap-2 mb-6 p-1.5 rounded-3xl bg-bg-alt shadow-[inset_0_1px_3px_rgba(0,0,0,0.12)]" role="tablist">
+            {roles.map(({ value, label, icon: Icon }) => {
+              const active = role === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setRole(value)}
+                  className={`relative flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-colors duration-300 active:scale-95 ${
+                    active ? "text-on-brand" : "text-ink-soft hover:text-brand-ink"
+                  }`}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="login-role"
+                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                      className="absolute inset-0 rounded-2xl bg-brand sh-brand"
+                    />
+                  )}
+                  <Icon size={20} className="relative" />
+                  <span className="relative">{label}</span>
+                </button>
+              );
+            })}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-bold text-emerald-900 mb-1.5 block">
-                {role === "student" ? "الرقم القومي" : "اسم المستخدم"}
-              </label>
+              <label className="field-label">{role === "student" ? "الرقم القومي" : "اسم المستخدم"}</label>
               <input
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition"
+                className="field"
                 placeholder={role === "student" ? "أدخل رقمك القومي" : "أدخل اسم المستخدم"}
+                autoComplete="username"
+                inputMode={role === "student" ? "numeric" : "text"}
               />
             </div>
             <div>
-              <label className="text-sm font-bold text-emerald-900 mb-1.5 block">كلمة المرور</label>
+              <label className="field-label">كلمة المرور</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition"
+                className="field"
                 placeholder="••••••••"
+                autoComplete="current-password"
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full">
-              <LogIn size={18} />
+            <Button type="submit" loading={loading} className="w-full">
+              {!loading && <LogIn size={18} />}
               {loading ? "جاري الدخول..." : "تسجيل الدخول"}
             </Button>
           </form>
-        </div>
+        </motion.div>
       </Container>
     </div>
   );

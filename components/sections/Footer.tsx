@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Facebook, Instagram, Youtube, Phone, Mail, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { Logo } from "@/components/ui/Logo";
+import { Reveal } from "@/components/ui/Reveal";
 
 const quickLinks = [
   { href: "/about", label: "عن المدرسة" },
@@ -11,60 +13,82 @@ const quickLinks = [
   { href: "/contact", label: "تواصل معنا" },
 ];
 
+const socials = [
+  { icon: Facebook, label: "فيسبوك" },
+  { icon: Instagram, label: "إنستجرام" },
+  { icon: Youtube, label: "يوتيوب" },
+];
+
 export function Footer() {
   return (
-    <footer className="bg-emerald-950 text-cream-100">
-      <Container className="py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        <div>
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="h-10 w-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold">ق</div>
-            <p className="font-extrabold">مدرسة التربية بالقرآن الكريم</p>
+    <footer className="relative bg-deep text-on-deep overflow-hidden shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.45)]">
+      {/* خط ذهبي متدرج أعلى الفوتر */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-gold to-transparent" />
+      <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.05]" />
+
+      <Container className="relative py-14 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <Reveal>
+          <div className="mb-4">
+            <Logo size="md" tone="onDeep" />
           </div>
-          <p className="text-cream-100/60 text-sm leading-relaxed">
+          <p className="text-on-deep-soft text-sm leading-relaxed max-w-xs">
             منصة تعليمية شاملة لتحفيظ القرآن الكريم وتدريس علومه، بمنهجية تربوية متكاملة ومتابعة مستمرة لكل طالب.
           </p>
-        </div>
+        </Reveal>
 
-        <div>
-          <p className="font-bold mb-4 text-cream-50">روابط سريعة</p>
-          <ul className="space-y-2.5 text-sm">
+        <Reveal delay={0.08}>
+          <p className="font-bold mb-4 text-on-deep text-lg">روابط سريعة</p>
+          <ul className="space-y-1 text-sm">
             {quickLinks.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="text-cream-100/60 hover:text-gold-400 transition-colors">
+                <Link
+                  href={l.href}
+                  className="inline-flex min-h-9 items-center text-on-deep-soft hover:text-gold hover:-translate-x-1 transition-all duration-300"
+                >
                   {l.label}
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
-        <div>
-          <p className="font-bold mb-4 text-cream-50">تواصل معنا</p>
-          <ul className="space-y-3 text-sm text-cream-100/60">
-            <li className="flex items-center gap-2"><Phone size={16} className="text-gold-400" /> 01000000000</li>
-            <li className="flex items-center gap-2"><Mail size={16} className="text-gold-400" /> info@quran-school.com</li>
-            <li className="flex items-center gap-2"><MapPin size={16} className="text-gold-400" /> جمهورية مصر العربية</li>
+        <Reveal delay={0.16}>
+          <p className="font-bold mb-4 text-on-deep text-lg">تواصل معنا</p>
+          <ul className="space-y-3.5 text-sm text-on-deep-soft">
+            <li className="flex items-center gap-2.5">
+              <Phone size={16} className="text-gold shrink-0" />
+              <span dir="ltr">01000000000</span>
+            </li>
+            <li className="flex items-center gap-2.5 min-w-0">
+              <Mail size={16} className="text-gold shrink-0" />
+              <span className="truncate">info@quran-school.com</span>
+            </li>
+            <li className="flex items-center gap-2.5">
+              <MapPin size={16} className="text-gold shrink-0" />
+              جمهورية مصر العربية
+            </li>
           </ul>
-        </div>
+        </Reveal>
 
-        <div>
-          <p className="font-bold mb-4 text-cream-50">تابعونا</p>
+        <Reveal delay={0.24}>
+          <p className="font-bold mb-4 text-on-deep text-lg">تابعونا</p>
           <div className="flex gap-3">
-            {[Facebook, Instagram, Youtube].map((Icon, i) => (
+            {socials.map(({ icon: Icon, label }) => (
               <a
-                key={i}
+                key={label}
                 href="#"
-                className="h-10 w-10 flex items-center justify-center rounded-full bg-emerald-900 hover:bg-emerald-600 transition-colors"
+                aria-label={label}
+                className="h-11 w-11 grid place-items-center rounded-full bg-deep-2 border border-deep-line text-on-deep hover:bg-gold hover:text-on-gold hover:border-gold hover:-translate-y-1.5 hover:rotate-[-6deg] transition-all duration-300 shadow-[0_8px_18px_-6px_rgba(0,0,0,0.6)]"
               >
                 <Icon size={18} />
               </a>
             ))}
           </div>
-        </div>
+        </Reveal>
       </Container>
 
-      <div className="border-t border-cream-100/10 py-5">
-        <Container className="text-center text-xs text-cream-100/50">
+      <div className="relative border-t border-deep-line py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+        <Container className="text-center text-xs text-on-deep-soft">
           © {new Date().getFullYear()} مدرسة التربية بالقرآن الكريم — جميع الحقوق محفوظة
         </Container>
       </div>

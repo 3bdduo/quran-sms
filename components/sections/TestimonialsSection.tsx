@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Stagger, StaggerItem } from "@/components/ui/Reveal";
 
 const testimonials = [
   { name: "أم عبدالرحمن", role: "ولية أمر", text: "ابني تغيّر تمامًا من ناحية الالتزام والأخلاق، والمتابعة المستمرة من المعلمين شيء نادر تلاقيه." },
@@ -13,29 +13,29 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-20">
+    <section className="py-16 sm:py-24 bg-bg-alt/60">
       <Container>
         <SectionHeading eyebrow="آراؤهم" title="ماذا يقول أولياء الأمور والطلاب" />
 
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Stagger className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {testimonials.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-cream-100/60 rounded-3xl p-7 border border-emerald-900/5 relative"
-            >
-              <Quote className="text-emerald-200 mb-3" size={32} />
-              <p className="text-emerald-900/80 leading-relaxed mb-5">{t.text}</p>
-              <div>
-                <p className="font-extrabold text-emerald-950">{t.name}</p>
-                <p className="text-xs text-emerald-700 font-semibold">{t.role}</p>
-              </div>
-            </motion.div>
+            <StaggerItem key={t.name} className={`h-full ${i === 2 ? "md:col-span-2 lg:col-span-1" : ""}`}>
+              <figure className="card-interactive relative h-full p-6 sm:p-7 flex flex-col">
+                <Quote className="text-gold mb-3 rotate-180" size={34} />
+                <blockquote className="text-ink-soft leading-relaxed mb-6 flex-1">{t.text}</blockquote>
+                <figcaption className="flex items-center gap-3 pt-4 border-t border-line">
+                  <span className="h-11 w-11 shrink-0 rounded-full bg-brand-soft text-brand-ink grid place-items-center font-ruqaa text-xl font-bold">
+                    {t.name.replace(/^(أم|أبو)\s/, "").charAt(0)}
+                  </span>
+                  <span>
+                    <span className="block font-extrabold text-ink">{t.name}</span>
+                    <span className="block text-xs text-brand-ink font-semibold">{t.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </Container>
     </section>
   );

@@ -1,10 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { motion } from "framer-motion";
 import { UserPlus, CheckCircle2 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { useToast } from "@/components/ui/Toast";
 import { contactApi } from "@/lib/resources";
 import { ApiError } from "@/lib/api";
@@ -33,7 +35,7 @@ export default function RegisterPage() {
         `السن: ${form.age}`,
         `المسار المطلوب: ${form.track}`,
         form.notes ? `ملاحظات: ${form.notes}` : "",
-      ].filter(Boolean).join("\\n");
+      ].filter(Boolean).join("\n");
 
       await contactApi.submit({ name: form.parentName, email: form.email, phone: form.phone, message });
       setSuccess(true);
@@ -46,77 +48,79 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="py-24 min-h-[70vh] flex items-center">
+      <div className="py-24 min-h-[70dvh] flex items-center">
         <Container className="max-w-lg text-center">
-          <div className="h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 size={32} />
-          </div>
-          <h1 className="text-2xl font-extrabold text-emerald-950">تم استلام طلب التسجيل بنجاح</h1>
-          <p className="text-emerald-900/60 mt-3 leading-relaxed">
-            شكرًا لتواصلكم معنا. سيقوم فريق الإدارة بمراجعة الطلب والتواصل معكم قريبًا لإتمام باقي خطوات التسجيل.
-          </p>
+          <motion.div
+            initial={{ scale: 0, rotate: -40 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 16 }}
+            className="h-20 w-20 rounded-full bg-brand-soft text-brand-ink flex items-center justify-center mx-auto mb-6 sh-lift"
+          >
+            <CheckCircle2 size={40} />
+          </motion.div>
+          <Reveal delay={0.15}>
+            <h1 className="font-ruqaa font-bold text-4xl leading-[1.6] text-ink">تم استلام طلب التسجيل بنجاح</h1>
+            <p className="text-ink-soft mt-3 leading-relaxed">
+              شكرًا لتواصلكم معنا. سيقوم فريق الإدارة بمراجعة الطلب والتواصل معكم قريبًا لإتمام باقي خطوات التسجيل.
+            </p>
+          </Reveal>
         </Container>
       </div>
     );
   }
 
   return (
-    <div className="py-16 sm:py-24">
+    <div className="py-14 sm:py-24">
       <Container className="max-w-2xl">
         <SectionHeading eyebrow="التسجيل" title="سجّل ابنك الآن" description="املأ البيانات التالية وسيتواصل معك فريقنا لإتمام التسجيل" />
 
-        <form onSubmit={handleSubmit} className="mt-12 bg-white rounded-3xl border border-emerald-900/5 p-8 space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="text-sm font-bold text-emerald-900 mb-1.5 block">اسم الطالب</label>
-              <input required value={form.studentName} onChange={(e) => setForm({ ...form, studentName: e.target.value })}
-                className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition" />
+        <Reveal className="mt-10 sm:mt-12" delay={0.1}>
+          <form onSubmit={handleSubmit} className="card p-6 sm:p-8 space-y-5 !rounded-[2rem]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="field-label">اسم الطالب</label>
+                <input required value={form.studentName} onChange={(e) => setForm({ ...form, studentName: e.target.value })} className="field" />
+              </div>
+              <div>
+                <label className="field-label">سن الطالب</label>
+                <input required type="number" inputMode="numeric" min={3} max={25} value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} className="field" />
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-bold text-emerald-900 mb-1.5 block">سن الطالب</label>
-              <input required type="number" min={3} max={25} value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })}
-                className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="field-label">اسم ولي الأمر</label>
+                <input required value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })} className="field" autoComplete="name" />
+              </div>
+              <div>
+                <label className="field-label">رقم الهاتف</label>
+                <input required inputMode="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" autoComplete="tel" />
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="text-sm font-bold text-emerald-900 mb-1.5 block">اسم ولي الأمر</label>
-              <input required value={form.parentName} onChange={(e) => setForm({ ...form, parentName: e.target.value })}
-                className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition" />
+              <label className="field-label">البريد الإلكتروني</label>
+              <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="field" autoComplete="email" />
             </div>
+
             <div>
-              <label className="text-sm font-bold text-emerald-900 mb-1.5 block">رقم الهاتف</label>
-              <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition" />
+              <label className="field-label">المسار التعليمي المطلوب</label>
+              <select value={form.track} onChange={(e) => setForm({ ...form, track: e.target.value })} className="field field-select">
+                {tracks.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
             </div>
-          </div>
 
-          <div>
-            <label className="text-sm font-bold text-emerald-900 mb-1.5 block">البريد الإلكتروني</label>
-            <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition" />
-          </div>
+            <div>
+              <label className="field-label">ملاحظات إضافية (اختياري)</label>
+              <textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="field resize-none" />
+            </div>
 
-          <div>
-            <label className="text-sm font-bold text-emerald-900 mb-1.5 block">المسار التعليمي المطلوب</label>
-            <select value={form.track} onChange={(e) => setForm({ ...form, track: e.target.value })}
-              className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition bg-white">
-              {tracks.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-bold text-emerald-900 mb-1.5 block">ملاحظات إضافية (اختياري)</label>
-            <textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              className="w-full rounded-xl border border-emerald-900/10 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition resize-none" />
-          </div>
-
-          <Button type="submit" disabled={loading} className="w-full">
-            <UserPlus size={18} />
-            {loading ? "جاري الإرسال..." : "إرسال طلب التسجيل"}
-          </Button>
-        </form>
+            <Button type="submit" loading={loading} className="w-full">
+              {!loading && <UserPlus size={18} />}
+              {loading ? "جاري الإرسال..." : "إرسال طلب التسجيل"}
+            </Button>
+          </form>
+        </Reveal>
       </Container>
     </div>
   );

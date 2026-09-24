@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { CalendarDays, User } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
+import { Reveal } from "@/components/ui/Reveal";
 import { blogApi } from "@/lib/resources";
 
 interface Props {
@@ -35,7 +36,7 @@ export default async function BlogPostPage({ params }: Props) {
     return (
       <article className="py-16 sm:py-24">
         <Container className="max-w-3xl text-center">
-          <h1 className="text-2xl font-bold text-emerald-950">المقال غير متوفر حالياً</h1>
+          <h1 className="font-ruqaa text-4xl font-bold leading-[1.6] text-ink">المقال غير متوفر حالياً</h1>
         </Container>
       </article>
     );
@@ -44,25 +45,28 @@ export default async function BlogPostPage({ params }: Props) {
   const date = post.published_at ? new Date(post.published_at).toLocaleDateString("ar-EG", { year: "numeric", month: "long", day: "numeric" }) : "";
 
   return (
-    <article className="py-16 sm:py-24">
+    <article className="py-14 sm:py-24">
       <Container className="max-w-3xl">
+        <Reveal>
         <Badge>{post.category}</Badge>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-emerald-950 leading-tight mt-4">{post.title}</h1>
+        <h1 className="font-ruqaa font-bold text-[clamp(2rem,5.5vw,3.4rem)] text-ink leading-[1.65] mt-4 text-balance">{post.title}</h1>
 
-        <div className="flex items-center gap-5 text-sm text-emerald-900/50 font-semibold mt-4">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-mute font-semibold mt-4">
           <span className="flex items-center gap-1.5"><User size={15} /> {post.author}</span>
           {date && <span className="flex items-center gap-1.5"><CalendarDays size={15} /> {date}</span>}
         </div>
 
+        </Reveal>
+
         {post.cover_image && (
-          <div className="relative h-64 sm:h-96 rounded-3xl overflow-hidden mt-8">
-            <Image src={post.cover_image} alt={post.title} fill className="object-cover" sizes="800px" priority />
-          </div>
+          <Reveal from="scale" delay={0.1} className="relative h-64 sm:h-96 rounded-3xl overflow-hidden mt-8 sh-float">
+            <Image src={post.cover_image} alt={post.title} fill className="object-cover" sizes="(min-width: 768px) 768px, 100vw" priority />
+          </Reveal>
         )}
 
-        <div className="prose prose-emerald max-w-none mt-10 text-lg leading-loose text-emerald-900/80 whitespace-pre-line">
+        <Reveal delay={0.1} className="max-w-none mt-10 text-base sm:text-lg leading-loose text-ink-soft whitespace-pre-line">
           {post.content}
-        </div>
+        </Reveal>
       </Container>
     </article>
   );

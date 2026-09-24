@@ -2,10 +2,10 @@ import clsx from "clsx";
 import { ReactNode } from "react";
 
 const tones = {
-  green: "bg-emerald-100 text-emerald-700",
-  gold: "bg-gold-400/20 text-gold-500",
-  red: "bg-red-100 text-red-600",
-  gray: "bg-cream-200 text-emerald-900/60",
+  green: "bg-brand-soft text-brand-ink",
+  gold: "bg-gold-soft text-gold-ink",
+  red: "bg-danger-soft text-danger-ink",
+  gray: "bg-bg-alt text-ink-soft",
 };
 
 export function Badge({ children, tone = "green" }: { children: ReactNode; tone?: keyof typeof tones }) {
