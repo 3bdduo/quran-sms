@@ -113,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-dvh bg-bg flex" dir="rtl">
       {/* الشريط الجانبي العصري */}
       <aside
-        className={`fixed inset-y-0 right-0 lg:sticky lg:top-0 h-dvh z-40 transition-all duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:p-4 lg:pl-0 flex flex-col ${
+        className={`fixed inset-y-0 right-0 lg:sticky lg:top-0 h-dvh z-40 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:p-4 lg:pl-0 flex flex-col ${
           sidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
         } ${collapsed ? "w-[104px]" : "w-[300px] max-w-[85vw]"}`}
       >
@@ -249,7 +249,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"
+            className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+            transition={{ duration: 0.2 }}
             onClick={() => setSidebarOpen(false)}
           />
         )}

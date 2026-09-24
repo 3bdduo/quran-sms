@@ -62,9 +62,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
       const doc = document as ViewTransitionDocument;
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // على الموبايل/التابلت نتخطى View Transition عشانها ثقيلة
+      const isMobile = window.matchMedia("(pointer: coarse)").matches;
 
-      // المتصفحات الحديثة: دايرة بتكبر من الزر
-      if (doc.startViewTransition && !reduce) {
+      // المتصفحات الحديثة على الديسكتوب فقط: دايرة بتكبر من الزر
+      if (doc.startViewTransition && !reduce && !isMobile) {
         const x = origin?.x ?? window.innerWidth / 2;
         const y = origin?.y ?? 0;
         const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
@@ -74,16 +76,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           .then(() => {
             document.documentElement.animate(
               { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-              { duration: 975.0, easing: "cubic-bezier(0.22, 1, 0.36, 1)", pseudoElement: "::view-transition-new(root)" },
+              { duration: 550, easing: "cubic-bezier(0.22, 1, 0.36, 1)", pseudoElement: "::view-transition-new(root)" },
             );
           })
           .catch(() => undefined);
       } else {
-        // بديل: تدرّج ناعم للألوان
+        // بديل سريع: تدرّج ناعم للألوان
         const root = document.documentElement;
         root.classList.add("theme-anim");
         applyTheme(next);
-        window.setTimeout(() => root.classList.remove("theme-anim"), 500);
+        window.setTimeout(() => root.classList.remove("theme-anim"), 250);
       }
 
       setTheme(next);

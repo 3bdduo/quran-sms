@@ -15,7 +15,7 @@ import type { MediaItem } from "@/types";
 const tracks = ["تحفيظ", "تفسير وتجويد", "علوم شرعية"];
 
 const chip = (active: boolean) =>
-  `relative px-4 min-h-11 inline-flex items-center rounded-full text-sm font-bold transition-all duration-[1000ms] active:scale-95 ${
+  `relative px-4 min-h-11 inline-flex items-center rounded-full text-sm font-bold transition-all duration-200 active:scale-95 ${
     active
       ? "bg-brand text-on-brand sh-brand"
       : "bg-surface text-ink-soft border border-line sh-soft hover:border-brand hover:text-brand-ink"
@@ -114,7 +114,7 @@ export default function MediaPage() {
                         src={item.thumbnail_url}
                         alt={item.title}
                         fill
-                        className="object-cover opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1600ms]"
+                        className="object-cover opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400"
                         sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
                       />
                     ) : (
@@ -124,7 +124,7 @@ export default function MediaPage() {
                     )}
                     <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="grid place-items-center h-16 w-16 rounded-full bg-white/25 border border-white/30 text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] group-hover:scale-110 group-hover:bg-brand group-hover:text-on-brand transition-all duration-[1300ms]">
+                      <span className="grid place-items-center h-16 w-16 rounded-full bg-white/25 border border-white/30 text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] group-hover:scale-110 group-hover:bg-brand group-hover:text-on-brand transition-all duration-300">
                         <PlayCircle size={34} />
                       </span>
                     </div>

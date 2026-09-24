@@ -27,7 +27,7 @@ export function Logo({ size = "md", showText = true, tone = "default", className
         className={clsx(
           "relative shrink-0 rounded-full bg-[#f7f9ef] sh-lift ring-2 ring-gold/70 ring-offset-2",
           tone === "onDeep" ? "ring-offset-deep" : "ring-offset-bg",
-          "transition-transform duration-[1300ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-[-4deg]",
+          "transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:rotate-[-4deg]",
           s.badge,
         )}
       >

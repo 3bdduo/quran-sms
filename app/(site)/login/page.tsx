@@ -70,7 +70,7 @@ export default function LoginPage() {
                   role="tab"
                   aria-selected={active}
                   onClick={() => setRole(value)}
-                  className={`relative flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-colors duration-[1000ms] active:scale-95 ${
+                  className={`relative flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-colors duration-200 active:scale-95 ${
                     active ? "text-on-brand" : "text-ink-soft hover:text-brand-ink"
                   }`}
                 >

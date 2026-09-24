@@ -276,6 +276,36 @@ a, button, [role="button"], [role="switch"], input, select, textarea, label, sum
   touch-action: manipulation;
 }
 
+/*
+  ============================================================================
+  إصلاح شامل للموبايل — سرعة واستجابة فورية:
+  • نحدد duration سريع (150ms) فقط على العناصر التفاعلية بدل * (عشان ما نشغلش
+    الـ transition على كل عناصر الـ DOM).
+  • إلغاء backdrop-filter الثقيل على الموبايل لتوفير كارت الشاشة والمعالج.
+  • إيقاف الـ infinite animations الكبيرة على الموبايل لمنع استهلاك البطارية والتهنيج.
+  ============================================================================
+*/
+@media (pointer: coarse) {
+  a, button, input, select, textarea, [role="button"], [role="switch"], .card-interactive {
+    transition-duration: 150ms !important;
+  }
+
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .animate-float,
+  .animate-float-slow,
+  .animate-spin-slower {
+    animation: none !important;
+  }
+}
+
 button { cursor: pointer; font-family: inherit; }
 img, svg, video { max-width: 100%; }
 
@@ -329,11 +359,18 @@ textarea:-webkit-autofill {
 ::view-transition-new(root) { z-index: 2147483646; }
 
 html.theme-anim,
-html.theme-anim *,
-html.theme-anim *::before,
-html.theme-anim *::after {
-  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease,
-    box-shadow 0.45s ease, fill 0.45s ease, stroke 0.45s ease !important;
+html.theme-anim body,
+html.theme-anim header,
+html.theme-anim nav,
+html.theme-anim main,
+html.theme-anim footer,
+html.theme-anim aside,
+html.theme-anim .card,
+html.theme-anim .card-interactive,
+html.theme-anim .glass,
+html.theme-anim button,
+html.theme-anim a {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease !important;
 }
 
 /* ============================================================================
@@ -383,11 +420,12 @@ html.theme-anim *::after {
   border: 1px solid var(--line);
   border-radius: 1.5rem;
   box-shadow: var(--sh-card);
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.3s ease;
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease;
   @media (hover: hover) {
     &:hover {
-      transform: translateY(-10px);
+      transform: translateY(-8px);
       box-shadow: var(--sh-float);
       border-color: color-mix(in oklab, var(--brand) 45%, var(--line));
     }
@@ -400,7 +438,7 @@ html.theme-anim *::after {
   background: color-mix(in oklab, var(--surface) 94%, transparent);
 }
 
-/* لمعة بتعدي على الزر عند الـ hover */
+/* لمعة بتعدي على الزر عند الـ hover — على الديسكتوب بس */
 @utility btn-shine {
   position: relative;
   overflow: hidden;
@@ -412,10 +450,14 @@ html.theme-anim *::after {
     z-index: -1;
     background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
     transform: translateX(-130%);
-    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
   @media (hover: hover) {
     &:hover::after { transform: translateX(130%); }
+  }
+  /* الموبايل: ما نحتاجش الـ shine — بيبطء الـ GPU */
+  @media (pointer: coarse) {
+    &::after { display: none; }
   }
 }
 

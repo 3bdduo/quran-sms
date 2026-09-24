@@ -1,94 +1,129 @@
 "use client";
 
-import { m, type HTMLMotionProps, type Variants } from "framer-motion";
-import type { ReactNode } from "react";
+import { useRef, useEffect, useState, type ReactNode } from "react";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/**
+ * Reveal / Stagger بـ CSS فقط — بدون Framer Motion على الموبايل.
+ * بيستخدم IntersectionObserver + CSS animation عشان:
+ *  • صفر JS overhead على الـ scroll
+ *  • GPU-only animation (opacity + transform = composite layers)
+ *  • يشتغل حتى على أضعف الأجهزة
+ */
 
-interface RevealProps extends Omit<HTMLMotionProps<"div">, "children"> {
+interface RevealProps {
   children: ReactNode;
   delay?: number;
-  /** الاتجاه اللي العنصر بيدخل منه */
   from?: "up" | "down" | "start" | "end" | "scale" | "none";
   distance?: number;
   duration?: number;
+  className?: string;
+  [key: string]: unknown;
 }
 
-/** ظهور ناعم لأي عنصر لما يدخل الشاشة (مرة واحدة). */
+const fromMap = {
+  up: "translate3d(0, 28px, 0)",
+  down: "translate3d(0, -28px, 0)",
+  start: "translate3d(28px, 0, 0)",
+  end: "translate3d(-28px, 0, 0)",
+  scale: "scale(0.93)",
+  none: "none",
+};
+
 export function Reveal({
   children,
   delay = 0,
   from = "up",
-  distance = 28,
-  duration = 0.75,
+  distance: _distance = 28,
+  duration = 0.55,
   className,
   ...rest
 }: RevealProps) {
-  const initial =
-    from === "up"
-      ? { opacity: 0, y: distance }
-      : from === "down"
-        ? { opacity: 0, y: -distance }
-        : from === "start"
-          ? { opacity: 0, x: distance }
-          : from === "end"
-            ? { opacity: 0, x: -distance }
-            : from === "scale"
-              ? { opacity: 0, scale: 0.92 }
-              : { opacity: 0 };
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -6% 0px", threshold: 0.01 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const transform = fromMap[from] ?? fromMap.up;
 
   return (
-    <m.div
-      initial={initial}
-      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-      transition={{ duration, delay, ease: EASE }}
+    <div
+      ref={ref}
       className={className}
-      {...rest}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "none" : transform,
+        transition: visible
+          ? `opacity ${duration}s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform ${duration}s cubic-bezier(0.22,1,0.36,1) ${delay}s`
+          : "none",
+        willChange: visible ? "auto" : "opacity, transform",
+      }}
+      {...(rest as React.HTMLAttributes<HTMLDivElement>)}
     >
       {children}
-    </m.div>
+    </div>
   );
 }
 
-const containerVariants: Variants = {
-  hidden: {},
-  show: (stagger: number) => ({ transition: { staggerChildren: stagger, delayChildren: 0.05 } }),
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 26, scale: 0.97 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.05, ease: EASE } },
-};
-
-/** حاوية بتظهّر أولادها ورا بعض (Stagger) — استخدمها مع StaggerItem. */
+/** Stagger — بدون Framer Motion، بيضيف delay على كل ولد تلقائياً */
 export function Stagger({
   children,
-  stagger = 0.09,
+  stagger = 0.07,
   className,
 }: {
   children: ReactNode;
   stagger?: number;
   className?: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -6% 0px", threshold: 0.01 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <m.div
-      variants={containerVariants}
-      custom={stagger}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-      className={className}
-    >
+    <div ref={ref} className={className} data-stagger-visible={visible ? "1" : "0"}>
       {children}
-    </m.div>
+    </div>
   );
 }
 
-export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
+export function StaggerItem({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <m.div variants={itemVariants} className={className}>
+    <div className={`qs-stagger-item ${className ?? ""}`}>
       {children}
-    </m.div>
+    </div>
   );
 }

@@ -32,7 +32,7 @@ export function StatCard({ icon: Icon, label, value, tone = "emerald", delay = 0
       <div className="group card-interactive h-full p-5 sm:p-6 flex items-center gap-4 !rounded-2xl">
         <div
           className={clsx(
-            "h-12 w-12 sm:h-14 sm:w-14 rounded-2xl flex items-center justify-center shrink-0 sh-soft transition-transform duration-[1300ms] group-hover:scale-110 group-hover:rotate-[-6deg]",
+            "h-12 w-12 sm:h-14 sm:w-14 rounded-2xl flex items-center justify-center shrink-0 sh-soft transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-6deg]",
             tones[tone],
           )}
         >

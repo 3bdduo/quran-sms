@@ -73,7 +73,7 @@ export default function AdminDashboard() {
                   key={path}
                   onClick={() => handleDownload(path, filename)}
                   disabled={downloadingKey === path}
-                  className="flex items-center gap-3 bg-bg-alt hover:bg-brand-soft rounded-xl p-4 text-right transition-all duration-[1000ms] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
+                  className="flex items-center gap-3 bg-bg-alt hover:bg-brand-soft rounded-xl p-4 text-right transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
                 >
                   <div className="h-10 w-10 rounded-lg bg-brand-soft text-brand-ink flex items-center justify-center shrink-0">
                     {downloadingKey === path ? <Spinner size={18} /> : <Icon size={18} />}

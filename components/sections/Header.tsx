@@ -67,15 +67,15 @@ export function Header() {
       <ScrollProgress />
 
       <header
-        className={`sticky top-0 z-50 pt-[env(safe-area-inset-top)] border-b transition-[background-color,box-shadow,border-color] duration-[1300ms] ${
+        className={`sticky top-0 z-50 pt-[env(safe-area-inset-top)] border-b transition-[background-color,box-shadow,border-color] duration-300 ${
           scrolled || open
             ? "glass border-line sh-lift"
             : "bg-bg/80 border-transparent shadow-none"
         }`}
       >
         <Container
-          className={`flex items-center justify-between gap-3 transition-[height] duration-[1300ms] ${
-            scrolled ? "h-16 sm:h-[4.25rem]" : "h-[4.5rem] sm:h-20"
+          className={`flex items-center justify-between gap-3 sm:transition-[height] sm:duration-200 ${
+            scrolled ? "h-16 sm:h-[4.25rem]" : "h-16 sm:h-20"
           }`}
         >
           {/* اللوجو — بيفتح مودال معلومات المدرسة */}
@@ -95,7 +95,7 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative px-3.5 xl:px-4 py-2 rounded-full text-sm font-bold transition-colors duration-[1000ms] ${
+                  className={`relative px-3.5 xl:px-4 py-2 rounded-full text-sm font-bold transition-colors duration-200 ${
                     active ? "text-on-brand" : "text-ink-soft hover:text-brand-ink hover:bg-brand-soft"
                   }`}
                 >
@@ -137,23 +137,27 @@ export function Header() {
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <button
-              className="relative h-11 w-11 grid place-items-center text-ink rounded-2xl bg-surface border border-line sh-soft active:scale-90 transition-transform duration-[900ms]"
+              className="relative h-11 w-11 grid place-items-center text-ink rounded-2xl bg-surface border border-line sh-soft active:scale-90 transition-transform duration-150"
               onClick={() => setOpen((o) => !o)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
             >
-              <AnimatePresence mode="wait" initial={false}>
-                <m.span
-                  key={open ? "x" : "menu"}
-                  initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
-                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                  exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute"
+              <span className="relative h-5 w-5 flex items-center justify-center pointer-events-none">
+                <span
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
+                    open ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
+                  }`}
                 >
-                  {open ? <X size={22} /> : <Menu size={22} />}
-                </m.span>
-              </AnimatePresence>
+                  <X size={22} />
+                </span>
+                <span
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
+                    !open ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-50"
+                  }`}
+                >
+                  <Menu size={22} />
+                </span>
+              </span>
             </button>
           </div>
         </Container>
@@ -165,40 +169,29 @@ export function Header() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:hidden overflow-hidden border-t border-line"
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:hidden overflow-hidden border-t border-line bg-surface/98"
               aria-label="قائمة الموبايل"
             >
               <Container className="flex flex-col gap-1.5 py-4 max-h-[calc(100dvh-5rem)] overflow-y-auto">
-                {links.map((link, i) => {
+                {links.map((link) => {
                   const active = isActive(link.href);
                   return (
-                    <m.div
+                    <Link
                       key={link.href}
-                      initial={{ opacity: 0, x: 24 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 + i * 0.045, duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+                      href={link.href}
+                      className={`flex items-center min-h-12 px-4 rounded-2xl text-base font-bold transition-colors duration-150 active:scale-[0.98] ${
+                        active
+                          ? "bg-brand text-on-brand sh-brand"
+                          : "text-ink hover:bg-brand-soft"
+                      }`}
                     >
-                      <Link
-                        href={link.href}
-                        className={`flex items-center min-h-12 px-4 rounded-2xl text-base font-bold transition-all duration-[900ms] active:scale-[0.98] ${
-                          active
-                            ? "bg-brand text-on-brand sh-brand"
-                            : "text-ink hover:bg-brand-soft"
-                        }`}
-                      >
-                        {link.label}
-                      </Link>
-                    </m.div>
+                      {link.label}
+                    </Link>
                   );
                 })}
 
-                <m.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.48, duration: 0.52 }}
-                  className="flex flex-col gap-2.5 mt-3 pt-4 border-t border-line pb-[env(safe-area-inset-bottom)]"
-                >
+                <div className="flex flex-col gap-2.5 mt-3 pt-4 border-t border-line pb-[env(safe-area-inset-bottom)]">
                   {user ? (
                     <ButtonLink href={`/dashboard/${user.role}`}>لوحة التحكم</ButtonLink>
                   ) : (
@@ -209,7 +202,7 @@ export function Header() {
                       <ButtonLink href="/register">سجّل الآن</ButtonLink>
                     </>
                   )}
-                </m.div>
+                </div>
               </Container>
             </m.nav>
           )}

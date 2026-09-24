@@ -42,20 +42,20 @@ export function LogoModal({ open, onClose }: LogoModalProps) {
           aria-label="معلومات المدرسة"
         >
           {/* الخلفية */}
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
+          <div className="absolute inset-0 bg-black/75" />
 
           {/* الكارت */}
           <m.div
-            initial={{ scale: 0.86, opacity: 0, y: 32 }}
+            initial={{ scale: 0.92, opacity: 0, y: 16 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 24 }}
-            transition={{ type: "spring", stiffness: 135, damping: 21 }}
+            exit={{ scale: 0.94, opacity: 0, y: 12 }}
+            transition={{ type: "spring", stiffness: 260, damping: 25 }}
             className="relative z-10 w-full max-w-sm max-h-[92dvh] overflow-y-auto rounded-[2rem] bg-surface border border-line sh-float"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={onClose}
-              className="absolute top-3.5 left-3.5 z-20 h-10 w-10 grid place-items-center rounded-full bg-bg-alt/90 text-ink-soft hover:bg-brand hover:text-on-brand hover:rotate-90 transition-all duration-[1000ms]"
+              className="absolute top-3.5 left-3.5 z-20 h-10 w-10 grid place-items-center rounded-full bg-bg-alt/90 text-ink-soft hover:bg-brand hover:text-on-brand hover:rotate-90 transition-all duration-200"
               aria-label="إغلاق"
             >
               <X size={18} />
@@ -88,14 +88,14 @@ export function LogoModal({ open, onClose }: LogoModalProps) {
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 min-h-12 rounded-2xl border-2 border-line-strong text-ink-soft text-sm font-bold hover:border-brand hover:text-brand-ink hover:bg-brand-soft transition-all duration-[900ms] active:scale-[0.97]"
+                  className="flex-1 min-h-12 rounded-2xl border-2 border-line-strong text-ink-soft text-sm font-bold hover:border-brand hover:text-brand-ink hover:bg-brand-soft transition-all duration-200 active:scale-[0.97]"
                 >
                   إغلاق
                 </button>
                 <Link
                   href="/"
                   onClick={onClose}
-                  className="btn-shine flex-1 min-h-12 flex items-center justify-center gap-2 rounded-2xl bg-brand text-on-brand text-sm font-bold hover:bg-brand-strong sh-brand transition-all duration-[900ms] hover:-translate-y-0.5 active:scale-[0.97]"
+                  className="btn-shine flex-1 min-h-12 flex items-center justify-center gap-2 rounded-2xl bg-brand text-on-brand text-sm font-bold hover:bg-brand-strong sh-brand transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97]"
                 >
                   <BookOpen size={16} />
                   الصفحة الرئيسية

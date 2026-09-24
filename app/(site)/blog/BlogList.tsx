@@ -15,7 +15,7 @@ import type { BlogPost } from "@/types";
 const categories = ["فوائد قرآنية", "تجويد", "تربية", "أخبار المدرسة"];
 
 const chip = (active: boolean) =>
-  `inline-flex items-center min-h-11 px-4 rounded-full text-sm font-bold transition-all duration-[1000ms] active:scale-95 ${
+  `inline-flex items-center min-h-11 px-4 rounded-full text-sm font-bold transition-all duration-200 active:scale-95 ${
     active
       ? "bg-brand text-on-brand sh-brand"
       : "bg-surface text-ink-soft border border-line sh-soft hover:border-brand hover:text-brand-ink"
@@ -81,7 +81,7 @@ export default function BlogList() {
                       src={post.cover_image}
                       alt={post.title}
                       fill
-                      className="object-cover transition-transform duration-[1600ms] group-hover:scale-110"
+                      className="object-cover transition-transform duration-400 group-hover:scale-110"
                       sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
                     />
                   ) : (

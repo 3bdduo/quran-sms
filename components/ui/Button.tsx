@@ -26,7 +26,7 @@ const sizeStyles = {
 
 const base =
   "btn-shine inline-flex items-center justify-center gap-2 rounded-full font-bold select-none " +
-  "transition-[translate,scale,box-shadow,background-color,color,border-color,filter] duration-[1000ms]  " +
+  "transition-[transform,box-shadow,background-color,color,border-color] duration-150 " +
   "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] " +
   "disabled:opacity-60 disabled:pointer-events-none disabled:translate-y-0";
 

@@ -22,7 +22,7 @@ export function FeaturesSection() {
           {features.map(({ icon: Icon, title, desc }) => (
             <StaggerItem key={title} className="h-full">
               <div className="group card-interactive h-full p-6 sm:p-7">
-                <div className="h-14 w-14 rounded-2xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand transition-all duration-[1300ms] mb-5 sh-soft group-hover:rotate-[-6deg] group-hover:scale-110">
+                <div className="h-14 w-14 rounded-2xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand transition-all duration-300 mb-5 sh-soft group-hover:rotate-[-6deg] group-hover:scale-110">
                   <Icon size={26} />
                 </div>
                 <h3 className="font-extrabold text-ink text-lg mb-2">{title}</h3>

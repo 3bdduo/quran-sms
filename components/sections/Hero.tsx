@@ -17,16 +17,16 @@ const chips = [
   { icon: Sparkles, label: "متابعة مستمرة لكل طالب" },
 ];
 
-/** كلمات العنوان بتدخل واحدة ورا التانية بحركة ناعمة. */
+/** كلمات العنوان بتدخل واحدة ورا التانية بحركة ناعمة وسريعة. */
 function Words({ words, start, className }: { words: string[]; start: number; className?: string }) {
   return (
     <span className={className}>
       {words.map((w, i) => (
         <span key={w + i}>
           <m.span
-            initial={{ opacity: 0, y: 34 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.35, delay: start + i * 0.09, ease: EASE }}
+            transition={{ duration: 0.45, delay: start + i * 0.035, ease: EASE }}
             className="inline-block"
           >
             {w}
@@ -68,9 +68,9 @@ export function Hero() {
 
       <Container className="relative py-16 sm:py-24 lg:py-28 text-center">
         <m.span
-          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          initial={{ opacity: 0, y: 12, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.05, ease: EASE }}
+          transition={{ duration: 0.35, ease: EASE }}
           className="inline-flex items-center gap-2 text-sm font-bold text-brand-ink bg-brand-soft border border-line px-5 py-2 rounded-full mb-7 sh-soft"
         >
           <Sparkles size={16} className="text-gold-ink" />
@@ -79,15 +79,15 @@ export function Hero() {
 
         {/* العنوان الرئيسي — خط الرقعة */}
         <h1 className="font-ruqaa font-bold text-ink text-[clamp(2.4rem,7.4vw,5rem)] leading-[1.7] max-w-4xl mx-auto text-balance">
-          <Words words={line1} start={0.15} />
+          <Words words={line1} start={0.08} />
           <br className="hidden sm:block" />
-          <Words words={line2} start={0.15 + line1.length * 0.09} className="text-brand-ink" />
+          <Words words={line2} start={0.08 + line1.length * 0.035} className="text-brand-ink" />
         </h1>
 
         <m.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 1.08, ease: EASE }}
+          transition={{ duration: 0.4, delay: 0.2, ease: EASE }}
           className="mt-6 text-base sm:text-lg text-ink-soft max-w-2xl mx-auto leading-relaxed font-medium"
         >
           منهج متكامل يجمع بين تحفيظ القرآن الكريم، والتفسير والتجويد، والعلوم الشرعية —
@@ -95,9 +95,9 @@ export function Hero() {
         </m.p>
 
         <m.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 1.26, ease: EASE }}
+          transition={{ duration: 0.4, delay: 0.28, ease: EASE }}
           className="mt-9 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto"
         >
           <ButtonLink href="/register" size="lg">
@@ -115,15 +115,15 @@ export function Hero() {
         <m.div
           initial="hidden"
           animate="show"
-          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12, delayChildren: 1.25 } } }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.35 } } }}
           className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-4xl mx-auto mt-4"
         >
           {chips.map(({ icon: Icon, label }) => (
             <m.div
               key={label}
               variants={{
-                hidden: { opacity: 0, y: 30, scale: 0.94 },
-                show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.05, ease: EASE } },
+                hidden: { opacity: 0, y: 16, scale: 0.96 },
+                show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: EASE } },
               }}
               className="card-interactive flex items-center gap-3 px-5 py-4"
             >

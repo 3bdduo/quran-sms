@@ -37,7 +37,7 @@ export default function ContactPage() {
             ].map(({ icon: Icon, title, value, ltr }, i) => (
               <Reveal key={title} delay={i * 0.1} from="start">
                 <div className="group card-interactive flex items-center gap-4 p-5 !rounded-2xl">
-                  <div className="h-12 w-12 shrink-0 rounded-xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand transition-all duration-[1300ms] sh-soft">
+                  <div className="h-12 w-12 shrink-0 rounded-xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand transition-all duration-300 sh-soft">
                     <Icon size={20} />
                   </div>
                   <div className="min-w-0">
