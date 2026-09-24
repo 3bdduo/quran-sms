@@ -7,9 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   LogOut,
-  Bell,
   Menu,
   X,
+  ChevronRight,
+  ChevronLeft,
   GraduationCap,
   ShieldCheck,
   UserRound,
@@ -22,12 +23,10 @@ import {
   Trophy,
   Globe,
   Mail,
-  Activity,
   Settings,
   BookMarked,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { notificationsApi } from "@/lib/resources";
 import { Loader } from "@/components/ui/Loader";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -56,7 +55,6 @@ const navItemsByRole: Record<string, NavItem[]> = {
     { href: "/dashboard/admin/competitions", label: "المسابقات والامتحانات", icon: Trophy },
     { href: "/dashboard/admin/content", label: "إدارة المحتوى والموقع", icon: Globe },
     { href: "/dashboard/admin/messages", label: "رسائل التواصل", icon: Mail },
-    { href: "/dashboard/admin/notifications", label: "الإشعارات والنشاط", icon: Activity },
     { href: "/dashboard/admin/settings", label: "إعدادات المدرسة", icon: Settings },
   ],
   teacher: [
@@ -77,18 +75,10 @@ const navItemsByRole: Record<string, NavItem[]> = {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, logout } = useAuth();
-  const [unread, setUnread] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!user) return;
-    notificationsApi
-      .unreadCount()
-      .then((r) => setUnread(r.count))
-      .catch(() => undefined);
-  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) router.push("/login");
@@ -121,17 +111,31 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-dvh bg-bg flex" dir="rtl">
       {/* الشريط الجانبي */}
       <aside
-        className={`fixed inset-y-0 right-0 lg:sticky lg:top-0 h-dvh w-72 max-w-[85vw] bg-deep text-on-deep flex flex-col z-40 border-l border-deep-line shadow-[-30px_0_80px_-20px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pt-[env(safe-area-inset-top)] ${
+        className={`fixed inset-y-0 right-0 lg:sticky lg:top-0 h-dvh bg-deep text-on-deep flex flex-col z-40 border-l border-deep-line shadow-[-30px_0_80px_-20px_rgba(0,0,0,0.55)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] pt-[env(safe-area-inset-top)] ${
           sidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
-        }`}
+        } ${collapsed ? "w-[88px]" : "w-72 max-w-[85vw]"}`}
       >
         <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.05] pointer-events-none" />
 
-        <div className="relative p-5 border-b border-deep-line">
-          <Logo size="md" tone="onDeep" />
-          <p className="text-xs text-on-deep-soft flex items-center gap-1.5 mt-3">
-            <meta.icon size={13} className="text-gold" /> لوحة {meta.label}
-          </p>
+        <div className="relative p-5 border-b border-deep-line flex items-center justify-between min-h-[88px]">
+          {!collapsed ? (
+            <div className="overflow-hidden">
+              <Logo size="md" tone="onDeep" />
+              <p className="text-xs text-on-deep-soft flex items-center gap-1.5 mt-3 whitespace-nowrap">
+                <meta.icon size={13} className="text-gold" /> لوحة {meta.label}
+              </p>
+            </div>
+          ) : (
+            <div className="w-full flex justify-center">
+              <Logo size="sm" showText={false} tone="onDeep" />
+            </div>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="hidden lg:flex items-center justify-center h-7 w-7 rounded-lg bg-deep-2 text-on-deep hover:bg-deep-3 transition-colors absolute -left-3.5 top-8 border border-deep-line z-50"
+          >
+            {collapsed ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+          </button>
         </div>
 
         <nav className="relative flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
@@ -142,14 +146,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 min-h-11 px-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 active:scale-[0.98] ${
+                className={`flex items-center gap-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 active:scale-[0.98] ${
+                  collapsed ? "justify-center px-0" : "px-3.5"
+                } ${
                   isActive
                     ? "bg-brand text-on-brand sh-brand"
                     : "text-on-deep-soft hover:bg-deep-2 hover:text-on-deep"
                 }`}
+                title={collapsed ? item.label : undefined}
               >
-                <Icon size={17} className={isActive ? "text-on-brand" : "text-gold/80"} />
-                <span>{item.label}</span>
+                <Icon size={collapsed ? 20 : 17} className={isActive ? "text-on-brand" : "text-gold/80"} />
+                {!collapsed && <span>{item.label}</span>}
               </Link>
             );
           })}
@@ -157,35 +164,46 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="pt-2 border-t border-deep-line/60">
             <Link
               href="/"
-              className="flex items-center gap-3 min-h-11 px-3.5 rounded-xl text-xs sm:text-sm font-bold text-on-deep-soft hover:bg-deep-2 hover:text-on-deep transition-all duration-300 active:scale-[0.98]"
+              className={`flex items-center gap-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold text-on-deep-soft hover:bg-deep-2 hover:text-on-deep transition-all duration-300 active:scale-[0.98] ${
+                collapsed ? "justify-center px-0" : "px-3.5"
+              }`}
+              title={collapsed ? "الموقع الرئيسي" : undefined}
             >
-              <Home size={17} />
-              <span>الموقع الرئيسي</span>
+              <Home size={collapsed ? 20 : 17} />
+              {!collapsed && <span>الموقع الرئيسي</span>}
             </Link>
           </div>
         </nav>
 
-        <div className="relative p-4 border-t border-deep-line space-y-1.5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-          <div className="flex items-center gap-3 px-3 min-h-10 rounded-xl text-xs font-bold text-on-deep-soft">
-            <Bell size={16} />
-            الإشعارات
-            {unread > 0 && (
-              <span className="ms-auto h-5 min-w-5 px-1.5 rounded-full bg-danger-solid text-white text-[10px] flex items-center justify-center font-bold animate-pulse-soft">
-                {unread}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center justify-between px-3 min-h-10">
-            <span className="text-xs font-bold text-on-deep-soft">المظهر</span>
-            <ThemeToggle />
-          </div>
-          <button
-            onClick={logout}
-            className="w-full flex items-center gap-3 min-h-10 px-3 rounded-xl text-xs font-bold text-[#ffb4a3] hover:bg-danger-solid/20 transition-colors active:scale-[0.98]"
-          >
-            <LogOut size={16} />
-            تسجيل الخروج
-          </button>
+        <div className="relative p-4 border-t border-deep-line flex flex-col gap-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+          {!collapsed ? (
+            <>
+              <div className="flex items-center justify-between px-3 min-h-10">
+                <span className="text-xs font-bold text-on-deep-soft">المظهر</span>
+                <ThemeToggle />
+              </div>
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-3 min-h-10 px-3 rounded-xl text-xs font-bold text-[#ffb4a3] hover:bg-danger-solid/20 transition-colors active:scale-[0.98]"
+              >
+                <LogOut size={16} />
+                تسجيل الخروج
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-center mb-2">
+                <ThemeToggle />
+              </div>
+              <button
+                onClick={logout}
+                title="تسجيل الخروج"
+                className="w-full flex items-center justify-center min-h-10 rounded-xl text-[#ffb4a3] hover:bg-danger-solid/20 transition-colors active:scale-[0.98]"
+              >
+                <LogOut size={20} />
+              </button>
+            </>
+          )}
         </div>
       </aside>
 

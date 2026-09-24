@@ -101,17 +101,20 @@ export default function LoginPage() {
                 inputMode={role === "student" ? "numeric" : "text"}
               />
             </div>
-            <div>
-              <label className="field-label">كلمة المرور</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="field"
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
-            </div>
+            {role !== "student" && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
+                <label className="field-label">كلمة المرور</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="field"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  required
+                />
+              </motion.div>
+            )}
 
             <Button type="submit" loading={loading} className="w-full">
               {!loading && <LogIn size={18} />}

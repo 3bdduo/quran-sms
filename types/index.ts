@@ -72,6 +72,7 @@ export interface Student {
   age: number;
   phone?: string;
   memorized_amount: string;
+  current_surah: string;
   group_id: string;
   notes?: string;
   monthly_fee: number;

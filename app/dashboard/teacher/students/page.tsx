@@ -31,12 +31,10 @@ export default function TeacherStudentsPage() {
   const [form, setForm] = useState({
     name: "",
     nationalId: "",
-    dateOfBirth: "",
-    age: 10,
     phone: "",
     memorizedAmount: "0",
+    currentSurah: "غير محدد",
     groupId: "",
-    notes: "",
   });
   const [formLoading, setFormLoading] = useState(false);
 
@@ -70,17 +68,14 @@ export default function TeacherStudentsPage() {
         await studentsApi.update(editingStudent.id, {
           name: form.name,
           nationalId: form.nationalId,
-          dateOfBirth: form.dateOfBirth,
-          age: Number(form.age),
           phone: form.phone,
           memorizedAmount: form.memorizedAmount,
-          notes: form.notes,
+          currentSurah: form.currentSurah,
         });
         showToast("تم تحديث بيانات الطالب بنجاح", "success");
       } else {
         await studentsApi.create({
           ...form,
-          age: Number(form.age),
           groupId: form.groupId || (groups.length === 1 ? groups[0].id : undefined)
         });
         showToast("تمت إضافة الطالب للحلقة بنجاح", "success");
@@ -130,12 +125,10 @@ export default function TeacherStudentsPage() {
             setForm({
               name: "",
               nationalId: "",
-              dateOfBirth: "",
-              age: 10,
               phone: "",
               memorizedAmount: "0",
+              currentSurah: "غير محدد",
               groupId: "",
-              notes: "",
             });
             setShowAddModal(true);
           }}
@@ -227,12 +220,10 @@ export default function TeacherStudentsPage() {
                             setForm({
                               name: s.name,
                               nationalId: s.national_id,
-                              dateOfBirth: s.date_of_birth || "",
-                              age: s.age || 10,
                               phone: s.phone || "",
                               memorizedAmount: s.memorized_amount || "0",
+                              currentSurah: s.current_surah || "غير محدد",
                               groupId: s.group_id || "",
-                              notes: s.notes || "",
                             });
                             setShowAddModal(true);
                           }}
@@ -289,29 +280,7 @@ export default function TeacherStudentsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="field-label">تاريخ الميلاد *</label>
-                  <input
-                    required
-                    type="date"
-                    value={form.dateOfBirth}
-                    onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                    className="field"
-                  />
-                </div>
-                <div>
-                  <label className="field-label">السن *</label>
-                  <input
-                    required
-                    type="number"
-                    min={3}
-                    max={30}
-                    value={form.age}
-                    onChange={(e) => setForm({ ...form, age: Number(e.target.value) })}
-                    className="field"
-                  />
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="field-label">المحفوظ الحالي</label>
                   <input
@@ -319,6 +288,29 @@ export default function TeacherStudentsPage() {
                     onChange={(e) => setForm({ ...form, memorizedAmount: e.target.value })}
                     className="field"
                     placeholder="مثال: 3 أجزاء"
+                  />
+                </div>
+                <div>
+                  <label className="field-label">السورة الحالية *</label>
+                  <input
+                    required
+                    value={form.currentSurah}
+                    onChange={(e) => setForm({ ...form, currentSurah: e.target.value })}
+                    className="field"
+                    placeholder="مثال: سورة البقرة"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="field-label">رقم الهاتف للتواصل *</label>
+                  <input
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="field"
+                    placeholder="مثال: 01000000000"
                   />
                 </div>
                 {!editingStudent && groups.length > 1 && (
@@ -337,25 +329,6 @@ export default function TeacherStudentsPage() {
                     </select>
                   </div>
                 )}
-              </div>
-
-              <div>
-                <label className="field-label">رقم الهاتف للتواصل</label>
-                <input
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="field"
-                />
-              </div>
-
-              <div>
-                <label className="field-label">ملاحظات المعلم</label>
-                <textarea
-                  rows={2}
-                  value={form.notes}
-                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  className="field resize-none"
-                />
               </div>
 
               <div className="flex justify-end gap-2 pt-3 border-t border-line">

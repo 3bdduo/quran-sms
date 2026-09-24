@@ -43,11 +43,9 @@ export const studentsApi = {
     groupId?: string;
     name: string;
     nationalId: string;
-    dateOfBirth: string;
-    age: number;
     phone?: string;
     memorizedAmount?: string;
-    notes?: string;
+    currentSurah?: string;
     password?: string;
   }) => api.post<Student>("/students", body, true),
   update: (
@@ -55,12 +53,10 @@ export const studentsApi = {
     body: {
       name?: string;
       nationalId?: string;
-      dateOfBirth?: string;
-      age?: number;
       phone?: string;
       memorizedAmount?: string;
+      currentSurah?: string;
       groupId?: string;
-      notes?: string;
     }
   ) => api.put<Student>(`/students/${id}`, body, true),
   remove: (id: string) => api.delete(`/students/${id}`, true),

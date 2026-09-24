@@ -204,7 +204,7 @@ export default function AdminTeachersPage() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-ink-mute text-xs">بدون حلقة</span>
+                        <span className="text-ink-mute text-xs">-</span>
                       )}
                     </td>
                     <td className="p-4 flex items-center justify-center gap-1">
