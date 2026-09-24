@@ -13,7 +13,7 @@ const stats = [
 
 export function StatsSection() {
   return (
-    <section className="py-12 sm:py-16">
+    <section className="cv-auto py-12 sm:py-16">
       <Container>
         <Reveal from="scale" className="relative overflow-hidden card !rounded-[2rem] p-6 sm:p-10">
           <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.06]" />

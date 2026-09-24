@@ -13,7 +13,7 @@ export async function BlogPreview() {
   const latest = posts.slice(0, 3);
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="cv-auto py-16 sm:py-24">
       <Container>
         <SectionHeading eyebrow="المدونة" title="أحدث المقالات والفوائد" />
 
@@ -30,7 +30,7 @@ export async function BlogPreview() {
                         src={post.cover_image}
                         alt={post.title}
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="object-cover transition-transform duration-[1600ms] group-hover:scale-110"
                         sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
                       />
                     ) : (

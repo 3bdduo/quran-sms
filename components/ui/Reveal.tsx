@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type HTMLMotionProps, type Variants } from "framer-motion";
+import { m, type HTMLMotionProps, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -38,7 +38,7 @@ export function Reveal({
               : { opacity: 0 };
 
   return (
-    <motion.div
+    <m.div
       initial={initial}
       whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "0px 0px -8% 0px" }}
@@ -47,7 +47,7 @@ export function Reveal({
       {...rest}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -58,7 +58,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 26, scale: 0.97 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: EASE } },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.05, ease: EASE } },
 };
 
 /** حاوية بتظهّر أولادها ورا بعض (Stagger) — استخدمها مع StaggerItem. */
@@ -72,7 +72,7 @@ export function Stagger({
   className?: string;
 }) {
   return (
-    <motion.div
+    <m.div
       variants={containerVariants}
       custom={stagger}
       initial="hidden"
@@ -81,14 +81,14 @@ export function Stagger({
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
 export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div variants={itemVariants} className={className}>
+    <m.div variants={itemVariants} className={className}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }

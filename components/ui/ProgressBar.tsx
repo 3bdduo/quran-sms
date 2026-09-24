@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface Props {
   value: number; // 0-100
@@ -25,11 +25,11 @@ export function ProgressBar({ value, label, colorClass = "bg-linear-to-l from-br
         aria-valuenow={clamped}
         className="h-3 w-full rounded-full bg-brand-soft overflow-hidden shadow-[inset_0_1px_3px_rgba(0,0,0,0.18)]"
       >
-        <motion.div
+        <m.div
           initial={{ width: 0 }}
           whileInView={{ width: `${clamped}%` }}
           viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
           className={`h-full rounded-full ${colorClass} shadow-[0_0_14px_var(--glow-1)]`}
         />
       </div>

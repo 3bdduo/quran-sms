@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { X, BookOpen } from "lucide-react";
 
 interface LogoModalProps {
@@ -30,11 +30,11 @@ export function LogoModal({ open, onClose }: LogoModalProps) {
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.38 }}
           className="fixed inset-0 z-[200] flex items-center justify-center p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
           onClick={onClose}
           role="dialog"
@@ -45,17 +45,17 @@ export function LogoModal({ open, onClose }: LogoModalProps) {
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
 
           {/* الكارت */}
-          <motion.div
+          <m.div
             initial={{ scale: 0.86, opacity: 0, y: 32 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 24 }}
-            transition={{ type: "spring", stiffness: 300, damping: 26 }}
+            transition={{ type: "spring", stiffness: 135, damping: 21 }}
             className="relative z-10 w-full max-w-sm max-h-[92dvh] overflow-y-auto rounded-[2rem] bg-surface border border-line sh-float"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={onClose}
-              className="absolute top-3.5 left-3.5 z-20 h-10 w-10 grid place-items-center rounded-full bg-bg-alt/90 text-ink-soft hover:bg-brand hover:text-on-brand hover:rotate-90 transition-all duration-300"
+              className="absolute top-3.5 left-3.5 z-20 h-10 w-10 grid place-items-center rounded-full bg-bg-alt/90 text-ink-soft hover:bg-brand hover:text-on-brand hover:rotate-90 transition-all duration-[1000ms]"
               aria-label="إغلاق"
             >
               <X size={18} />
@@ -64,17 +64,17 @@ export function LogoModal({ open, onClose }: LogoModalProps) {
             {/* منطقة اللوجو */}
             <div className="relative overflow-hidden rounded-t-[2rem] bg-bg-alt px-6 pt-10 pb-8 grid place-items-center border-b border-line">
               <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.12]" />
-              <div aria-hidden="true" className="absolute h-64 w-64 rounded-full bg-glow-2 blur-3xl" />
+              <div aria-hidden="true" className="absolute h-64 w-64 rounded-full orb-2" />
               <div aria-hidden="true" className="absolute h-56 w-56 rounded-full border border-dashed border-gold/50 animate-spin-slow" />
               {/* اللوجو الكامل على بلاطة بيضا عشان الكتابة الغامقة تفضل مقروءة في الدارك */}
-              <motion.div
+              <m.div
                 initial={{ rotate: -6, scale: 0.9 }}
                 animate={{ rotate: 0, scale: 1 }}
-                transition={{ type: "spring", stiffness: 200, damping: 16, delay: 0.1 }}
+                transition={{ type: "spring", stiffness: 90, damping: 14, delay: 0.12 }}
                 className="relative h-44 w-44 rounded-[1.75rem] bg-white overflow-hidden ring-2 ring-gold/60 sh-lift"
               >
                 <Image src="/logo-full.png" alt="شعار مدرسة التربية بالقرآن الكريم" fill sizes="176px" className="object-contain p-2" priority />
-              </motion.div>
+              </m.div>
             </div>
 
             {/* المعلومات */}
@@ -88,22 +88,22 @@ export function LogoModal({ open, onClose }: LogoModalProps) {
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 min-h-12 rounded-2xl border-2 border-line-strong text-ink-soft text-sm font-bold hover:border-brand hover:text-brand-ink hover:bg-brand-soft transition-all duration-200 active:scale-[0.97]"
+                  className="flex-1 min-h-12 rounded-2xl border-2 border-line-strong text-ink-soft text-sm font-bold hover:border-brand hover:text-brand-ink hover:bg-brand-soft transition-all duration-[900ms] active:scale-[0.97]"
                 >
                   إغلاق
                 </button>
                 <Link
                   href="/"
                   onClick={onClose}
-                  className="btn-shine flex-1 min-h-12 flex items-center justify-center gap-2 rounded-2xl bg-brand text-on-brand text-sm font-bold hover:bg-brand-strong sh-brand transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97]"
+                  className="btn-shine flex-1 min-h-12 flex items-center justify-center gap-2 rounded-2xl bg-brand text-on-brand text-sm font-bold hover:bg-brand-strong sh-brand transition-all duration-[900ms] hover:-translate-y-0.5 active:scale-[0.97]"
                 >
                   <BookOpen size={16} />
                   الصفحة الرئيسية
                 </Link>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

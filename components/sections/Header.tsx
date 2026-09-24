@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, LogIn, LayoutDashboard } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -68,14 +68,14 @@ export function Header() {
       <ScrollProgress />
 
       <header
-        className={`sticky top-0 z-50 pt-[env(safe-area-inset-top)] border-b transition-[background-color,box-shadow,border-color] duration-500 ${
+        className={`sticky top-0 z-50 pt-[env(safe-area-inset-top)] border-b transition-[background-color,box-shadow,border-color] duration-[1300ms] ${
           scrolled || open
             ? "glass border-line sh-lift"
-            : "bg-bg/60 backdrop-blur-sm border-transparent shadow-none"
+            : "bg-bg/80 border-transparent shadow-none"
         }`}
       >
         <Container
-          className={`flex items-center justify-between gap-3 transition-[height] duration-500 ${
+          className={`flex items-center justify-between gap-3 transition-[height] duration-[1300ms] ${
             scrolled ? "h-16 sm:h-[4.25rem]" : "h-[4.5rem] sm:h-20"
           }`}
         >
@@ -96,14 +96,14 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative px-3.5 xl:px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
+                  className={`relative px-3.5 xl:px-4 py-2 rounded-full text-sm font-bold transition-colors duration-[1000ms] ${
                     active ? "text-on-brand" : "text-ink-soft hover:text-brand-ink hover:bg-brand-soft"
                   }`}
                 >
                   {active && (
-                    <motion.span
+                    <m.span
                       layoutId="nav-pill"
-                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                      transition={{ type: "spring", stiffness: 189, damping: 26 }}
                       className="absolute inset-0 rounded-full bg-brand sh-brand"
                     />
                   )}
@@ -138,22 +138,22 @@ export function Header() {
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <button
-              className="relative h-11 w-11 grid place-items-center text-ink rounded-2xl bg-surface border border-line sh-soft active:scale-90 transition-transform duration-200"
+              className="relative h-11 w-11 grid place-items-center text-ink rounded-2xl bg-surface border border-line sh-soft active:scale-90 transition-transform duration-[900ms]"
               onClick={() => setOpen((o) => !o)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
             >
               <AnimatePresence mode="wait" initial={false}>
-                <motion.span
+                <m.span
                   key={open ? "x" : "menu"}
                   initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
                   animate={{ rotate: 0, opacity: 1, scale: 1 }}
                   exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.3 }}
                   className="absolute"
                 >
                   {open ? <X size={22} /> : <Menu size={22} />}
-                </motion.span>
+                </m.span>
               </AnimatePresence>
             </button>
           </div>
@@ -162,11 +162,11 @@ export function Header() {
         {/* قائمة الموبايل */}
         <AnimatePresence>
           {open && (
-            <motion.nav
+            <m.nav
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="lg:hidden overflow-hidden border-t border-line"
               aria-label="قائمة الموبايل"
             >
@@ -174,15 +174,15 @@ export function Header() {
                 {links.map((link, i) => {
                   const active = isActive(link.href);
                   return (
-                    <motion.div
+                    <m.div
                       key={link.href}
                       initial={{ opacity: 0, x: 24 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 + i * 0.045, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ delay: 0.05 + i * 0.045, duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <Link
                         href={link.href}
-                        className={`flex items-center min-h-12 px-4 rounded-2xl text-base font-bold transition-all duration-200 active:scale-[0.98] ${
+                        className={`flex items-center min-h-12 px-4 rounded-2xl text-base font-bold transition-all duration-[900ms] active:scale-[0.98] ${
                           active
                             ? "bg-brand text-on-brand sh-brand"
                             : "text-ink hover:bg-brand-soft"
@@ -190,14 +190,14 @@ export function Header() {
                       >
                         {link.label}
                       </Link>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
 
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.35 }}
+                  transition={{ delay: 0.48, duration: 0.52 }}
                   className="flex flex-col gap-2.5 mt-3 pt-4 border-t border-line pb-[env(safe-area-inset-bottom)]"
                 >
                   {user ? (
@@ -210,9 +210,9 @@ export function Header() {
                       <ButtonLink href="/register">سجّل الآن</ButtonLink>
                     </>
                   )}
-                </motion.div>
+                </m.div>
               </Container>
-            </motion.nav>
+            </m.nav>
           )}
         </AnimatePresence>
       </header>

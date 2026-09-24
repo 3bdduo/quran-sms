@@ -39,7 +39,7 @@ export default function AboutPage() {
           {values.map(({ icon: Icon, title, text }, i) => (
             <Reveal key={title} delay={i * 0.12} className="h-full">
               <div className="group card-interactive h-full p-7 sm:p-8 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand mx-auto mb-5 transition-all duration-500 sh-soft group-hover:rotate-[-6deg] group-hover:scale-110">
+                <div className="h-16 w-16 rounded-2xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand mx-auto mb-5 transition-all duration-[1300ms] sh-soft group-hover:rotate-[-6deg] group-hover:scale-110">
                   <Icon size={28} />
                 </div>
                 <h3 className="font-ruqaa font-bold text-ink text-2xl leading-[1.6] mb-2">{title}</h3>

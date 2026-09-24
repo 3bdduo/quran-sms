@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Bell, BellRing } from "lucide-react";
 import { notificationsApi } from "@/lib/resources";
 import type { NotificationItem } from "@/types";
@@ -40,13 +40,13 @@ export function NotificationsList() {
         ) : (
           <ul className="space-y-2 max-h-80 overflow-y-auto pe-1">
             {items.map((n, i) => (
-              <motion.li
+              <m.li
                 key={n.id}
                 initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05, duration: 0.4 }}
+                transition={{ delay: i * 0.05, duration: 0.6 }}
                 onClick={() => !n.isRead && markRead(n.id)}
-                className={`p-3.5 rounded-xl cursor-pointer transition-all duration-300 active:scale-[0.99] ${
+                className={`p-3.5 rounded-xl cursor-pointer transition-all duration-[1000ms] active:scale-[0.99] ${
                   n.isRead
                     ? "bg-bg-alt/70"
                     : "bg-brand-soft hover:brightness-95 border border-brand/25"
@@ -59,7 +59,7 @@ export function NotificationsList() {
                     <p className="text-xs text-ink-soft mt-0.5">{n.body}</p>
                   </div>
                 </div>
-              </motion.li>
+              </m.li>
             ))}
           </ul>
         )}

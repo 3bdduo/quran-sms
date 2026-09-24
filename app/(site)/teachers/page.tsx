@@ -23,10 +23,10 @@ export default async function TeachersPage() {
             {teachers.map((t, i) => (
               <Reveal key={t.id} delay={(i % 3) * 0.1} className="h-full">
                 <div className="group card-interactive h-full overflow-hidden text-center p-7 sm:p-8">
-                  <div className="relative h-32 w-32 mx-auto rounded-full p-1.5 bg-linear-to-br from-gold via-brand to-brand-strong sh-lift transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-3">
+                  <div className="relative h-32 w-32 mx-auto rounded-full p-1.5 bg-linear-to-br from-gold via-brand to-brand-strong sh-lift transition-transform duration-[1300ms] group-hover:scale-105 group-hover:-rotate-3">
                     <div className="relative h-full w-full rounded-full overflow-hidden bg-brand-soft ring-4 ring-surface">
                       {t.photo_url ? (
-                        <Image src={t.photo_url} alt={t.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="128px" />
+                        <Image src={t.photo_url} alt={t.name} fill className="object-cover transition-transform duration-[1600ms] group-hover:scale-110" sizes="128px" />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center text-brand-ink/60">
                           <GraduationCap size={36} />

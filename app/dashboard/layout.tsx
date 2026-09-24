@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   LogOut,
@@ -109,107 +109,141 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-dvh bg-bg flex" dir="rtl">
-      {/* الشريط الجانبي */}
+      {/* الشريط الجانبي العصري */}
       <aside
-        className={`fixed inset-y-0 right-0 lg:sticky lg:top-0 h-dvh bg-deep text-on-deep flex flex-col z-40 border-l border-deep-line shadow-[-30px_0_80px_-20px_rgba(0,0,0,0.55)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] pt-[env(safe-area-inset-top)] ${
+        className={`fixed inset-y-0 right-0 lg:sticky lg:top-0 h-dvh z-40 transition-all duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:p-4 lg:pl-0 flex flex-col ${
           sidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
-        } ${collapsed ? "w-[88px]" : "w-72 max-w-[85vw]"}`}
+        } ${collapsed ? "w-[104px]" : "w-[300px] max-w-[85vw]"}`}
       >
-        <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.05] pointer-events-none" />
-
-        <div className="relative p-5 border-b border-deep-line flex items-center justify-between min-h-[88px]">
-          {!collapsed ? (
-            <div className="overflow-hidden">
-              <Logo size="md" tone="onDeep" />
-              <p className="text-xs text-on-deep-soft flex items-center gap-1.5 mt-3 whitespace-nowrap">
-                <meta.icon size={13} className="text-gold" /> لوحة {meta.label}
-              </p>
-            </div>
-          ) : (
-            <div className="w-full flex justify-center">
-              <Logo size="sm" showText={false} tone="onDeep" />
-            </div>
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex items-center justify-center h-7 w-7 rounded-lg bg-deep-2 text-on-deep hover:bg-deep-3 transition-colors absolute -left-3.5 top-8 border border-deep-line z-50"
-          >
-            {collapsed ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
-          </button>
-        </div>
-
-        <nav className="relative flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 active:scale-[0.98] ${
-                  collapsed ? "justify-center px-0" : "px-3.5"
-                } ${
-                  isActive
-                    ? "bg-brand text-on-brand sh-brand"
-                    : "text-on-deep-soft hover:bg-deep-2 hover:text-on-deep"
-                }`}
-                title={collapsed ? item.label : undefined}
-              >
-                <Icon size={collapsed ? 20 : 17} className={isActive ? "text-on-brand" : "text-gold/80"} />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            );
-          })}
-
-          <div className="pt-2 border-t border-deep-line/60">
-            <Link
-              href="/"
-              className={`flex items-center gap-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold text-on-deep-soft hover:bg-deep-2 hover:text-on-deep transition-all duration-300 active:scale-[0.98] ${
-                collapsed ? "justify-center px-0" : "px-3.5"
-              }`}
-              title={collapsed ? "الموقع الرئيسي" : undefined}
-            >
-              <Home size={collapsed ? 20 : 17} />
-              {!collapsed && <span>الموقع الرئيسي</span>}
-            </Link>
+        <div className="relative h-full w-full bg-deep text-on-deep lg:rounded-[2rem] border-l lg:border border-deep-line shadow-[-30px_0_80px_-20px_rgba(0,0,0,0.55)] lg:shadow-[-20px_0_80px_-20px_rgba(0,0,0,0.6)] flex flex-col pt-[env(safe-area-inset-top)] z-10">
+          
+          {/* حاوية الزخرفة عشان ما تطلعش برا الحواف الدائرية */}
+          <div className="absolute inset-0 overflow-hidden lg:rounded-[2rem] pointer-events-none">
+            <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.03]" />
           </div>
-        </nav>
 
-        <div className="relative p-4 border-t border-deep-line flex flex-col gap-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-          {!collapsed ? (
-            <>
-              <div className="flex items-center justify-between px-3 min-h-10">
-                <span className="text-xs font-bold text-on-deep-soft">المظهر</span>
-                <ThemeToggle />
+          <div className="relative p-6 border-b border-deep-line flex items-center justify-between min-h-[104px]">
+            {!collapsed ? (
+              <div className="flex flex-col min-w-0 pr-1 py-1">
+                {/* شيلنا overflow-hidden اللي كانت بتقص اللوجو */}
+                <Logo size="md" tone="onDeep" className="py-1" />
+                <m.p 
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-xs text-on-deep-soft flex items-center gap-1.5 mt-3 whitespace-nowrap"
+                >
+                  <meta.icon size={14} className="text-gold" /> لوحة {meta.label}
+                </m.p>
               </div>
-              <button
-                onClick={logout}
-                className="w-full flex items-center gap-3 min-h-10 px-3 rounded-xl text-xs font-bold text-[#ffb4a3] hover:bg-danger-solid/20 transition-colors active:scale-[0.98]"
-              >
-                <LogOut size={16} />
-                تسجيل الخروج
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="flex justify-center mb-2">
-                <ThemeToggle />
+            ) : (
+              <div className="w-full flex justify-center py-1">
+                <Logo size="sm" showText={false} tone="onDeep" />
               </div>
-              <button
-                onClick={logout}
-                title="تسجيل الخروج"
-                className="w-full flex items-center justify-center min-h-10 rounded-xl text-[#ffb4a3] hover:bg-danger-solid/20 transition-colors active:scale-[0.98]"
+            )}
+            
+            {/* زر القفل والفتح العصري */}
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden lg:flex items-center justify-center h-8 w-8 rounded-full bg-brand text-on-brand hover:scale-110 hover:shadow-lg hover:shadow-brand/20 transition-all absolute -left-4 top-10 z-50 ring-[6px] ring-bg"
+              aria-label={collapsed ? "توسيع القائمة" : "تصغير القائمة"}
+            >
+              {collapsed ? <ChevronLeft size={16} strokeWidth={2.5} /> : <ChevronRight size={16} strokeWidth={2.5} />}
+            </button>
+          </div>
+
+          <nav className="relative flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar z-10">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`relative flex items-center gap-3.5 min-h-[3.25rem] rounded-2xl text-xs sm:text-sm font-bold transition-all duration-300 group ${
+                    collapsed ? "justify-center px-0" : "px-4"
+                  } ${
+                    isActive
+                      ? "text-brand"
+                      : "text-on-deep-soft hover:text-white"
+                  }`}
+                  title={collapsed ? item.label : undefined}
+                >
+                  {isActive && (
+                    <m.div
+                      layoutId="activeNav"
+                      className="absolute inset-0 bg-brand/10 border border-brand/20 rounded-2xl"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  {/* تأثير التوهج عند الـ hover */}
+                  {!isActive && (
+                    <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  )}
+                  
+                  <Icon 
+                    size={collapsed ? 24 : 20} 
+                    className={`relative z-10 transition-transform duration-300 ${collapsed ? "group-hover:scale-110" : ""} ${isActive ? "text-brand" : "text-on-deep-soft group-hover:text-gold"}`} 
+                  />
+                  {!collapsed && (
+                    <span className="relative z-10 whitespace-nowrap">{item.label}</span>
+                  )}
+                </Link>
+              );
+            })}
+
+            <div className="pt-3 mt-3 border-t border-deep-line/60">
+              <Link
+                href="/"
+                className={`relative flex items-center gap-3.5 min-h-[3.25rem] rounded-2xl text-xs sm:text-sm font-bold text-on-deep-soft hover:text-white transition-all duration-300 group ${
+                  collapsed ? "justify-center px-0" : "px-4"
+                }`}
+                title={collapsed ? "الموقع الرئيسي" : undefined}
               >
-                <LogOut size={20} />
-              </button>
-            </>
-          )}
+                <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Home size={collapsed ? 24 : 20} className="relative z-10 transition-transform duration-300 group-hover:scale-110" />
+                {!collapsed && <span className="relative z-10 whitespace-nowrap">الموقع الرئيسي</span>}
+              </Link>
+            </div>
+          </nav>
+
+          <div className="relative p-5 border-t border-deep-line flex flex-col gap-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] z-10">
+            {!collapsed ? (
+              <>
+                <div className="flex items-center justify-between px-3 min-h-[2.5rem] bg-deep-2/50 rounded-xl">
+                  <span className="text-xs font-bold text-on-deep-soft">المظهر</span>
+                  <ThemeToggle />
+                </div>
+                <button
+                  onClick={logout}
+                  className="w-full flex items-center gap-3.5 min-h-[3rem] px-4 rounded-2xl text-xs sm:text-sm font-bold text-danger-ink hover:bg-danger-solid/10 hover:text-danger-solid transition-colors active:scale-[0.98] group"
+                >
+                  <LogOut size={18} className="transition-transform group-hover:-translate-x-1" />
+                  تسجيل الخروج
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-center mb-2">
+                  <ThemeToggle />
+                </div>
+                <button
+                  onClick={logout}
+                  title="تسجيل الخروج"
+                  className="w-full flex items-center justify-center min-h-[3rem] rounded-2xl text-danger-ink hover:bg-danger-solid/10 hover:text-danger-solid transition-colors active:scale-[0.98] group"
+                >
+                  <LogOut size={22} className="transition-transform group-hover:scale-110" />
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </aside>
 
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -220,7 +254,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </AnimatePresence>
 
       <div className="flex-1 min-w-0">
-        <header className="lg:hidden sticky top-0 z-20 bg-surface/85 backdrop-blur-xl border-b border-line sh-lift px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between">
+        <header className="lg:hidden sticky top-0 z-20 bg-surface/95 border-b border-line sh-lift px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between">
           <span className="font-ruqaa font-bold text-xl text-ink">لوحة {meta.label}</span>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -233,7 +267,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </button>
           </div>
         </header>
-        <main className="p-4 xs:p-5 sm:p-8 pb-[calc(2rem+env(safe-area-inset-bottom))]">{children}</main>
+        <main data-dash className="p-4 xs:p-5 sm:p-8 pb-[calc(2rem+env(safe-area-inset-bottom))]">{children}</main>
       </div>
     </div>
   );

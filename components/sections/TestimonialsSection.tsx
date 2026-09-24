@@ -13,7 +13,7 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-16 sm:py-24 bg-bg-alt/60">
+    <section className="cv-auto py-16 sm:py-24 bg-bg-alt/60">
       <Container>
         <SectionHeading eyebrow="آراؤهم" title="ماذا يقول أولياء الأمور والطلاب" />
 

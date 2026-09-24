@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { PlayCircle, Radio, X, Video } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -14,7 +14,7 @@ import type { MediaItem } from "@/types";
 const tracks = ["تحفيظ", "تفسير وتجويد", "علوم شرعية", "لغة عربية"];
 
 const chip = (active: boolean) =>
-  `relative px-4 min-h-11 inline-flex items-center rounded-full text-sm font-bold transition-all duration-300 active:scale-95 ${
+  `relative px-4 min-h-11 inline-flex items-center rounded-full text-sm font-bold transition-all duration-[1000ms] active:scale-95 ${
     active
       ? "bg-brand text-on-brand sh-brand"
       : "bg-surface text-ink-soft border border-line sh-soft hover:border-brand hover:text-brand-ink"
@@ -82,7 +82,7 @@ export default function MediaPage() {
                         src={item.thumbnail_url}
                         alt={item.title}
                         fill
-                        className="object-cover opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
+                        className="object-cover opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1600ms]"
                         sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
                       />
                     ) : (
@@ -92,7 +92,7 @@ export default function MediaPage() {
                     )}
                     <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="grid place-items-center h-16 w-16 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] group-hover:scale-110 group-hover:bg-brand group-hover:text-on-brand transition-all duration-500">
+                      <span className="grid place-items-center h-16 w-16 rounded-full bg-white/25 border border-white/30 text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] group-hover:scale-110 group-hover:bg-brand group-hover:text-on-brand transition-all duration-[1300ms]">
                         <PlayCircle size={34} />
                       </span>
                     </div>
@@ -120,7 +120,7 @@ export default function MediaPage() {
 
       <AnimatePresence>
         {active && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -130,11 +130,11 @@ export default function MediaPage() {
             aria-modal="true"
             aria-label={active.title}
           >
-            <motion.div
+            <m.div
               initial={{ scale: 0.92, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              transition={{ type: "spring", stiffness: 135, damping: 22 }}
               className="bg-black rounded-2xl sm:rounded-3xl overflow-hidden w-full max-w-3xl aspect-video relative sh-float"
               onClick={(e) => e.stopPropagation()}
             >
@@ -146,8 +146,8 @@ export default function MediaPage() {
                 <X size={18} />
               </button>
               <iframe src={active.video_url} title={active.title} className="w-full h-full" allow="autoplay; fullscreen" allowFullScreen />
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

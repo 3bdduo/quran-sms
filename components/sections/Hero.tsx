@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { BookOpenCheck, Users, Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
@@ -23,14 +23,14 @@ function Words({ words, start, className }: { words: string[]; start: number; cl
     <span className={className}>
       {words.map((w, i) => (
         <span key={w + i}>
-          <motion.span
-            initial={{ opacity: 0, y: 34, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.9, delay: start + i * 0.09, ease: EASE }}
+          <m.span
+            initial={{ opacity: 0, y: 34 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.35, delay: start + i * 0.09, ease: EASE }}
             className="inline-block"
           >
             {w}
-          </motion.span>{" "}
+          </m.span>{" "}
         </span>
       ))}
     </span>
@@ -63,19 +63,19 @@ export function Hero() {
       </svg>
 
       {/* توهجات طايرة */}
-      <div aria-hidden="true" className="absolute -top-24 -right-16 h-72 w-72 sm:h-96 sm:w-96 rounded-full bg-glow-1 blur-3xl animate-float-slow" />
-      <div aria-hidden="true" className="absolute -bottom-28 -left-16 h-72 w-72 sm:h-96 sm:w-96 rounded-full bg-glow-2 blur-3xl animate-float" />
+      <div aria-hidden="true" className="absolute -top-24 -right-16 h-80 w-80 sm:h-[30rem] sm:w-[30rem] rounded-full orb-1 animate-float-slow" />
+      <div aria-hidden="true" className="absolute -bottom-28 -left-16 h-80 w-80 sm:h-[30rem] sm:w-[30rem] rounded-full orb-2 animate-float" />
 
       <Container className="relative py-16 sm:py-24 lg:py-28 text-center">
-        <motion.span
+        <m.span
           initial={{ opacity: 0, y: 16, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, ease: EASE }}
+          transition={{ duration: 1.05, ease: EASE }}
           className="inline-flex items-center gap-2 text-sm font-bold text-brand-ink bg-brand-soft border border-line px-5 py-2 rounded-full mb-7 sh-soft"
         >
           <Sparkles size={16} className="text-gold-ink" />
           رحلة حفظ وتدبر تبدأ من هنا
-        </motion.span>
+        </m.span>
 
         {/* العنوان الرئيسي — خط الرقعة */}
         <h1 className="font-ruqaa font-bold text-ink text-[clamp(2.4rem,7.4vw,5rem)] leading-[1.7] max-w-4xl mx-auto text-balance">
@@ -84,20 +84,20 @@ export function Hero() {
           <Words words={line2} start={0.15 + line1.length * 0.09} className="text-brand-ink" />
         </h1>
 
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9, ease: EASE }}
+          transition={{ duration: 1.2, delay: 1.08, ease: EASE }}
           className="mt-6 text-base sm:text-lg text-ink-soft max-w-2xl mx-auto leading-relaxed font-medium"
         >
           منهج متكامل يجمع بين تحفيظ القرآن الكريم، والتفسير والتجويد، والعلوم الشرعية، واللغة العربية —
           بمتابعة مستمرة من معلمين مؤهلين لكل طالب.
-        </motion.p>
+        </m.p>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.05, ease: EASE }}
+          transition={{ duration: 1.2, delay: 1.26, ease: EASE }}
           className="mt-9 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto"
         >
           <ButtonLink href="/register" size="lg">
@@ -106,24 +106,24 @@ export function Hero() {
           <ButtonLink href="/curriculum" variant="outline" size="lg">
             تعرّف على المناهج
           </ButtonLink>
-        </motion.div>
+        </m.div>
 
         <div className="mt-10 sm:mt-12">
           <IslamicDivider />
         </div>
 
-        <motion.div
+        <m.div
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12, delayChildren: 1.25 } } }}
           className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-4xl mx-auto mt-4"
         >
           {chips.map(({ icon: Icon, label }) => (
-            <motion.div
+            <m.div
               key={label}
               variants={{
                 hidden: { opacity: 0, y: 30, scale: 0.94 },
-                show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: EASE } },
+                show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.05, ease: EASE } },
               }}
               className="card-interactive flex items-center gap-3 px-5 py-4"
             >
@@ -131,9 +131,9 @@ export function Hero() {
                 <Icon size={21} />
               </div>
               <p className="text-sm font-bold text-ink text-start leading-snug">{label}</p>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </Container>
     </section>
   );

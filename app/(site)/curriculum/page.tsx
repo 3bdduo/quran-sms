@@ -53,7 +53,7 @@ export default function CurriculumPage() {
               <div
                 className={`group card-interactive flex flex-col ${i % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"} gap-6 sm:gap-8 items-center p-6 sm:p-10`}
               >
-                <div className="shrink-0 h-24 w-24 rounded-3xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand transition-all duration-500 sh-soft group-hover:rotate-[-6deg]">
+                <div className="shrink-0 h-24 w-24 rounded-3xl bg-brand-soft group-hover:bg-brand flex items-center justify-center text-brand-ink group-hover:text-on-brand transition-all duration-[1300ms] sh-soft group-hover:rotate-[-6deg]">
                   <Icon size={44} />
                 </div>
                 <div className="flex-1 min-w-0 text-center lg:text-start">

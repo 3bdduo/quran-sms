@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 interface ToastItem {
@@ -35,14 +35,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       >
         <AnimatePresence>
           {toasts.map((t) => (
-            <motion.div
+            <m.div
               key={t.id}
               layout
               role="status"
               initial={{ opacity: 0, y: 40, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.92 }}
-              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              transition={{ type: "spring", stiffness: 171, damping: 22 }}
               className={`relative overflow-hidden pointer-events-auto flex items-center gap-2.5 px-5 py-3.5 rounded-2xl sh-float text-sm font-bold max-w-md w-full sm:w-auto ${
                 t.type === "success" ? "bg-brand text-on-brand" : "bg-danger-solid text-white"
               }`}
@@ -54,7 +54,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 className="absolute bottom-0 right-0 h-[3px] w-full origin-right bg-current opacity-40"
                 style={{ animation: `toast-bar ${DURATION}ms linear forwards` }}
               />
-            </motion.div>
+            </m.div>
           ))}
         </AnimatePresence>
       </div>

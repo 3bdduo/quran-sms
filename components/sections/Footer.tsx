@@ -21,7 +21,7 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="relative bg-deep text-on-deep overflow-hidden shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.45)]">
+    <footer className="cv-auto relative bg-deep text-on-deep overflow-hidden shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.45)]">
       {/* خط ذهبي متدرج أعلى الفوتر */}
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-gold to-transparent" />
       <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.05]" />
@@ -43,7 +43,7 @@ export function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="inline-flex min-h-9 items-center text-on-deep-soft hover:text-gold hover:-translate-x-1 transition-all duration-300"
+                  className="inline-flex min-h-9 items-center text-on-deep-soft hover:text-gold hover:-translate-x-1 transition-all duration-[1000ms]"
                 >
                   {l.label}
                 </Link>
@@ -78,7 +78,7 @@ export function Footer() {
                 key={label}
                 href="#"
                 aria-label={label}
-                className="h-11 w-11 grid place-items-center rounded-full bg-deep-2 border border-deep-line text-on-deep hover:bg-gold hover:text-on-gold hover:border-gold hover:-translate-y-1.5 hover:rotate-[-6deg] transition-all duration-300 shadow-[0_8px_18px_-6px_rgba(0,0,0,0.6)]"
+                className="h-11 w-11 grid place-items-center rounded-full bg-deep-2 border border-deep-line text-on-deep hover:bg-gold hover:text-on-gold hover:border-gold hover:-translate-y-1.5 hover:rotate-[-6deg] transition-all duration-[1000ms] shadow-[0_8px_18px_-6px_rgba(0,0,0,0.6)]"
               >
                 <Icon size={18} />
               </a>

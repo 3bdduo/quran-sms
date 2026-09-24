@@ -1,29 +1,33 @@
 import type { Metadata, Viewport } from "next";
-import { Tajawal, Amiri, Aref_Ruqaa } from "next/font/google";
+import { Tajawal, Aref_Ruqaa } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import { MotionProvider } from "@/components/ui/MotionProvider";
+import { AppBootstrap } from "@/components/ui/AppBootstrap";
+import { FormValidator } from "@/components/ui/FormValidator";
+import { API_URL } from "@/lib/api";
 import "./globals.css";
+
+const API_ORIGIN = (() => {
+  try {
+    return new URL(API_URL).origin;
+  } catch {
+    return "https://quran-school-nest-js.vercel.app";
+  }
+})();
 
 const tajawal = Tajawal({
   subsets: ["arabic"],
-  weight: ["300", "400", "500", "700", "800"],
+  weight: ["400", "500", "700", "800"],
   variable: "--font-tajawal-var",
-  display: "swap",
-});
-
-const amiri = Amiri({
-  subsets: ["arabic"],
-  weight: ["400", "700"],
-  variable: "--font-amiri-var",
   display: "swap",
 });
 
 // خط الرقعة — للعناوين الكبيرة فقط (font-ruqaa)
 const ruqaa = Aref_Ruqaa({
   subsets: ["arabic"],
-  weight: ["400", "700"],
+  weight: ["700"],
   variable: "--font-ruqaa-var",
   display: "swap",
 });
@@ -56,17 +60,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${tajawal.variable} ${amiri.variable} ${ruqaa.variable}`}
+      className={`${tajawal.variable} ${ruqaa.variable}`}
     >
       <head>
         <meta name="theme-color" content="#ecf0de" />
+        {/* فتح الاتصال بالباك إند مبكرًا (DNS + TLS) عشان أول طلب يبقى أسرع */}
+        <link rel="preconnect" href={API_ORIGIN} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={API_ORIGIN} />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="bg-bg text-ink antialiased">
         <MotionProvider>
           <ThemeProvider>
             <AuthProvider>
-              <ToastProvider>{children}</ToastProvider>
+              <ToastProvider>
+                {children}
+                <AppBootstrap />
+                <FormValidator />
+              </ToastProvider>
             </AuthProvider>
           </ThemeProvider>
         </MotionProvider>

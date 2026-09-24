@@ -1,9 +1,16 @@
 "use client";
 
-import { MotionConfig } from "framer-motion";
+import { LazyMotion, MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
 
-// بيحترم إعداد "تقليل الحركة" في الجهاز تلقائيًا لكل حركات framer-motion
+// تحميل مزايا الحركة بعد أول رسمة للصفحة (يقلل حجم الـ JS الأولي)
+const loadFeatures = () => import("./motionFeatures").then((mod) => mod.default);
+
+// بيحترم إعداد "تقليل الحركة" في الجهاز تلقائيًا
 export function MotionProvider({ children }: { children: ReactNode }) {
-  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
+  return (
+    <LazyMotion features={loadFeatures}>
+      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+    </LazyMotion>
+  );
 }

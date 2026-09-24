@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { GraduationCap, ShieldCheck, UserRound, LogIn } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -43,14 +43,14 @@ export default function LoginPage() {
   return (
     <div className="relative py-12 sm:py-24 min-h-[70dvh] flex items-center overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.07] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
-      <div aria-hidden="true" className="absolute top-10 right-[8%] h-64 w-64 rounded-full bg-glow-1 blur-3xl animate-float-slow" />
-      <div aria-hidden="true" className="absolute bottom-6 left-[6%] h-64 w-64 rounded-full bg-glow-2 blur-3xl animate-float" />
+      <div aria-hidden="true" className="absolute top-10 right-[8%] h-64 w-64 rounded-full orb-1" />
+      <div aria-hidden="true" className="absolute bottom-6 left-[6%] h-64 w-64 rounded-full orb-2" />
 
       <Container className="relative max-w-md">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
           style={{ boxShadow: "var(--sh-float)" }}
           className="card p-6 xs:p-8 sm:p-10 !rounded-[2rem]"
         >
@@ -70,14 +70,14 @@ export default function LoginPage() {
                   role="tab"
                   aria-selected={active}
                   onClick={() => setRole(value)}
-                  className={`relative flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-colors duration-300 active:scale-95 ${
+                  className={`relative flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-colors duration-[1000ms] active:scale-95 ${
                     active ? "text-on-brand" : "text-ink-soft hover:text-brand-ink"
                   }`}
                 >
                   {active && (
-                    <motion.span
+                    <m.span
                       layoutId="login-role"
-                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                      transition={{ type: "spring", stiffness: 189, damping: 26 }}
                       className="absolute inset-0 rounded-2xl bg-brand sh-brand"
                     />
                   )}
@@ -102,10 +102,11 @@ export default function LoginPage() {
               />
             </div>
             {role !== "student" && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
+              <m.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
                 <label className="field-label">كلمة المرور</label>
                 <input
                   type="password"
+                  data-vrule="loose"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="field"
@@ -113,7 +114,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   required
                 />
-              </motion.div>
+              </m.div>
             )}
 
             <Button type="submit" loading={loading} className="w-full">
@@ -121,7 +122,7 @@ export default function LoginPage() {
               {loading ? "جاري الدخول..." : "تسجيل الدخول"}
             </Button>
           </form>
-        </motion.div>
+        </m.div>
       </Container>
     </div>
   );

@@ -24,6 +24,28 @@ export function clearToken() {
   Cookies.remove(TOKEN_COOKIE);
 }
 
+
+// ============================================================================
+// كاش خفيف لطلبات الـ GET (في المتصفح فقط) — عشان أي صفحة تفتح فورًا من غير تحميل.
+//  • نفس الـ URL ونفس الـ headers ونفس الـ endpoints — مفيش أي تغيير في شكل الطلب.
+//  • أي طلب تعديل (POST/PUT/PATCH/DELETE) بيمسح الكاش كله، فالبيانات دايمًا صح بعد التعديل.
+//  • الطلبات المتكررة في نفس اللحظة بتتجمّع في طلب واحد.
+// ============================================================================
+const CACHE_TTL = 30_000; // البيانات "طازة" لمدة 30 ثانية
+const REFRESH_AFTER = 8_000; // بعد 8 ثواني بنجدد الكاش في الخلفية عشان الزيارة الجاية
+const cache = new Map<string, { data: unknown; time: number }>();
+const inflight = new Map<string, Promise<unknown>>();
+const isBrowser = typeof window !== "undefined";
+let cacheVersion = 0; // بيزيد مع كل مسح للكاش عشان طلب قديم ما يكتبش بيانات قديمة بعد تعديل
+
+const clone = <T>(v: T): T => (typeof structuredClone === "function" ? structuredClone(v) : v);
+
+export function clearApiCache() {
+  cacheVersion++;
+  cache.clear();
+  inflight.clear();
+}
+
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -31,7 +53,7 @@ interface RequestOptions {
   params?: Record<string, string | number | undefined>;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function networkRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, auth = false, params } = options;
 
   let url = `${API_URL}${path}`;
@@ -50,11 +72,16 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     if (token) headers.Authorization = `Bearer ${token}`;
   }
 
+  // على السيرفر: الصفحات العامة (مدونة/معلمين/...) بتتخزّن دقيقة، فالصفحة الرئيسية بتفتح فورًا
+  // من غير ما تستنى الباك إند. باقي الطلبات (المحمية بالتوكن + أي تعديل) دايمًا طازة.
+  const cacheOptions: RequestInit & { next?: { revalidate: number } } =
+    !isBrowser && method === "GET" && !auth ? { next: { revalidate: 60 } } : { cache: "no-store" };
+
   const res = await fetch(url, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
-    cache: "no-store",
+    ...cacheOptions,
   });
 
   if (res.status === 204) return undefined as T;
@@ -72,6 +99,56 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
 
   return data as T;
+}
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const { method = "GET", auth = false } = options;
+
+  // تعديل بيانات: ننفّذه وبعدين نمسح الكاش
+  if (method !== "GET") {
+    const result = await networkRequest<T>(path, options);
+    clearApiCache();
+    return result;
+  }
+
+  // على السيرفر مفيش كاش في الذاكرة (كل طلب مستقل)
+  if (!isBrowser) return networkRequest<T>(path, options);
+
+  const qs = options.params
+    ? Object.entries(options.params)
+        .filter(([, v]) => v !== undefined && v !== null && v !== "")
+        .map(([k, v]) => `${k}=${String(v)}`)
+        .join("&")
+    : "";
+  const key = `${auth ? getToken() || "anon" : "public"}|${path}?${qs}`;
+
+  const hit = cache.get(key);
+  if (hit && Date.now() - hit.time < CACHE_TTL) {
+    // جدّد في الخلفية لو الكاش بدأ يقدم — من غير ما المستخدم يستنى
+    if (Date.now() - hit.time > REFRESH_AFTER && !inflight.has(key)) {
+      networkFetch<T>(key, path, options).catch(() => undefined);
+    }
+    return clone(hit.data as T);
+  }
+
+  const pending = inflight.get(key);
+  if (pending) return clone((await pending) as T);
+
+  return clone(await networkFetch<T>(key, path, options));
+}
+
+function networkFetch<T>(key: string, path: string, options: RequestOptions): Promise<T> {
+  const version = cacheVersion;
+  const promise: Promise<T> = networkRequest<T>(path, options)
+    .then((data) => {
+      if (version === cacheVersion) cache.set(key, { data, time: Date.now() });
+      return data;
+    })
+    .finally(() => {
+      if (inflight.get(key) === promise) inflight.delete(key);
+    });
+  inflight.set(key, promise);
+  return promise;
 }
 
 export const api = {

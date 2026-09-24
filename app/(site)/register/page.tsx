@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { UserPlus, CheckCircle2 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -50,14 +50,14 @@ export default function RegisterPage() {
     return (
       <div className="py-24 min-h-[70dvh] flex items-center">
         <Container className="max-w-lg text-center">
-          <motion.div
+          <m.div
             initial={{ scale: 0, rotate: -40 }}
             animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 16 }}
+            transition={{ type: "spring", stiffness: 117, damping: 14 }}
             className="h-20 w-20 rounded-full bg-brand-soft text-brand-ink flex items-center justify-center mx-auto mb-6 sh-lift"
           >
             <CheckCircle2 size={40} />
-          </motion.div>
+          </m.div>
           <Reveal delay={0.15}>
             <h1 className="font-ruqaa font-bold text-4xl leading-[1.6] text-ink">تم استلام طلب التسجيل بنجاح</h1>
             <p className="text-ink-soft mt-3 leading-relaxed">

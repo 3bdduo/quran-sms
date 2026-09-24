@@ -22,10 +22,10 @@ export function Loader({ className, size = "md", label = "جاري التحمي�
     <div
       role="status"
       aria-live="polite"
-      className={clsx("flex flex-col items-center justify-center gap-6 py-16", className)}
+      className={clsx("qs-delay flex flex-col items-center justify-center gap-6 py-16", className)}
     >
       <div className={clsx("relative", s.box)}>
-        <span aria-hidden="true" className="absolute -inset-4 rounded-full bg-glow-1 blur-2xl animate-pulse-soft" />
+        <span aria-hidden="true" className="absolute -inset-8 rounded-full orb-1 animate-pulse-soft" />
         <span aria-hidden="true" className="loader-dash" />
         <span aria-hidden="true" className="loader-ring" />
         <span
@@ -82,7 +82,7 @@ export function Spinner({ size = 18, className }: { size?: number; className?: s
 /** شاشة تحميل كاملة (بتظهر أثناء الانتقال بين الأقسام الكبيرة). */
 export function PageLoader() {
   return (
-    <div className="fixed inset-0 z-[300] grid place-items-center bg-bg">
+    <div className="qs-delay fixed inset-0 z-[300] grid place-items-center bg-bg">
       <div aria-hidden="true" className="absolute inset-0 pattern-star opacity-[0.06] [mask-image:radial-gradient(circle_at_center,black,transparent_70%)]" />
       <Loader size="lg" />
     </div>
