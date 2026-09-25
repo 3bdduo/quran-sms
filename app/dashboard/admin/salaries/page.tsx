@@ -415,7 +415,7 @@ export default function AdminSalariesPage() {
           <div className="p-16 text-center text-ink-mute">
             <AlertCircle className="w-10 h-10 mx-auto mb-2 text-ink-soft opacity-60" />
             <p className="font-bold text-base">لا توجد بيانات مطابقة لهذا البحث أو الشهر</p>
-            <p className="text-xs mt-1">يمكنك الضغط على زر "تحديد راتب معلم" لإدخال مسير جديد</p>
+            <p className="text-xs mt-1">يمكنك الضغط على زر &quot;تحديد راتب معلم&quot; لإدخال مسير جديد</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
