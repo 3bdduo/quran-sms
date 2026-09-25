@@ -4,6 +4,7 @@ export interface AuthUser {
   role: UserRole;
   username: string;
   teacherId?: string | null;
+  teacherType?: "group" | "edu" | "other" | null;
   groupIds?: string[];
   groupId?: string | null; // For legacy
   eduGroupId?: string | null;

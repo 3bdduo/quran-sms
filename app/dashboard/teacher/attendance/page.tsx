@@ -10,6 +10,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { attendanceApi, groupsApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
@@ -18,6 +19,7 @@ import type { AttendanceGroupRecord } from "@/types";
 
 export default function TeacherAttendancePage() {
   const { user } = useAuth();
+  const router = useRouter();
   const today = new Date().toISOString().slice(0, 10);
   const [selectedDate, setSelectedDate] = useState(today);
   
@@ -29,6 +31,16 @@ export default function TeacherAttendancePage() {
   const [saving, setSaving] = useState(false);
 
   const { showToast } = useToast();
+
+  const isEduTeacher =
+    user?.role === "teacher" &&
+    (user.teacherType === "edu" || (Boolean(user.eduGroupId) && (!user.groupIds || user.groupIds.length === 0)));
+
+  useEffect(() => {
+    if (isEduTeacher) {
+      router.replace("/dashboard/teacher/edu-groups");
+    }
+  }, [isEduTeacher, router]);
 
   async function loadGroups() {
     try {

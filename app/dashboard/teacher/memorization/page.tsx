@@ -12,6 +12,8 @@ import {
   UserCheck,
   CheckCircle2,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { memorizationApi, studentsApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
@@ -19,6 +21,8 @@ import { Button } from "@/components/ui/Button";
 import type { Student, MemorizationEntry } from "@/types";
 
 export default function TeacherMemorizationPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [logs, setLogs] = useState<MemorizationEntry[]>([]);
@@ -37,6 +41,16 @@ export default function TeacherMemorizationPage() {
   const [formLoading, setFormLoading] = useState(false);
 
   const { showToast } = useToast();
+
+  const isEduTeacher =
+    user?.role === "teacher" &&
+    (user.teacherType === "edu" || (Boolean(user.eduGroupId) && (!user.groupIds || user.groupIds.length === 0)));
+
+  useEffect(() => {
+    if (isEduTeacher) {
+      router.replace("/dashboard/teacher/edu-groups");
+    }
+  }, [isEduTeacher, router]);
 
   useEffect(() => {
     studentsApi

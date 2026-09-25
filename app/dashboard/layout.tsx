@@ -107,8 +107,41 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  const meta = roleMeta[user.role] || roleMeta.student;
-  const navItems = navItemsByRole[user.role] || [];
+  const isEduTeacher =
+    user.role === "teacher" &&
+    (user.teacherType === "edu" || (Boolean(user.eduGroupId) && (!user.groupIds || user.groupIds.length === 0)));
+
+  const meta =
+    user.role === "admin"
+      ? roleMeta.admin
+      : user.role === "teacher"
+      ? isEduTeacher
+        ? { label: "معلم التربوي", icon: BookMarked }
+        : { label: "معلم الحلقة", icon: UserRound }
+      : roleMeta.student;
+
+  let navItems: NavItem[] = [];
+  if (user.role === "admin") {
+    navItems = navItemsByRole.admin;
+  } else if (user.role === "student") {
+    navItems = navItemsByRole.student;
+  } else if (user.role === "teacher") {
+    if (isEduTeacher) {
+      navItems = [
+        { href: "/dashboard/teacher", label: "نظرة عامة", icon: LayoutDashboard },
+        { href: "/dashboard/teacher/edu-groups", label: "مجموعة التربوي", icon: BookMarked },
+        { href: "/dashboard/teacher/salary", label: "راتبي ومستحقاتي", icon: Banknote },
+      ];
+    } else {
+      navItems = [
+        { href: "/dashboard/teacher", label: "نظرة عامة", icon: LayoutDashboard },
+        { href: "/dashboard/teacher/students", label: "طلاب حلقتي", icon: Users },
+        { href: "/dashboard/teacher/memorization", label: "تسجيل التسميع والحفظ", icon: BookMarked },
+        { href: "/dashboard/teacher/attendance", label: "تسجيل الحضور اليومي", icon: CalendarCheck },
+        { href: "/dashboard/teacher/salary", label: "راتبي ومستحقاتي", icon: Banknote },
+      ];
+    }
+  }
 
   return (
     <div className="min-h-dvh bg-bg flex" dir="rtl">

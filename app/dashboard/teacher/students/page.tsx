@@ -11,6 +11,8 @@ import {
   X,
   Search,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { studentsApi, groupsApi } from "@/lib/resources";
 import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
@@ -19,6 +21,8 @@ import { Button } from "@/components/ui/Button";
 import type { Student } from "@/types";
 
 export default function TeacherStudentsPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [students, setStudents] = useState<Student[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +43,16 @@ export default function TeacherStudentsPage() {
   const [formLoading, setFormLoading] = useState(false);
 
   const { showToast } = useToast();
+
+  const isEduTeacher =
+    user?.role === "teacher" &&
+    (user.teacherType === "edu" || (Boolean(user.eduGroupId) && (!user.groupIds || user.groupIds.length === 0)));
+
+  useEffect(() => {
+    if (isEduTeacher) {
+      router.replace("/dashboard/teacher/edu-groups");
+    }
+  }, [isEduTeacher, router]);
 
   async function loadData() {
     setLoading(true);

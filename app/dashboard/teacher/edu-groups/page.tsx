@@ -19,6 +19,7 @@ import {
   Filter,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { eduGroupsApi, eduAttendanceApi, examsApi, studentsApi, groupsApi } from "@/lib/resources";
 import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
@@ -29,9 +30,20 @@ import type { EduGroupItem, ExamItem, Student, GroupItem } from "@/types";
 
 export default function TeacherEduGroupsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [eduGroup, setEduGroup] = useState<EduGroupItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"students" | "attendance" | "exams">("students");
+
+  const isEduTeacher =
+    user?.role === "teacher" &&
+    (user.teacherType === "edu" || (Boolean(user.eduGroupId) && (!user.groupIds || user.groupIds.length === 0)));
+
+  useEffect(() => {
+    if (user && user.role === "teacher" && !isEduTeacher) {
+      router.replace("/dashboard/teacher");
+    }
+  }, [user, isEduTeacher, router]);
 
   // Students Pool (من الحلقات كلها)
   const [allStudents, setAllStudents] = useState<Student[]>([]);
