@@ -133,20 +133,21 @@ export default function AdminSalariesPage() {
     const existingRec = summary?.teachers.find((t) => t.username === username);
     const teacherMeta = allTeachers.find((t) => t.username === username);
 
+    const base = existingRec?.baseSalary ?? teacherMeta?.base_salary ?? 0;
+    setBaseSalaryInput(base > 0 ? base : "");
+
     if (existingRec) {
-      setBaseSalaryInput(existingRec.baseSalary ?? teacherMeta?.base_salary ?? 0);
-      setIncentiveAmountInput(existingRec.incentiveAmount ?? 0);
+      setIncentiveAmountInput(existingRec.incentiveAmount ? existingRec.incentiveAmount : "");
       setIncentiveReasonInput(existingRec.incentiveReason ?? "");
-      setDeductionAmountInput(existingRec.deductionAmount ?? 0);
+      setDeductionAmountInput(existingRec.deductionAmount ? existingRec.deductionAmount : "");
       setDeductionReasonInput(existingRec.deductionReason ?? "");
       setSalaryStatusInput(existingRec.status || "paid");
       setPaidDateInput(existingRec.paidDate || new Date().toISOString().slice(0, 10));
       setNoteInput(existingRec.note || "");
     } else {
-      setBaseSalaryInput(teacherMeta?.base_salary ?? 0);
-      setIncentiveAmountInput(0);
+      setIncentiveAmountInput("");
       setIncentiveReasonInput("");
-      setDeductionAmountInput(0);
+      setDeductionAmountInput("");
       setDeductionReasonInput("");
       setSalaryStatusInput("paid");
       setPaidDateInput(new Date().toISOString().slice(0, 10));
@@ -162,20 +163,21 @@ export default function AdminSalariesPage() {
     const existingRec = summary?.teachers.find((t) => t.username === newUsername);
     const teacherMeta = allTeachers.find((t) => t.username === newUsername);
 
+    const base = existingRec?.baseSalary ?? teacherMeta?.base_salary ?? 0;
+    setBaseSalaryInput(base > 0 ? base : "");
+
     if (existingRec) {
-      setBaseSalaryInput(existingRec.baseSalary ?? teacherMeta?.base_salary ?? 0);
-      setIncentiveAmountInput(existingRec.incentiveAmount ?? 0);
+      setIncentiveAmountInput(existingRec.incentiveAmount ? existingRec.incentiveAmount : "");
       setIncentiveReasonInput(existingRec.incentiveReason ?? "");
-      setDeductionAmountInput(existingRec.deductionAmount ?? 0);
+      setDeductionAmountInput(existingRec.deductionAmount ? existingRec.deductionAmount : "");
       setDeductionReasonInput(existingRec.deductionReason ?? "");
       setSalaryStatusInput(existingRec.status || "paid");
       setPaidDateInput(existingRec.paidDate || new Date().toISOString().slice(0, 10));
       setNoteInput(existingRec.note || "");
     } else {
-      setBaseSalaryInput(teacherMeta?.base_salary ?? 0);
-      setIncentiveAmountInput(0);
+      setIncentiveAmountInput("");
       setIncentiveReasonInput("");
-      setDeductionAmountInput(0);
+      setDeductionAmountInput("");
       setDeductionReasonInput("");
       setSalaryStatusInput("paid");
       setPaidDateInput(new Date().toISOString().slice(0, 10));
@@ -188,6 +190,11 @@ export default function AdminSalariesPage() {
     e.preventDefault();
     if (!selectedTeacherUsername) {
       showToast("يرجى اختيار المعلم أولاً", "error");
+      return;
+    }
+
+    if (liveBase <= 0) {
+      showToast("يرجى إدخال الراتب الأساسي للمعلم (أكبر من 0)", "error");
       return;
     }
 
@@ -217,6 +224,18 @@ export default function AdminSalariesPage() {
 
   // صرف فوري سريع
   async function handleQuickPay(teacher: TeacherSalaryRecord) {
+    if (!teacher.baseSalary || teacher.baseSalary <= 0) {
+      showToast("يرجى تحديد الراتب الأساسي والحوافز والخصومات أولاً", "error");
+      openSalaryModal(teacher.username);
+      return;
+    }
+
+    const net = teacher.netSalary ?? Math.max(0, (teacher.baseSalary || 0) + (teacher.incentiveAmount || 0) - (teacher.deductionAmount || 0));
+
+    if (!confirm(`هل أنت متأكد من تسجيل صرف راتب (${net.toLocaleString()} ج.م) للمعلم ${teacher.full_name || teacher.username} لشهر ${selectedMonth}؟`)) {
+      return;
+    }
+
     try {
       await salariesApi.setMonth(teacher.username, selectedMonth, {
         baseSalary: teacher.baseSalary,
@@ -225,7 +244,7 @@ export default function AdminSalariesPage() {
         deductionAmount: teacher.deductionAmount || 0,
         deductionReason: teacher.deductionReason || undefined,
         status: "paid",
-        amount: teacher.netSalary,
+        amount: net,
         paidDate: new Date().toISOString().slice(0, 10),
       });
       showToast(`تم تسجيل صرف راتب ${teacher.full_name || teacher.username} بنجاح`, "success");
@@ -395,16 +414,28 @@ export default function AdminSalariesPage() {
 
       {/* جدول كشف الرواتب للمعلمين */}
       <div className="card !rounded-2xl overflow-hidden shadow-sm">
-        <div className="p-4 sm:p-5 border-b border-line flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-extrabold text-ink flex items-center gap-2">
-            <span>كشف رواتب شهر ({selectedMonth})</span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-soft text-brand-ink">
-              {filteredTeachers.length} معلم
+        <div className="p-4 sm:p-5 border-b border-line flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-extrabold text-ink flex items-center gap-2">
+              <span>كشف رواتب شهر ({selectedMonth})</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-soft text-brand-ink">
+                {filteredTeachers.length} معلم
+              </span>
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-ink-mute hidden sm:inline">
+              * يتم الحساب تلقائياً: الراتب الأساسي + الحوافز - الخصومات
             </span>
-          </h2>
-          <span className="text-xs text-ink-mute">
-            * يتم الحساب تلقائياً: الراتب الأساسي + الحوافز - الخصومات
-          </span>
+            <button
+              onClick={() => openSalaryModal()}
+              className="btn-primary flex items-center gap-1.5 text-xs !py-2 !px-3.5 shadow-sm font-bold"
+            >
+              <Plus className="w-4 h-4" />
+              تحديد راتب معلم
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -418,12 +449,14 @@ export default function AdminSalariesPage() {
             <p className="text-xs mt-1">يمكنك الضغط على زر &quot;تحديد راتب معلم&quot; لإدخال مسير جديد</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto" dir="rtl">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line bg-bg-alt/70 text-right text-xs font-bold text-ink-mute">
                   <th className="p-3.5 whitespace-nowrap">#</th>
-                  <th className="p-3.5 whitespace-nowrap">المعلم</th>
+                  <th className="p-3.5 whitespace-nowrap sticky right-0 bg-bg-alt/95 z-20 border-l border-line/50 shadow-sm">
+                    المعلم
+                  </th>
                   <th className="p-3.5 whitespace-nowrap">الراتب الأساسي</th>
                   <th className="p-3.5 whitespace-nowrap">الحوافز والمكافآت</th>
                   <th className="p-3.5 whitespace-nowrap">الخصومات والاستقطاعات</th>
@@ -435,6 +468,7 @@ export default function AdminSalariesPage() {
               </thead>
               <tbody className="divide-y divide-line">
                 {filteredTeachers.map((t, idx) => {
+                  const hasBase = t.baseSalary !== undefined && t.baseSalary !== null && t.baseSalary > 0;
                   const net = t.netSalary ?? Math.max(0, (t.baseSalary || 0) + (t.incentiveAmount || 0) - (t.deductionAmount || 0));
                   const isPaid = t.status === "paid";
                   const isAdvance = t.status === "advance";
@@ -446,9 +480,15 @@ export default function AdminSalariesPage() {
                     >
                       <td className="p-3.5 text-xs text-ink-mute font-mono">{idx + 1}</td>
 
-                      {/* بيانات المعلم */}
-                      <td className="p-3.5">
-                        <div className="font-bold text-ink">{t.full_name || t.username}</div>
+                      {/* بيانات المعلم - مثبتة عند التمرير الأفقي */}
+                      <td className="p-3.5 sticky right-0 bg-bg group-hover:bg-bg-alt/90 transition-colors z-10 border-l border-line/50 shadow-sm">
+                        <div
+                          className="font-bold text-ink hover:text-brand cursor-pointer transition-colors"
+                          onClick={() => openSalaryModal(t.username)}
+                          title="اضغط لتحديد أو تعديل راتب هذا المعلم"
+                        >
+                          {t.full_name || t.username}
+                        </div>
                         <div className="text-xs text-ink-mute font-mono flex items-center gap-2 mt-0.5">
                           <span>@{t.username}</span>
                           {t.national_id && <span>• {t.national_id}</span>}
@@ -456,8 +496,14 @@ export default function AdminSalariesPage() {
                       </td>
 
                       {/* الراتب الأساسي */}
-                      <td className="p-3.5 whitespace-nowrap font-bold text-ink">
-                        {(t.baseSalary || 0).toLocaleString()} ج.م
+                      <td className="p-3.5 whitespace-nowrap font-bold">
+                        {hasBase ? (
+                          <span className="text-ink">{(t.baseSalary || 0).toLocaleString()} ج.م</span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md">
+                            غير محدد
+                          </span>
+                        )}
                       </td>
 
                       {/* الحوافز + السبب */}
@@ -500,7 +546,11 @@ export default function AdminSalariesPage() {
 
                       {/* الراتب الكلي (الصافي) */}
                       <td className="p-3.5 whitespace-nowrap">
-                        <span className="font-extrabold text-sm text-brand-ink bg-brand-soft/60 px-2.5 py-1 rounded-lg">
+                        <span
+                          className={`font-extrabold text-sm px-2.5 py-1 rounded-lg ${
+                            net > 0 ? "text-brand-ink bg-brand-soft/60" : "text-ink-mute bg-bg-alt/70"
+                          }`}
+                        >
                           {net.toLocaleString()} ج.م
                         </span>
                       </td>
@@ -542,48 +592,58 @@ export default function AdminSalariesPage() {
 
                       {/* الإجراءات */}
                       <td className="p-3.5 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          {/* زر صرف الآن إذا لم يكن مدفوعاً */}
-                          {!isPaid && (
-                            <button
-                              onClick={() => handleQuickPay(t)}
-                              className="text-emerald-700 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 p-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors"
-                              title="تسجيل صرف الراتب فوراً"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                              صرف الآن
-                            </button>
-                          )}
-
-                          {/* تعديل الراتب */}
+                        {!hasBase ? (
+                          /* لو المعلم ملوش راتب أساسي متسجل لسه: زر كبير واضح لتحديد الراتب */
                           <button
                             onClick={() => openSalaryModal(t.username)}
-                            className="p-1.5 rounded-lg text-ink-mute hover:text-brand hover:bg-brand-soft/40 transition-colors"
-                            title="تعديل وتحديد الراتب"
+                            className="btn-primary !py-1.5 !px-3 text-xs font-bold flex items-center gap-1.5 shadow-sm whitespace-nowrap mx-auto"
+                            title="تحديد الراتب الأساسي والحوافز والخصومات"
                           >
-                            <Edit2 className="w-4 h-4" />
+                            <Plus className="w-3.5 h-3.5" />
+                            تحديد الراتب
                           </button>
+                        ) : (
+                          /* لو الراتب محدد بالفعل */
+                          <div className="flex items-center justify-center gap-1.5">
+                            {!isPaid && (
+                              <button
+                                onClick={() => handleQuickPay(t)}
+                                className="text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm whitespace-nowrap transition-colors"
+                                title="تسجيل صرف الراتب فوراً"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                                صرف ({net.toLocaleString()} ج.م)
+                              </button>
+                            )}
 
-                          {/* سجل رواتب المعلم */}
-                          <button
-                            onClick={() => openHistoryModal(t)}
-                            className="p-1.5 rounded-lg text-ink-mute hover:text-gold-ink hover:bg-gold-soft/40 transition-colors"
-                            title="عرض السجل التاريخي لرواتب المعلم"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-
-                          {/* حذف السجل */}
-                          {(t.amount > 0 || t.status === "paid") && (
                             <button
-                              onClick={() => handleDeleteRecord(t.username)}
-                              className="p-1.5 rounded-lg text-ink-mute hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                              title="حذف سجل هذا الشهر"
+                              onClick={() => openSalaryModal(t.username)}
+                              className="btn-outline !py-1.5 !px-2.5 text-xs font-bold flex items-center gap-1 whitespace-nowrap"
+                              title="تعديل وتحديد الراتب"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Edit2 className="w-3.5 h-3.5" />
+                              تعديل
                             </button>
-                          )}
-                        </div>
+
+                            <button
+                              onClick={() => openHistoryModal(t)}
+                              className="p-1.5 rounded-lg text-ink-mute hover:text-gold-ink hover:bg-gold-soft/40 transition-colors"
+                              title="عرض السجل التاريخي لرواتب المعلم"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+
+                            {(t.amount > 0 || t.status === "paid") && (
+                              <button
+                                onClick={() => handleDeleteRecord(t.username)}
+                                className="p-1.5 rounded-lg text-ink-mute hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                                title="حذف سجل هذا الشهر"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
