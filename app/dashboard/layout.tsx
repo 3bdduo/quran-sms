@@ -219,10 +219,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
                 <button
                   onClick={logout}
-                  className="w-full flex items-center gap-3.5 min-h-[3rem] px-4 rounded-2xl text-xs sm:text-sm font-bold text-danger-ink hover:bg-danger-solid/10 hover:text-danger-solid transition-colors active:scale-[0.98] group"
+                  className="w-full flex items-center gap-3.5 min-h-[3rem] px-4 rounded-2xl text-xs sm:text-sm font-bold text-red-400 hover:text-red-300 hover:bg-red-500/15 transition-colors active:scale-[0.98] group"
                 >
-                  <LogOut size={18} className="transition-transform group-hover:-translate-x-1" />
-                  تسجيل الخروج
+                  <LogOut size={18} className="transition-transform group-hover:-translate-x-1 text-red-400 group-hover:text-red-300" />
+                  <span>تسجيل الخروج</span>
                 </button>
               </>
             ) : (
@@ -233,9 +233,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <button
                   onClick={logout}
                   title="تسجيل الخروج"
-                  className="w-full flex items-center justify-center min-h-[3rem] rounded-2xl text-danger-ink hover:bg-danger-solid/10 hover:text-danger-solid transition-colors active:scale-[0.98] group"
+                  className="w-full flex items-center justify-center min-h-[3rem] rounded-2xl text-red-400 hover:text-red-300 hover:bg-red-500/15 transition-colors active:scale-[0.98] group"
                 >
-                  <LogOut size={22} className="transition-transform group-hover:scale-110" />
+                  <LogOut size={22} className="transition-transform group-hover:scale-110 text-red-400 group-hover:text-red-300" />
                 </button>
               </>
             )}

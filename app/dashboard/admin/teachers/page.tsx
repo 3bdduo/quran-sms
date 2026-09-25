@@ -208,7 +208,6 @@ export default function AdminTeachersPage() {
                   <th className="p-4 font-bold">اسم المستخدم (للدخول)</th>
                   <th className="p-4 font-bold">الهاتف</th>
                   <th className="p-4 font-bold">نوع المعلم</th>
-                  <th className="p-4 font-bold">الحلقات المسندة</th>
                   <th className="p-4 font-bold text-center min-w-[100px] w-28">إجراءات</th>
                 </tr>
               </thead>
@@ -245,19 +244,6 @@ export default function AdminTeachersPage() {
                           <CircleHelp size={13} />
                           <span>حدد النوع</span>
                         </button>
-                      )}
-                    </td>
-                    <td className="p-4 text-ink-soft">
-                      {t.groups && t.groups.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {t.groups.map((g) => (
-                            <span key={g.id} className="px-2 py-0.5 bg-brand-soft text-brand-ink rounded text-xs font-bold">
-                              {g.name}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-ink-mute text-xs">-</span>
                       )}
                     </td>
                     <td className="p-4 text-center whitespace-nowrap min-w-[100px] w-28">
