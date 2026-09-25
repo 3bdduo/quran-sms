@@ -21,6 +21,8 @@ export interface Teacher {
   national_id: string;
   username: string;
   phone?: string;
+  // نوع المعلم: "group" معلم حلقة (يقدر يكون عنده طلاب) — "other" معلم عادي (بدون طلاب) — null لسه محددش
+  teacher_type?: "group" | "other" | null;
   groups?: { id: string; name: string }[];
 }
 

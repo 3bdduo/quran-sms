@@ -77,6 +77,12 @@ export const teachersApi = {
   me: () => api.get<any>("/teachers/me", undefined, true),
   create: (body: any) => api.post<any>("/teachers", body, true),
   update: (id: string, body: any) => api.put<any>(`/teachers/${id}`, body, true),
+  setType: (id: string, type: "group" | "other") =>
+    api.patch<{ id: string; teacher_type: "group" | "other"; message: string }>(
+      `/teachers/${id}/type`,
+      { type },
+      true
+    ),
   remove: (id: string) => api.delete(`/teachers/${id}`, true),
   assignToGroup: (teacherId: string, groupId: string) =>
     api.post<{ message: string }>(`/teachers/${teacherId}/assign/${groupId}`, undefined, true),
@@ -370,4 +376,18 @@ export const contactApi = {
 // 20. فحص الصحة
 export const healthApi = {
   check: () => api.get<{ status: string; database: string; timestamp: string }>("/health"),
+};
+
+// 21. المساعد الذكي
+export interface AssistantReply {
+  reply: string;
+  navigateTo: string | null;
+}
+export const assistantApi = {
+  ask: (body: {
+    message: string;
+    history?: { role: "user" | "assistant"; text: string }[];
+    role?: "guest" | "admin" | "teacher" | "student";
+    currentPath?: string;
+  }) => api.post<AssistantReply>("/assistant/ask", body),
 };

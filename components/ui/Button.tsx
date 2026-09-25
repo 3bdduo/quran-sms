@@ -41,6 +41,7 @@ export function Button({
 }: BaseProps & ButtonHTMLAttributes<HTMLButtonElement> & { loading?: boolean }) {
   return (
     <button
+      suppressHydrationWarning
       className={clsx(base, variantStyles[variant], sizeStyles[size], className)}
       disabled={disabled || loading}
       aria-busy={loading || undefined}

@@ -6,6 +6,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { AppBootstrap } from "@/components/ui/AppBootstrap";
 import { FormValidator } from "@/components/ui/FormValidator";
+import { AssistantWidget } from "@/components/ui/AssistantWidget";
 import { API_URL } from "@/lib/api";
 import "./globals.css";
 
@@ -51,8 +52,28 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-// بيضبط المود قبل أول رسمة للصفحة — بيمنع الوميض (flash) الأبيض في الدارك مود
-const themeInitScript = `(function(){try{var s=localStorage.getItem("qs-theme");var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(d){document.documentElement.classList.add("dark");}var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute("content",d?"#0d0b09":"#ecf0de");}}catch(e){}})();`;
+// بيضبط المود قبل أول رسمة ويمنع أخطاء الـ hydration الناتجة عن إضافات المتصفح (مثل إضافات التحميل والتعبئة التلقائية)
+const headInitScript = `(function(){
+  try {
+    var s = localStorage.getItem("qs-theme");
+    var d = s ? s === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (d) { document.documentElement.classList.add("dark"); }
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) { m.setAttribute("content", d ? "#0d0b09" : "#ecf0de"); }
+  } catch(e) {}
+  try {
+    if (typeof MutationObserver !== 'undefined') {
+      new MutationObserver(function(mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var mut = mutations[i];
+          if (mut.type === 'attributes' && mut.attributeName && (mut.attributeName.indexOf('fdprocess') !== -1 || mut.attributeName.indexOf('data-dashlane') !== -1)) {
+            mut.target.removeAttribute(mut.attributeName);
+          }
+        }
+      }).observe(document.documentElement, { attributes: true, subtree: true });
+    }
+  } catch(e) {}
+})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -67,9 +88,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* فتح الاتصال بالباك إند مبكرًا (DNS + TLS) عشان أول طلب يبقى أسرع */}
         <link rel="preconnect" href={API_ORIGIN} crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={API_ORIGIN} />
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: headInitScript }} />
       </head>
-      <body className="bg-bg text-ink antialiased">
+      <body className="bg-bg text-ink antialiased" suppressHydrationWarning>
         <MotionProvider>
           <ThemeProvider>
             <AuthProvider>
@@ -77,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {children}
                 <AppBootstrap />
                 <FormValidator />
+                <AssistantWidget />
               </ToastProvider>
             </AuthProvider>
           </ThemeProvider>

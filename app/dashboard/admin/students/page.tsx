@@ -245,7 +245,7 @@ export default function AdminStudentsPage() {
       phone: "",
       memorizedAmount: "0",
       currentSurah: "غير محدد",
-      groupId: groups[0]?.id || "",
+      groupId: "", // لا تختار حلقة تلقائياً — لازم الأدمن يختار بنفسه
       password: "",
     });
   }

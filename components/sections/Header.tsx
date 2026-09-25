@@ -83,6 +83,7 @@ export function Header() {
             onClick={() => setLogoModal(true)}
             className="group shrink-0 min-w-0 rounded-2xl focus-visible:outline-offset-4"
             aria-label="معلومات المدرسة"
+            suppressHydrationWarning
           >
             <Logo size="md" />
           </button>
@@ -141,6 +142,7 @@ export function Header() {
               onClick={() => setOpen((o) => !o)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
+              suppressHydrationWarning
             >
               <span className="relative h-5 w-5 flex items-center justify-center pointer-events-none">
                 <span

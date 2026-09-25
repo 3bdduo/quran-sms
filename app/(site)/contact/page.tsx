@@ -14,13 +14,32 @@ export default function ContactPage() {
   const { showToast } = useToast();
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.message) {
-      showToast("يرجى إكمال البيانات المطلوبة", "error");
+    if (!form.name.trim() || !form.phone.trim() || !form.message.trim()) {
+      showToast("يرجى ملء جميع البيانات المطلوبة (الاسم، رقم الهاتف، والرسالة)", "error");
       return;
     }
-    const text = `الاسم: ${form.name}\nرقم الهاتف: ${form.phone || "بدون"}\n\nالرسالة:\n${form.message}`;
-    const url = `https://wa.me/201120449993?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
+
+    const formattedMessage = [
+      "السلام عليكم ورحمة الله وبركاته،",
+      "",
+      "*رسالة جديدة عبر الموقع الإلكتروني - مدرسة التربية بالقرآن الكريم*",
+      "",
+      `*الاسم:* ${form.name.trim()}`,
+      `*رقم الهاتف:* ${form.phone.trim()}`,
+      "",
+      "*نص الرسالة:*",
+      form.message.trim(),
+    ].join("\n");
+
+    const url = `https://api.whatsapp.com/send?phone=201120449993&text=${encodeURIComponent(formattedMessage)}`;
+
+    showToast("تم تجهيز رسالتك! جاري تحويلك إلى واتساب...", "success");
+
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win || win.closed || typeof win.closed === "undefined") {
+      window.location.href = url;
+    }
+
     setForm({ name: "", phone: "", message: "" });
   }
 
@@ -63,17 +82,20 @@ export default function ContactPage() {
                     className="field"
                     placeholder="اسمك الكامل"
                     autoComplete="name"
+                    suppressHydrationWarning
                   />
                 </div>
                 <div>
                   <label className="field-label">رقم الهاتف</label>
                   <input
+                    required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="field"
                     placeholder="01xxxxxxxxx"
                     inputMode="tel"
                     autoComplete="tel"
+                    suppressHydrationWarning
                   />
                 </div>
               </div>
@@ -87,6 +109,7 @@ export default function ContactPage() {
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   className="field resize-none"
                   placeholder="اكتب رسالتك هنا..."
+                  suppressHydrationWarning
                 />
               </div>
 

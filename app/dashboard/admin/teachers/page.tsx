@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, Download, Search, Users } from "lucide-react";
+import { Plus, Edit2, Trash2, Download, Search, Users, CircleHelp } from "lucide-react";
 import { teachersApi } from "@/lib/resources";
 import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
@@ -24,6 +24,10 @@ export default function AdminTeachersPage() {
     password: "",
   });
   const [formLoading, setFormLoading] = useState(false);
+
+  // المعلم اللي بنطلب منه يحدد نوعه دلوقتي (حلقة / عادي) — بيتفتح تلقائي بعد إضافة معلم جديد
+  const [typeTeacher, setTypeTeacher] = useState<Teacher | null>(null);
+  const [typeLoading, setTypeLoading] = useState<"group" | "other" | null>(null);
 
   const { showToast } = useToast();
 
@@ -74,13 +78,15 @@ export default function AdminTeachersPage() {
         });
         showToast("تم تحديث بيانات المعلم بنجاح", "success");
       } else {
-        await teachersApi.create({
+        const created = await teachersApi.create({
           full_name: formData.full_name,
           national_id: formData.national_id,
           phone: formData.phone || undefined,
           password: formData.password,
         });
         showToast("تم إضافة المعلم بنجاح", "success");
+        // مباشرة بعد الإضافة، لازم الأدمن يحدد نوع المعلم: معلم حلقة (يقدر يكون عنده طلاب) أو معلم عادي (بدون طلاب)
+        setTypeTeacher(created);
       }
       setShowModal(false);
       resetForm();
@@ -89,6 +95,24 @@ export default function AdminTeachersPage() {
       showToast(err.message || "حدث خطأ أثناء الحفظ", "error");
     } finally {
       setFormLoading(false);
+    }
+  }
+
+  async function handleSetType(type: "group" | "other") {
+    if (!typeTeacher) return;
+    setTypeLoading(type);
+    try {
+      await teachersApi.setType(typeTeacher.id, type);
+      showToast(
+        type === "group" ? "تم تحديد المعلم كمعلم حلقة" : "تم تحديد المعلم كمعلم عادي",
+        "success"
+      );
+      setTypeTeacher(null);
+      loadTeachers();
+    } catch (err: any) {
+      showToast(err.message || "تعذّر تحديد نوع المعلم", "error");
+    } finally {
+      setTypeLoading(null);
     }
   }
 
@@ -183,6 +207,7 @@ export default function AdminTeachersPage() {
                   <th className="p-4 font-bold">الرقم القومي</th>
                   <th className="p-4 font-bold">اسم المستخدم (للدخول)</th>
                   <th className="p-4 font-bold">الهاتف</th>
+                  <th className="p-4 font-bold">نوع المعلم</th>
                   <th className="p-4 font-bold">الحلقات المسندة</th>
                   <th className="p-4 font-bold text-center">إجراءات</th>
                 </tr>
@@ -194,6 +219,34 @@ export default function AdminTeachersPage() {
                     <td className="p-4 font-mono text-xs text-ink-soft">{t.national_id}</td>
                     <td className="p-4 font-mono font-bold text-brand-ink">{t.username}</td>
                     <td className="p-4 text-ink-soft">{t.phone || "-"}</td>
+                    <td className="p-4">
+                      {t.teacher_type === "group" ? (
+                        <button
+                          onClick={() => setTypeTeacher(t)}
+                          className="px-2 py-1 bg-brand-soft text-brand-ink rounded-lg text-xs font-bold hover:opacity-80 transition-opacity"
+                          title="اضغط لتغيير النوع"
+                        >
+                          معلم حلقة
+                        </button>
+                      ) : t.teacher_type === "other" ? (
+                        <button
+                          onClick={() => setTypeTeacher(t)}
+                          className="px-2 py-1 bg-bg-alt text-ink-soft rounded-lg text-xs font-bold hover:opacity-80 transition-opacity"
+                          title="اضغط لتغيير النوع"
+                        >
+                          معلم عادي
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setTypeTeacher(t)}
+                          className="flex items-center gap-1 px-2 py-1 bg-danger-soft text-danger-ink rounded-lg text-xs font-bold hover:opacity-80 transition-opacity"
+                          title="لسه محدّدش نوعه"
+                        >
+                          <CircleHelp size={13} />
+                          <span>حدد النوع</span>
+                        </button>
+                      )}
+                    </td>
                     <td className="p-4 text-ink-soft">
                       {t.groups && t.groups.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
@@ -306,6 +359,49 @@ export default function AdminTeachersPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {typeTeacher && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full sh-float border border-line">
+            <h3 className="font-extrabold text-lg text-ink mb-2">تحديد نوع المعلم</h3>
+            <p className="text-ink-mute text-sm mb-5">
+              المعلم <strong className="text-ink">{typeTeacher.full_name}</strong> لازم يتحدد نوعه الأول:
+            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleSetType("group")}
+                disabled={typeLoading !== null}
+                className="w-full text-right p-4 rounded-2xl border-2 border-brand-soft hover:border-brand-ink hover:bg-brand-soft/40 transition-colors disabled:opacity-60"
+              >
+                <div className="font-bold text-ink mb-1">
+                  {typeLoading === "group" ? "جاري الحفظ..." : "معلم حلقة"}
+                </div>
+                <p className="text-xs text-ink-mute leading-relaxed">
+                  هيتعمله حلقة تلقائي، ويقدر يتضافله طلاب مباشرة زي أي معلم حلقة عادي.
+                </p>
+              </button>
+
+              <button
+                onClick={() => handleSetType("other")}
+                disabled={typeLoading !== null}
+                className="w-full text-right p-4 rounded-2xl border-2 border-line hover:border-ink-mute hover:bg-bg-alt/40 transition-colors disabled:opacity-60"
+              >
+                <div className="font-bold text-ink mb-1">
+                  {typeLoading === "other" ? "جاري الحفظ..." : "معلم عادي"}
+                </div>
+                <p className="text-xs text-ink-mute leading-relaxed">
+                  مينفعش يتضافله طلاب مباشرة (زي معلمي التفسير والتجويد ومواد المجموعات التعليمية).
+                </p>
+              </button>
+            </div>
+
+            <p className="text-[11px] text-ink-mute mt-4 text-center">
+              تقدر تغيّر النوع في أي وقت من جدول المعلمين
+            </p>
           </div>
         </div>
       )}
