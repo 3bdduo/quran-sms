@@ -80,6 +80,7 @@ export interface Student {
   notes?: string;
   monthly_fee: number;
   is_waiting?: boolean;
+  gender?: "male" | "female" | null;
   attendanceRecords?: { date: string; status: string }[];
   memorizationLog?: MemorizationEntry[];
   payment?: { monthlyFee: number; months: Record<string, PaymentMonth> };
@@ -113,11 +114,19 @@ export interface GroupItem {
 export interface EduGroupItem {
   id: string;
   name: string;
+  teacherId?: string;
+  teacherName?: string;
   teacherUsername: string;
+  teacherNationalId?: string;
+  teacherPhone?: string;
   studentsCount?: number;
   students?: {
     studentId: string;
     studentName?: string;
+    studentNationalId?: string;
+    studentPhone?: string;
+    groupName?: string;
+    gender?: "male" | "female" | string;
     attendanceRecords?: { date: string; status: string }[];
     examRecords?: { id: string; name: string; score: number; max_score: number; date: string }[];
   }[];

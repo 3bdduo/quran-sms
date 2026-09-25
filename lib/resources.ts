@@ -104,19 +104,34 @@ export const groupsApi = {
   remove: (id: string) => api.delete(`/groups/${id}`, true),
 };
 
-// 4. المجموعات التعليمية (تجويد، تفسير، علوم شرعية، إلخ)
+// 4. المجموعات التربوية والتعليمية
 export const eduGroupsApi = {
   list: () => api.get<EduGroupItem[]>("/edu-groups", undefined, true),
   byId: (id: string) => api.get<EduGroupItem>(`/edu-groups/${id}`, undefined, true),
-  create: (body: { name: string; teacherUsername: string; teacherPassword: string }) =>
-    api.post<EduGroupItem>("/edu-groups", body, true),
+  create: (body: {
+    name: string;
+    teacherName?: string;
+    nationalId?: string;
+    phone?: string;
+    teacherUsername?: string;
+    teacherPassword?: string;
+  }) => api.post<EduGroupItem>("/edu-groups", body, true),
   update: (
     id: string,
-    body: { name?: string; teacherUsername?: string; teacherPassword?: string }
+    body: {
+      name?: string;
+      teacherName?: string;
+      nationalId?: string;
+      phone?: string;
+      teacherUsername?: string;
+      teacherPassword?: string;
+    }
   ) => api.put<EduGroupItem>(`/edu-groups/${id}`, body, true),
   remove: (id: string) => api.delete(`/edu-groups/${id}`, true),
   addStudent: (eduGroupId: string, studentId: string) =>
     api.post<{ message: string }>(`/edu-groups/${eduGroupId}/students`, { studentId }, true),
+  bulkAddStudents: (eduGroupId: string, studentIds: string[]) =>
+    api.post<{ message: string; count: number }>(`/edu-groups/${eduGroupId}/students/bulk`, { studentIds }, true),
   removeStudent: (eduGroupId: string, studentId: string) =>
     api.delete(`/edu-groups/${eduGroupId}/students/${studentId}`, true),
 };

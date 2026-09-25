@@ -50,7 +50,8 @@ const navItemsByRole: Record<string, NavItem[]> = {
     { href: "/dashboard/admin/students", label: "إدارة الطلاب", icon: Users },
     { href: "/dashboard/admin/waiting", label: "قائمة الانتظار", icon: Clock },
     { href: "/dashboard/admin/teachers", label: "المعلمين", icon: UserRound },
-    { href: "/dashboard/admin/groups", label: "الحلقات والمجموعات", icon: Layers },
+    { href: "/dashboard/admin/groups", label: "حلقات القرآن", icon: Layers },
+    { href: "/dashboard/admin/edu-groups", label: "مجموعات التربوي", icon: BookMarked },
     { href: "/dashboard/admin/attendance", label: "التحضير والغياب", icon: CalendarCheck },
     { href: "/dashboard/admin/payments", label: "الاشتراكات والمدفوعات", icon: Wallet },
     { href: "/dashboard/admin/salaries", label: "رواتب المعلمين", icon: Banknote },
@@ -64,7 +65,7 @@ const navItemsByRole: Record<string, NavItem[]> = {
     { href: "/dashboard/teacher/students", label: "طلاب حلقتي", icon: Users },
     { href: "/dashboard/teacher/memorization", label: "تسجيل التسميع والحفظ", icon: BookMarked },
     { href: "/dashboard/teacher/attendance", label: "تسجيل الحضور اليومي", icon: CalendarCheck },
-    { href: "/dashboard/teacher/edu-groups", label: "المجموعات والاختبارات", icon: Layers },
+    { href: "/dashboard/teacher/edu-groups", label: "مجموعة التربوي", icon: BookMarked },
     { href: "/dashboard/teacher/salary", label: "راتبي ومستحقاتي", icon: Banknote },
   ],
   student: [
