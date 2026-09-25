@@ -159,7 +159,10 @@ export interface CompetitionItem {
 }
 
 export interface TeacherSalaryConfig {
+  id?: string;
   username: string;
+  full_name?: string;
+  national_id?: string;
   base_salary: number;
   notes?: string;
 }

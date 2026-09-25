@@ -254,7 +254,18 @@ export const salariesApi = {
   setMonth: (
     username: string,
     monthKey: string,
-    body: { status: "paid" | "unpaid" | "advance"; amount: number; paidDate?: string; note?: string; paidBy?: string }
+    body: {
+      baseSalary?: number;
+      incentiveAmount?: number;
+      incentiveReason?: string;
+      deductionAmount?: number;
+      deductionReason?: string;
+      status?: "paid" | "unpaid" | "advance";
+      amount?: number;
+      paidDate?: string;
+      note?: string;
+      paidBy?: string;
+    }
   ) => api.put<any>(`/salaries/teacher/${username}/month/${monthKey}`, body, true),
   deleteMonth: (username: string, monthKey: string) =>
     api.delete(`/salaries/teacher/${username}/month/${monthKey}`, true),
