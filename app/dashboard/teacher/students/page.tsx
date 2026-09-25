@@ -76,7 +76,7 @@ export default function TeacherStudentsPage() {
       } else {
         await studentsApi.create({
           ...form,
-          groupId: form.groupId || (groups.length === 1 ? groups[0].id : undefined)
+          groupId: form.groupId || groups[0]?.id
         });
         showToast("تمت إضافة الطالب للحلقة بنجاح", "success");
       }
@@ -128,7 +128,7 @@ export default function TeacherStudentsPage() {
               phone: "",
               memorizedAmount: "0",
               currentSurah: "غير محدد",
-              groupId: "",
+              groupId: groups[0]?.id || "",
             });
             setShowAddModal(true);
           }}

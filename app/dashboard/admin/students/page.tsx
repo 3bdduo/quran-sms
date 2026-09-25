@@ -519,7 +519,7 @@ export default function AdminStudentsPage() {
                     <option value="">اختر الحلقة</option>
                     {groups.map((g) => (
                       <option key={g.id} value={g.id}>
-                        {g.name} — {g.teacherUsername || "بدون معلم"}
+                        {g.name} — {g.teacherName ? `أ. ${g.teacherName}` : g.teacherUsername || "بدون معلم"}
                       </option>
                     ))}
                   </select>

@@ -209,7 +209,7 @@ export default function AdminTeachersPage() {
                   <th className="p-4 font-bold">الهاتف</th>
                   <th className="p-4 font-bold">نوع المعلم</th>
                   <th className="p-4 font-bold">الحلقات المسندة</th>
-                  <th className="p-4 font-bold text-center">إجراءات</th>
+                  <th className="p-4 font-bold text-center min-w-[100px] w-28">إجراءات</th>
                 </tr>
               </thead>
               <tbody>
@@ -260,21 +260,23 @@ export default function AdminTeachersPage() {
                         <span className="text-ink-mute text-xs">-</span>
                       )}
                     </td>
-                    <td className="p-4 flex items-center justify-center gap-1">
-                      <button
-                        onClick={() => openEdit(t)}
-                        className="p-2 text-ink-mute hover:text-brand-ink rounded-lg transition-colors"
-                        title="تعديل البيانات"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(t.id, t.full_name)}
-                        className="p-2 text-ink-mute hover:text-danger-ink rounded-lg transition-colors"
-                        title="حذف المعلم"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                    <td className="p-4 text-center whitespace-nowrap min-w-[100px] w-28">
+                      <div className="inline-flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => openEdit(t)}
+                          className="p-2 text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-xl transition-all shrink-0"
+                          title="تعديل البيانات"
+                        >
+                          <Edit2 size={17} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(t.id, t.full_name)}
+                          className="p-2 text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-xl transition-all shrink-0"
+                          title="حذف المعلم"
+                        >
+                          <Trash2 size={17} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
