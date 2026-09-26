@@ -39,6 +39,23 @@ export function AssistantWidget() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // منع تمرير الصفحة الخلفية أثناء فتح الشات
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [open]);
+
+  // إغلاق الشات بسلاسة مع إلغاء فوكس الإدخال لتجنب أي قفزة
+  const handleClose = () => {
+    inputRef.current?.blur();
+    setOpen(false);
+  };
+
   // تمرير تلقائي لأسفل المحادثة
   useEffect(() => {
     if (open) {
@@ -46,14 +63,16 @@ export function AssistantWidget() {
     }
   }, [messages, loading, open]);
 
-  // التركيز على حقل الإدخال عند الفتح وإغلاق بزر Escape
+  // التركيز على حقل الإدخال عند الفتح وإغلاق بزر Escape بدون قفز الشاشة
   useEffect(() => {
     if (open) {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") setOpen(false);
+        if (e.key === "Escape") handleClose();
       };
       window.addEventListener("keydown", handleKeyDown);
-      const timer = setTimeout(() => inputRef.current?.focus(), 250);
+      const timer = setTimeout(() => {
+        inputRef.current?.focus({ preventScroll: true });
+      }, 300);
       return () => {
         window.removeEventListener("keydown", handleKeyDown);
         clearTimeout(timer);
@@ -128,43 +147,37 @@ export function AssistantWidget() {
 
   return (
     <>
-      {/* الزر العائم لفتح الشات */}
-      <AnimatePresence>
-        {!open && (
-          <m.button
-            key="chat-trigger"
-            onClick={() => setOpen(true)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-            aria-label="المساعد الذكي لموقع مدرسة التربية بالقرءان الكريم"
-            className="fixed bottom-5 left-5 z-40 w-14 h-14 rounded-full bg-brand text-on-brand flex items-center justify-center sh-float hover:sh-brand transition-shadow cursor-pointer group"
-            style={{
-              boxShadow: "0 10px 30px -8px color-mix(in oklab, var(--brand) 60%, transparent)",
-            }}
-          >
-            <MessageCircle size={26} className="transition-transform group-hover:scale-110" />
-          </m.button>
-        )}
-      </AnimatePresence>
+      {/* الزر العائم لفتح الشات — يبقى في مكانه ويختفي بنعومة بدون إعادة إنشاء بالـ DOM */}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label="المساعد الذكي لموقع مدرسة التربية بالقرءان الكريم"
+        aria-hidden={open}
+        tabIndex={open ? -1 : 0}
+        className={`fixed bottom-5 left-5 z-40 w-14 h-14 rounded-full bg-brand text-on-brand flex items-center justify-center sh-float hover:sh-brand transition-all duration-200 cursor-pointer group ${
+          open ? "opacity-0 pointer-events-none scale-90" : "opacity-100 pointer-events-auto scale-100"
+        }`}
+        style={{
+          boxShadow: "0 10px 30px -8px color-mix(in oklab, var(--brand) 60%, transparent)",
+        }}
+      >
+        <MessageCircle size={26} className="transition-transform group-hover:scale-110" />
+      </button>
 
       {/* نافذة الشات بطول الصفحة بالكامل مع خلفية الإغلاق */}
       <AnimatePresence>
         {open && (
           <>
-            {/* خلفية شبه شفافة تغطي الصفحة بالكامل — الضغط في أي مكان يغلق الشات بسلاسة */}
+            {/* خلفية شبه شفافة تغطي الصفحة بالكامل — الضغط في أي مكان يغلق الشات بسلاسة وبدون لاج الـ blur */}
             <m.div
               key="chat-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.28, ease: "easeOut" }}
-              onClick={() => setOpen(false)}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              onClick={handleClose}
               aria-label="إغلاق الشات"
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] cursor-pointer"
+              className="fixed inset-0 z-50 bg-black/50 cursor-pointer"
             />
 
             {/* الدرج الكامل للشات بطول الصفحة بالكامل من الأعلى للأسفل */}
@@ -173,8 +186,8 @@ export function AssistantWidget() {
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed inset-y-0 left-0 z-50 w-full sm:w-[440px] md:w-[480px] max-w-full h-[100dvh] bg-surface border-r border-line shadow-2xl flex flex-col overflow-hidden text-ink"
+              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+              className="fixed inset-y-0 left-0 z-50 w-full sm:w-[440px] md:w-[480px] max-w-full h-[100dvh] bg-surface border-r border-line shadow-2xl flex flex-col overflow-hidden text-ink will-change-transform"
             >
               {/* رأس المحادثة */}
               <div className="flex items-center justify-between px-3.5 sm:px-4 py-3.5 border-b border-line bg-surface-2/80 backdrop-blur-md gap-2">
@@ -210,7 +223,7 @@ export function AssistantWidget() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setOpen(false)}
+                    onClick={handleClose}
                     title="إغلاق الشات (Esc)"
                     aria-label="إغلاق الشات"
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors cursor-pointer"
@@ -255,7 +268,7 @@ export function AssistantWidget() {
                             type="button"
                             onClick={() => {
                               router.push(msg.navigateTo!);
-                              setOpen(false);
+                              handleClose();
                             }}
                             className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand text-on-brand text-xs font-bold hover:bg-brand-strong transition-all shadow-xs"
                           >

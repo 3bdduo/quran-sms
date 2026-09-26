@@ -228,6 +228,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
@@ -546,10 +547,9 @@ html.theme-anim a {
 @utility orb-1 { background: radial-gradient(closest-side, var(--glow-1), transparent); }
 @utility orb-2 { background: radial-gradient(closest-side, var(--glow-2), transparent); }
 
-/* الأقسام اللي تحت الشاشة ما بتترسمش إلا لما تقرّب منها */
+/* الأقسام اللي تحت الشاشة بدون قفزات في الارتفاع لتفادي أي اهتزاز أثناء السكرول */
 @utility cv-auto {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 640px;
+  content-visibility: visible;
 }
 
 /* اللودر بيظهر بعد لحظة بسيطة — لو البيانات جت بسرعة ما يومّضش */

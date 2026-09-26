@@ -30,10 +30,17 @@ export default function TeacherSalaryPage() {
 
   useEffect(() => {
     if (!user?.username) return;
-    Promise.all([salariesApi.me(), salariesApi.history(user.username)])
-      .then(([cfg, hist]) => {
-        setConfig(cfg);
-        setHistory(hist || []);
+    Promise.allSettled([salariesApi.me(), salariesApi.history(user.username)])
+      .then(([cfgRes, histRes]) => {
+        if (cfgRes.status === "fulfilled") {
+          setConfig(cfgRes.value);
+        }
+        if (histRes.status === "fulfilled") {
+          setHistory(histRes.value || []);
+        }
+        if (cfgRes.status === "rejected" && histRes.status === "rejected") {
+          showToast("تعذّر تحميل بيانات الراتب", "error");
+        }
       })
       .catch(() => showToast("تعذّر تحميل بيانات الراتب", "error"))
       .finally(() => setLoading(false));
@@ -48,6 +55,9 @@ export default function TeacherSalaryPage() {
 
   // أحدث سجل راتب
   const latestRecord = history[0] || null;
+  const currentBaseSalary = (config?.base_salary && config.base_salary > 0)
+    ? config.base_salary
+    : (latestRecord?.base_salary ?? 0);
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
@@ -66,7 +76,7 @@ export default function TeacherSalaryPage() {
         <StatCard
           icon={Banknote}
           label="الراتب الشهري الأساسي"
-          value={`${(config?.base_salary ?? 0).toLocaleString()} ج.م`}
+          value={`${currentBaseSalary.toLocaleString()} ج.م`}
           tone="gold"
         />
         <StatCard

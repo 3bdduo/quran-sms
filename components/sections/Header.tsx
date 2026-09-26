@@ -73,11 +73,7 @@ export function Header() {
             : "bg-bg/80 border-transparent shadow-none"
         }`}
       >
-        <Container
-          className={`flex items-center justify-between gap-3 sm:transition-[height] sm:duration-200 ${
-            scrolled ? "h-16 sm:h-[4.25rem]" : "h-16 sm:h-20"
-          }`}
-        >
+        <Container className="flex items-center justify-between gap-3 h-16 sm:h-20">
           {/* اللوجو — بيفتح مودال معلومات المدرسة */}
           <button
             onClick={() => setLogoModal(true)}
