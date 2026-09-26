@@ -420,14 +420,14 @@ export default function AdminGroupsPage() {
                     <button
                       onClick={() => openEdit(item)}
                       title="تعديل"
-                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-lg transition-colors"
+                      className="icon-btn rounded-lg text-ink-mute hover:text-brand-ink hover:bg-brand-soft transition-colors"
                     >
                       <Edit2 size={18} />
                     </button>
                     <button
                       onClick={() => handleDeleteGroup(item.id, item.name)}
                       title="حذف"
-                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-lg transition-colors"
+                      className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -499,7 +499,7 @@ export default function AdminGroupsPage() {
               </Button>
               <button
                 onClick={() => setActiveGroupDetails(null)}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>
@@ -585,7 +585,7 @@ export default function AdminGroupsPage() {
               </Button>
               <button
                 onClick={() => setActiveEduGroupDetails(null)}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>
@@ -639,7 +639,7 @@ export default function AdminGroupsPage() {
                           </button>
                           <button
                             onClick={() => handleRemoveStudentFromEduGroup(st.studentId)}
-                            className="p-1.5 min-w-[30px] min-h-[30px] flex items-center justify-center rounded-lg text-danger-ink hover:bg-danger-soft transition-colors"
+                            className="icon-btn rounded-lg text-danger-ink hover:bg-danger-soft transition-colors"
                             title="إزالة الطالب من المجموعة"
                           >
                             <UserMinus size={14} />
@@ -670,7 +670,7 @@ export default function AdminGroupsPage() {
                   setShowAddGroupModal(false);
                   setEditingGroup(null);
                 }}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>
@@ -808,7 +808,7 @@ export default function AdminGroupsPage() {
               </div>
               <button
                 onClick={() => { setTransferStudentModal({ open: false, studentId: "", studentName: "", fromGroupId: "", type: "ring" }); setTransferTargetGroupId(""); }}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>
@@ -870,7 +870,7 @@ export default function AdminGroupsPage() {
               </div>
               <button
                 onClick={() => { setChangeTeacherModal({ open: false, groupId: "", groupName: "", type: "ring" }); setChangeTeacherTargetId(""); }}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>

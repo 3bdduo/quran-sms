@@ -150,7 +150,7 @@ export default function AdminMessagesPage() {
                     e.stopPropagation();
                     handleDeleteMessage(msg.id);
                   }}
-                  className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
+                  className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
                   title="حذف الرسالة"
                 >
                   <Trash2 size={16} />
@@ -172,7 +172,7 @@ export default function AdminMessagesPage() {
               </div>
               <button
                 onClick={() => setActiveMessage(null)}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>

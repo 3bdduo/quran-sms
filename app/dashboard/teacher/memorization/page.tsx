@@ -229,14 +229,14 @@ export default function TeacherMemorizationPage() {
                             });
                             setShowAddModal(true);
                           }}
-                          className="p-1.5 rounded-lg text-ink-mute hover:text-brand-ink transition-colors"
+                          className="icon-btn rounded-lg text-ink-mute hover:text-brand-ink transition-colors"
                           title="تعديل السجل"
                         >
                           <Edit2 size={15} />
                         </button>
                         <button
                           onClick={() => handleDeleteEntry(log.id)}
-                          className="p-1.5 rounded-lg text-ink-mute hover:text-danger-ink transition-colors"
+                          className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink transition-colors"
                           title="حذف السجل"
                         >
                           <Trash2 size={15} />
@@ -261,7 +261,7 @@ export default function TeacherMemorizationPage() {
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={18} />
               </button>

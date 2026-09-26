@@ -379,7 +379,7 @@ export default function AdminCompetitionsPage() {
                           onClick={() => handleExportWord(comp)}
                           disabled={downloadingDocId === comp.id}
                           title="تصدير نتائج المسابقة (Word)"
-                          className="p-2 rounded-xl bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
+                          className="icon-btn rounded-xl bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
                         >
                           {downloadingDocId === comp.id ? (
                             <Spinner size={15} />
@@ -434,7 +434,7 @@ export default function AdminCompetitionsPage() {
 
                   <button
                     onClick={() => setActiveComp(null)}
-                    className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                    className="icon-btn rounded-lg text-ink-mute hover:text-ink"
                   >
                     <X size={20} />
                   </button>
@@ -494,7 +494,7 @@ export default function AdminCompetitionsPage() {
                             <td className="p-3 text-center">
                               <button
                                 onClick={() => handleRemoveParticipant(pid)}
-                                className="p-1.5 rounded-lg text-danger-ink hover:bg-danger-soft transition-colors"
+                                className="icon-btn rounded-lg text-danger-ink hover:bg-danger-soft transition-colors"
                                 title="إزالة من المسابقة"
                               >
                                 <UserMinus size={15} />
@@ -686,7 +686,7 @@ export default function AdminCompetitionsPage() {
               <h3 className="font-extrabold text-lg text-ink">رصد درجات المشاركين</h3>
               <button
                 onClick={() => setShowResultsModal(false)}
-                className="p-1.5 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={18} />
               </button>

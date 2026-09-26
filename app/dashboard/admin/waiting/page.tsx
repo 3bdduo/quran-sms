@@ -182,7 +182,7 @@ export default function WaitingListPage() {
                     <button
                       onClick={() => handleDelete(student)}
                       disabled={isDeleting || isMoving}
-                      className="h-9 w-9 flex items-center justify-center rounded-xl text-ink-muted hover:text-danger-solid hover:bg-danger-soft transition-colors shrink-0"
+                      className="icon-btn rounded-xl text-ink-muted hover:text-danger-solid hover:bg-danger-soft transition-colors"
                       title="حذف الطالب"
                     >
                       {isDeleting ? (

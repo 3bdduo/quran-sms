@@ -119,7 +119,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-mute hover:text-ink p-1 rounded-lg transition-colors"
+                    className="absolute left-1 top-1/2 -translate-y-1/2 icon-btn rounded-lg text-ink-mute hover:text-ink transition-colors"
                     title={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
                     tabIndex={-1}
                   >

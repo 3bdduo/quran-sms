@@ -211,7 +211,7 @@ export function AddStudentWizardModal({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors"
+            className="icon-btn rounded-xl text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors"
           >
             <X size={19} />
           </button>

@@ -251,14 +251,14 @@ export default function AdminTeachersPage() {
                       <div className="inline-flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => openEdit(t)}
-                          className="p-2 text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-xl transition-all shrink-0"
+                          className="icon-btn rounded-xl text-ink-mute hover:text-brand-ink hover:bg-brand-soft transition-all"
                           title="تعديل البيانات"
                         >
                           <Edit2 size={17} />
                         </button>
                         <button
                           onClick={() => handleDelete(t.id, t.full_name)}
-                          className="p-2 text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-xl transition-all shrink-0"
+                          className="icon-btn rounded-xl text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-all"
                           title="حذف المعلم"
                         >
                           <Trash2 size={17} />

@@ -196,7 +196,7 @@ export function AddTeacherWizardModal({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors"
+            className="icon-btn rounded-xl text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors"
           >
             <X size={19} />
           </button>
@@ -547,7 +547,7 @@ export function AddTeacherWizardModal({
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="p-1.5 text-ink-mute hover:text-ink rounded-lg"
+                        className="icon-btn rounded-lg text-ink-mute hover:text-ink"
                         title={showPassword ? "إخفاء" : "إظهار"}
                       >
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}

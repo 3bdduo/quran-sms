@@ -213,7 +213,7 @@ export default function TeacherStudentsPage() {
                           onClick={() => handleExportWord(s.id, s.name)}
                           disabled={downloadingId === s.id}
                           title="تصدير تقرير الطالب (Word)"
-                          className="p-2 rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
+                          className="icon-btn rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
                         >
                           {downloadingId === s.id ? (
                             <Spinner size={15} />
@@ -235,7 +235,7 @@ export default function TeacherStudentsPage() {
                             setShowAddModal(true);
                           }}
                           title="تعديل بيانات الطالب"
-                          className="p-2 rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
+                          className="icon-btn rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
                         >
                           <Edit2 size={15} />
                         </button>
@@ -272,7 +272,7 @@ export default function TeacherStudentsPage() {
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={18} />
               </button>

@@ -362,13 +362,13 @@ export default function AdminContentPage() {
                       });
                       setShowAddPostModal(true);
                     }}
-                    className="p-1.5 text-ink-mute hover:text-brand-ink rounded-lg"
+                    className="icon-btn rounded-lg text-ink-mute hover:text-brand-ink"
                   >
                     <Edit2 size={15} />
                   </button>
                   <button
                     onClick={() => handleDeletePost(post.id)}
-                    className="p-1.5 text-ink-mute hover:text-danger-ink rounded-lg"
+                    className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -423,13 +423,13 @@ export default function AdminContentPage() {
                       });
                       setShowAddMediaModal(true);
                     }}
-                    className="p-1.5 text-ink-mute hover:text-brand-ink rounded-lg"
+                    className="icon-btn rounded-lg text-ink-mute hover:text-brand-ink"
                   >
                     <Edit2 size={15} />
                   </button>
                   <button
                     onClick={() => handleDeleteMedia(m.id)}
-                    className="p-1.5 text-ink-mute hover:text-danger-ink rounded-lg"
+                    className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -465,13 +465,13 @@ export default function AdminContentPage() {
                         });
                         setShowAddTeacherModal(true);
                       }}
-                      className="p-1.5 text-ink-mute hover:text-brand-ink rounded-lg"
+                      className="icon-btn rounded-lg text-ink-mute hover:text-brand-ink"
                     >
                       <Edit2 size={15} />
                     </button>
                     <button
                       onClick={() => handleDeleteTeacher(t.id)}
-                      className="p-1.5 text-ink-mute hover:text-danger-ink rounded-lg"
+                      className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink"
                     >
                       <Trash2 size={15} />
                     </button>

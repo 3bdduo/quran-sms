@@ -251,9 +251,14 @@ body {
 }
 
 /* توسيط جميع الجداول في الموقع ووضع حدود (Borders) مثل الإكسيل */
+/* min-width: بيمنع انضغاط أعمدة الجدول (وأزرار التعديل/الحذف جواها) لما
+   الشريط الجانبي يتفتح/يتقفل ويكبر أو يصغّر المساحة المتاحة — بدل ما الجدول
+   يتزنّق، هو بيحافظ على أقل عرض مريح وبيعمل سكرول أفقي (الحاوية already عندها
+   overflow-x-auto) لو المساحة قلّت عن كده. */
 table {
   border-collapse: collapse !important;
-  width: 100% !important;
+  width: 100%;
+  min-width: 42rem;
 }
 
 th, td {
@@ -459,6 +464,23 @@ html.theme-anim a {
   /* الموبايل: ما نحتاجش الـ shine — بيبطء الـ GPU */
   @media (pointer: coarse) {
     &::after { display: none; }
+  }
+}
+
+/* زر أيقونة صغير (تعديل/حذف/تصدير... جوه الجداول والهيدرز)
+   مقاس ثابت ومايتصغرش (flex-shrink: 0) عشان يفضل مريح للمس حتى لو الجدول
+   اتزنق بسبب فتح/قفل الشريط الجانبي، وبيكبر شوية على الشاشات اللي بتتلمس
+   (موبايل/تابلت) عشان تبقى منطقة الضغط مريحة أكتر. */
+@utility icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 2.25rem;
+  width: 2.25rem;
+  @media (pointer: coarse) {
+    height: 2.5rem;
+    width: 2.5rem;
   }
 }
 

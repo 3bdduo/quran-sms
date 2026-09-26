@@ -116,7 +116,7 @@ export function EduAttendanceModal({ isOpen, onClose, eduGroup }: EduAttendanceM
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-ink-mute hover:text-ink hover:bg-bg-alt rounded-2xl transition-colors"
+            className="icon-btn rounded-2xl text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors"
           >
             <X size={20} />
           </button>

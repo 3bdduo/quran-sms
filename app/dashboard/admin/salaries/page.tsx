@@ -632,7 +632,7 @@ export default function AdminSalariesPage() {
 
                             <button
                               onClick={() => openHistoryModal(t)}
-                              className="p-1.5 rounded-lg text-ink-mute hover:text-gold-ink hover:bg-gold-soft/40 transition-colors"
+                              className="icon-btn rounded-lg text-ink-mute hover:text-gold-ink hover:bg-gold-soft/40 transition-colors"
                               title="عرض السجل التاريخي لرواتب المعلم"
                             >
                               <Eye className="w-4 h-4" />
@@ -641,7 +641,7 @@ export default function AdminSalariesPage() {
                             {(t.amount > 0 || t.status === "paid") && (
                               <button
                                 onClick={() => handleDeleteRecord(t.username)}
-                                className="p-1.5 rounded-lg text-ink-mute hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                                className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
                                 title="حذف سجل هذا الشهر"
                               >
                                 <Trash2 className="w-4 h-4" />

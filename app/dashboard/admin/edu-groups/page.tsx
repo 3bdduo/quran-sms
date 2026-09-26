@@ -430,14 +430,14 @@ export default function AdminEduGroupsPage() {
                     <div className="flex items-center gap-1.5 self-end md:self-start shrink-0 border border-line/60 bg-bg-alt/40 p-1 rounded-2xl">
                       <button
                         onClick={() => openEdit(group)}
-                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-xl transition-all"
+                        className="icon-btn rounded-xl text-ink-mute hover:text-brand-ink hover:bg-brand-soft transition-all"
                         title="تعديل بيانات المجموعة"
                       >
                         <Edit2 size={18} />
                       </button>
                       <button
                         onClick={() => handleDeleteGroup(group)}
-                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-xl transition-all"
+                        className="icon-btn rounded-xl text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-all"
                         title="حذف المجموعة"
                       >
                         <Trash2 size={18} />
@@ -578,7 +578,7 @@ export default function AdminEduGroupsPage() {
                                       onClick={() =>
                                         handleRemoveStudent(student.studentId, student.studentName || "")
                                       }
-                                      className="p-1.5 text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-lg transition-colors"
+                                      className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
                                       title="حذف من المجموعة"
                                     >
                                       <Trash2 size={15} />

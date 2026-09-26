@@ -431,21 +431,21 @@ export default function AdminStudentsPage() {
                                   onClick={() => handleExportStudentWord(s.id, s.name)}
                                   disabled={downloadingId === s.id}
                                   title="تصدير تقرير وورد"
-                                  className="p-1.5 rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors disabled:opacity-50"
+                                  className="icon-btn rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors disabled:opacity-50"
                                 >
                                   {downloadingId === s.id ? <Spinner size={13} /> : <FileText size={13} />}
                                 </button>
                                 <button
                                   onClick={() => openEditModal(s)}
                                   title="تعديل بيانات الطالب"
-                                  className="p-1.5 rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
+                                  className="icon-btn rounded-lg bg-bg-alt hover:bg-brand-soft text-ink-soft hover:text-brand-ink transition-colors"
                                 >
                                   <Edit2 size={13} />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteStudent(s.id, s.name)}
                                   title="حذف الطالب"
-                                  className="p-1.5 rounded-lg bg-bg-alt hover:bg-danger-soft text-ink-soft hover:text-danger-ink transition-colors"
+                                  className="icon-btn rounded-lg bg-bg-alt hover:bg-danger-soft text-ink-soft hover:text-danger-ink transition-colors"
                                 >
                                   <Trash2 size={13} />
                                 </button>
@@ -483,7 +483,7 @@ export default function AdminStudentsPage() {
               </h3>
               <button
                 onClick={() => setEditingStudent(null)}
-                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+                className="icon-btn rounded-lg text-ink-mute hover:text-ink"
               >
                 <X size={20} />
               </button>

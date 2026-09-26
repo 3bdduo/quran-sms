@@ -449,7 +449,7 @@ export default function TeacherEduGroupsPage() {
                         <td className="p-4 text-center">
                           <button
                             onClick={() => handleRemoveStudent(st.studentId, st.studentName || "")}
-                            className="p-2 text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-xl transition-colors"
+                            className="icon-btn rounded-xl text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
                             title="حذف من المجموعة"
                           >
                             <Trash2 size={16} />
@@ -598,7 +598,7 @@ export default function TeacherEduGroupsPage() {
 
                     <button
                       onClick={() => handleDeleteExam(ex.examId)}
-                      className="p-2 text-ink-mute hover:text-danger-ink rounded-lg"
+                      className="icon-btn rounded-lg text-ink-mute hover:text-danger-ink"
                       title="حذف الامتحان"
                     >
                       <Trash2 size={16} />
