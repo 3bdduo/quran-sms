@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { CalendarDays, User, ArrowRight, ExternalLink, Globe, Sparkles } from "lucide-react";
+import { CalendarDays, User, ArrowRight, ExternalLink, Globe, BookOpen } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
@@ -94,7 +94,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* قسم روابط قرآنية مقترحة داخل المقال */}
         <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-brand-soft/50 border border-brand/20">
           <div className="flex items-center gap-2 text-brand-ink font-bold text-sm mb-2">
-            <Sparkles size={16} />
+            <BookOpen size={16} />
             روابط ومصادر قرآنية موصى بها
           </div>
           <p className="text-xs sm:text-sm text-ink-soft mb-5">

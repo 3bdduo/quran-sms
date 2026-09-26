@@ -294,29 +294,52 @@ export default function TeacherEduGroupsPage() {
         </div>
 
         {tab === "students" ? (
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleExportStudents} className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportStudents}
+              className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
+            >
               <Download size={16} />
               <span>تصدير الطلاب Excel</span>
             </Button>
-            <Button onClick={() => setShowStudentPicker(true)} className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => setShowStudentPicker(true)}
+              className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
+            >
               <Plus size={16} />
-              <span>+ إضافة طلاب من الحلقات</span>
+              <span>إضافة طلاب من الحلقات</span>
             </Button>
           </div>
         ) : tab === "attendance" ? (
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleExportAttendance} className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportAttendance}
+              className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
+            >
               <Download size={16} />
               <span>تصدير الحضور Excel</span>
             </Button>
-            <Button onClick={handleSaveAttendance} loading={savingAtt} className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={handleSaveAttendance}
+              loading={savingAtt}
+              className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
+            >
               {!savingAtt && <Save size={16} />}
               <span>حفظ الحضور</span>
             </Button>
           </div>
         ) : (
-          <Button onClick={openExamModal} className="flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={openExamModal}
+            className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
+          >
             <Plus size={16} />
             <span>رصد امتحان جديد</span>
           </Button>

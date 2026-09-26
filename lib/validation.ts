@@ -27,12 +27,33 @@ export function isEmail(v: string) {
 }
 
 export function isPhone(v: string) {
-  const n = normalizeDigits(v).replace(/[\s\-().]/g, "");
-  return /^(?:\+?20|0)?1[0125]\d{8}$/.test(n) || /^0\d{8,10}$/.test(n) || /^\+\d{8,15}$/.test(n);
+  const n = normalizeDigits(v).replace(/[\s\-().]/g, "").replace(/^(\+?20|0020)/, "0");
+  // رقم مصري فقط: 01 + (0,1,2,5) + 8 أرقام = 11 رقم إجمالاً
+  return /^01[0125]\d{8}$/.test(n);
 }
 
 export function isNationalId(v: string) {
-  return /^\d{14}$/.test(normalizeDigits(v).trim());
+  const n = normalizeDigits(v).trim();
+  if (!/^\d{14}$/.test(n)) return false;
+  // أول رقم 2 (مواليد 1900s) أو 3 (مواليد 2000s)
+  if (n[0] !== "2" && n[0] !== "3") return false;
+  // شهر صحيح 01-12
+  const month = parseInt(n.substring(3, 5), 10);
+  if (month < 1 || month > 12) return false;
+  // يوم صحيح 01-31
+  const day = parseInt(n.substring(5, 7), 10);
+  if (day < 1 || day > 31) return false;
+  // كود محافظة معروف
+  const validGov = new Set(["01","02","03","04","11","12","13","14","15","16","17","18","19","21","22","23","24","25","26","27","28","29","31","32","33","34","35","88","99"]);
+  return validGov.has(n.substring(7, 9));
+}
+
+/** الاسم الرباعي: 4 كلمات على الأقل، أحرف عربية فقط */
+export function isEgyptianName(v: string) {
+  const trimmed = v.trim();
+  if (/[^\u0600-\u06FF\s]/.test(trimmed)) return false; // أحرف غير عربية
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  return parts.length >= 4 && parts.every((p) => p.length >= 2);
 }
 
 export function isUrl(v: string) {
@@ -169,15 +190,23 @@ export function validateField(el: FieldEl): string | null {
   // ---------- الرقم القومي ----------
   const isNid = rule === "nid" || (!rule && /الرقم القومي/.test(info.clean) && !isPassword);
   if (isNid) {
-    const v = normalizeDigits(value).trim();
-    if (!/^\d+$/.test(v)) return "الرقم القومي أرقام فقط";
-    return v.length === 14 ? null : `الرقم القومي لازم يكون 14 رقم (المكتوب ${v.length})`;
+    const nv = normalizeDigits(value).trim();
+    if (!/^\d+$/.test(nv)) return "الرقم القومي أرقام فقط";
+    if (nv.length !== 14) return `الرقم القومي لازم يكون 14 رقم (المكتوب ${nv.length})`;
+    if (nv[0] !== "2" && nv[0] !== "3") return "الرقم القومي غير صحيح (أول رقم لازم 2 أو 3)";
+    const month = parseInt(nv.substring(3, 5), 10);
+    if (month < 1 || month > 12) return "الرقم القومي غير صحيح (الشهر خاطئ)";
+    const day = parseInt(nv.substring(5, 7), 10);
+    if (day < 1 || day > 31) return "الرقم القومي غير صحيح (اليوم خاطئ)";
+    const validGov = new Set(["01","02","03","04","11","12","13","14","15","16","17","18","19","21","22","23","24","25","26","27","28","29","31","32","33","34","35","88","99"]);
+    if (!validGov.has(nv.substring(7, 9))) return "الرقم القومي غير صحيح (رمز المحافظة غير معروف)";
+    return null;
   }
 
   // ---------- الهاتف ----------
   const isPhoneField = rule === "phone" || type === "tel" || (!rule && /هاتف|موبايل|جوال|تليفون/.test(info.clean));
   if (isPhoneField) {
-    return isPhone(value) ? null : "رقم الهاتف غير صحيح (مثال: 01012345678)";
+    return isPhone(value) ? null : "رقم الهاتف غير صحيح — لازم يكون رقم مصري مثل: 01012345678";
   }
 
   // ---------- الروابط ----------
@@ -199,10 +228,12 @@ export function validateField(el: FieldEl): string | null {
   }
 
   // ---------- الأسماء ----------
-  const isNameField = rule === "name" || (!rule && /^(ال)?اسم (ال)?(طالب|ولي|معلم|شيخ)|^الاسم/.test(info.clean));
+  const isNameField = rule === "name" || (!rule && /^(ال)?اسم (ال)?(طالب|ولي|معلم|شيخ|كامل)|^الاسم/.test(info.clean));
   if (isNameField && el instanceof HTMLInputElement) {
-    if (/^[\d\s]+$/.test(value)) return `${name} لازم يحتوي على حروف`;
-    if (value.length < 2) return `${name} قصير جدًا`;
+    if (/[^\u0600-\u06FF\s]/.test(value)) return `${name} لازم يكون بالعربي فقط بدون أرقام أو رموز`;
+    const parts = value.trim().split(/\s+/).filter(Boolean);
+    if (parts.length < 4) return `${name} لازم يكون رباعياً على الأقل (تم كتابة ${parts.length} ${parts.length === 1 ? "كلمة" : "كلمات"})`;
+    if (parts.some((p) => p.length < 2)) return "كل جزء في الاسم لازم يكون حرفين على الأقل";
   }
 
   // ---------- pattern ----------

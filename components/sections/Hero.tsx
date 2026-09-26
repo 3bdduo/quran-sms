@@ -1,7 +1,7 @@
 "use client";
 
 import { m } from "framer-motion";
-import { BookOpenCheck, Users, Sparkles } from "lucide-react";
+import { BookOpenCheck, Users, CheckCircle2 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { IslamicDivider } from "@/components/ui/IslamicDivider";
@@ -14,7 +14,7 @@ const line2 = "حفظًا وفهمًا وتطبيقًا".split(" ");
 const chips = [
   { icon: BookOpenCheck, label: "منهج متكامل ومتدرج" },
   { icon: Users, label: "معلمون مؤهلون وإجازات قرآنية" },
-  { icon: Sparkles, label: "متابعة مستمرة لكل طالب" },
+  { icon: CheckCircle2, label: "متابعة مستمرة لكل طالب" },
 ];
 
 /** كلمات العنوان بتدخل واحدة ورا التانية بحركة ناعمة وسريعة. */
@@ -73,7 +73,6 @@ export function Hero() {
           transition={{ duration: 0.35, ease: EASE }}
           className="inline-flex items-center gap-2 text-sm font-bold text-brand-ink bg-brand-soft border border-line px-5 py-2 rounded-full mb-7 sh-soft"
         >
-          <Sparkles size={16} className="text-gold-ink" />
           رحلة حفظ وتدبر تبدأ من هنا
         </m.span>
 

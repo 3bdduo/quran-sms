@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Edit2, Trash2, Download, Search, Users, CircleHelp } from "lucide-react";
+import { AddTeacherWizardModal } from "@/components/wizards/AddTeacherWizardModal";
 import { teachersApi } from "@/lib/resources";
 import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
@@ -15,6 +16,7 @@ export default function AdminTeachersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+  const [showAddWizard, setShowAddWizard] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [formData, setFormData] = useState({
@@ -167,10 +169,7 @@ export default function AdminTeachersPage() {
             <span>تصدير Excel</span>
           </Button>
           <Button
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
+            onClick={() => setShowAddWizard(true)}
             className="flex items-center gap-2"
           >
             <Plus size={17} />
@@ -203,6 +202,7 @@ export default function AdminTeachersPage() {
             <table className="w-full text-sm whitespace-nowrap">
               <thead>
                 <tr className="border-b border-line bg-bg-alt/50 text-right text-ink-mute">
+                  <th className="p-4 font-bold text-center w-12">م</th>
                   <th className="p-4 font-bold">الاسم رباعي</th>
                   <th className="p-4 font-bold">الرقم القومي</th>
                   <th className="p-4 font-bold">اسم المستخدم (للدخول)</th>
@@ -212,8 +212,9 @@ export default function AdminTeachersPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredTeachers.map((t) => (
+                {filteredTeachers.map((t, idx) => (
                   <tr key={t.id} className="border-b border-line hover:bg-bg-alt/30 transition-colors">
+                    <td className="p-4 text-xs font-mono text-ink-mute text-center">{idx + 1}</td>
                     <td className="p-4 font-bold text-ink">{t.full_name}</td>
                     <td className="p-4 font-mono text-xs text-ink-soft">{t.national_id}</td>
                     <td className="p-4 font-mono font-bold text-brand-ink">{t.username}</td>
@@ -272,11 +273,21 @@ export default function AdminTeachersPage() {
         )}
       </div>
 
-      {showModal && (
+      {/* Wizard لإضافة معلم جديد خطوة بخطوة */}
+      <AddTeacherWizardModal
+        isOpen={showAddWizard}
+        onClose={() => setShowAddWizard(false)}
+        onSuccess={() => {
+          loadTeachers();
+        }}
+      />
+
+      {/* Modal تعديل بيانات المعلم فقط */}
+      {showModal && editingTeacher && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full sh-float border border-line">
             <h3 className="font-extrabold text-lg text-ink mb-5 pb-4 border-b border-line">
-              {editingTeacher ? "تعديل بيانات المعلم" : "إضافة معلم جديد"}
+              تعديل بيانات المعلم
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">

@@ -21,6 +21,7 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { AddStudentWizardModal } from "@/components/wizards/AddStudentWizardModal";
 import type { Student, GroupItem } from "@/types";
 
 export default function AdminStudentsPage() {
@@ -45,7 +46,6 @@ export default function AdminStudentsPage() {
     memorizedAmount: "0",
     currentSurah: "غير محدد",
     groupId: "",
-    password: "",
   });
   const [formLoading, setFormLoading] = useState(false);
 
@@ -234,7 +234,6 @@ export default function AdminStudentsPage() {
       memorizedAmount: student.memorized_amount || "0",
       currentSurah: student.current_surah || "غير محدد",
       groupId: student.group_id || "",
-      password: "",
     });
   }
 
@@ -246,7 +245,6 @@ export default function AdminStudentsPage() {
       memorizedAmount: "0",
       currentSurah: "غير محدد",
       groupId: "", // لا تختار حلقة تلقائياً — لازم الأدمن يختار بنفسه
-      password: "",
     });
   }
 
@@ -384,7 +382,7 @@ export default function AdminStudentsPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-line bg-bg-alt/70 text-ink-mute text-right">
-                          <th className="p-3 font-bold">#</th>
+                          <th className="p-3 font-bold text-center w-12">م</th>
                           <th className="p-3 font-bold">اسم الطالب</th>
                           <th className="p-3 font-bold">الرقم القومي</th>
                           <th className="p-3 font-bold">رقم الهاتف</th>
@@ -465,23 +463,33 @@ export default function AdminStudentsPage() {
         </div>
       )}
 
-      {/* Modal: إضافة / تعديل طالب */}
-      {(showAddModal || editingStudent) && (
+      {/* Wizard لتسجيل طالب جديد خطوة بخطوة */}
+      <AddStudentWizardModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={() => {
+          loadData();
+        }}
+        groups={groups}
+      />
+
+      {/* Modal: تعديل بيانات طالب */}
+      {editingStudent && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowExportMenu(false)}>
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full sh-float border border-line overflow-y-auto max-h-[90vh]">
             <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
               <h3 className="font-extrabold text-lg text-ink">
-                {editingStudent ? "تعديل بيانات الطالب" : "تسجيل طالب جديد"}
+                تعديل بيانات الطالب
               </h3>
               <button
-                onClick={() => { setShowAddModal(false); setEditingStudent(null); }}
+                onClick={() => setEditingStudent(null)}
                 className="p-2 text-ink-mute hover:text-ink rounded-lg"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={editingStudent ? handleUpdateStudent : handleCreateStudent} className="space-y-4">
+            <form onSubmit={handleUpdateStudent} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="field-label">اسم الطالب الكامل *</label>
@@ -559,25 +567,12 @@ export default function AdminStudentsPage() {
                 </div>
               </div>
 
-              {!editingStudent && (
-                <div>
-                  <label className="field-label">كلمة مرور حساب الطالب (اختياري)</label>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="field"
-                    placeholder="افتراضي: بدون كلمة مرور"
-                  />
-                </div>
-              )}
-
               <div className="flex justify-end gap-3 pt-4 border-t border-line">
-                <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); setEditingStudent(null); }}>
+                <Button type="button" variant="outline" onClick={() => setEditingStudent(null)}>
                   إلغاء
                 </Button>
                 <Button type="submit" loading={formLoading}>
-                  {editingStudent ? "حفظ التعديلات" : "إضافة الطالب"}
+                  حفظ التعديلات
                 </Button>
               </div>
             </form>

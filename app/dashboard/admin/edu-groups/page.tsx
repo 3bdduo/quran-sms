@@ -297,9 +297,9 @@ export default function AdminEduGroupsPage() {
   return (
     <div className="space-y-6 max-w-7xl">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">مجموعات التربوي</h1>
             <span className="text-xs font-bold bg-brand-soft text-brand-ink px-3 py-1 rounded-full">
               {eduGroups.length} مجموعة
@@ -310,20 +310,26 @@ export default function AdminEduGroupsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={handleExportAll} className="flex items-center gap-2">
-            <Download size={17} />
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportAll}
+            className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
+          >
+            <Download size={16} />
             <span>تصدير الكل Excel</span>
           </Button>
 
           <Button
+            size="sm"
             onClick={() => {
               resetForm();
               setShowCreateModal(true);
             }}
-            className="flex items-center gap-2"
+            className="whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm !min-h-10 px-4"
           >
-            <Plus size={17} />
+            <Plus size={16} />
             <span>إنشاء مجموعة تربوي</span>
           </Button>
         </div>
@@ -385,7 +391,7 @@ export default function AdminEduGroupsPage() {
             <p className="text-xs">اضغط على زر &quot;إنشاء مجموعة تربوي&quot; لبدء إضافة المجموعات ومعلميها</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {filteredGroups.map((group) => {
               const isExpanded = activeGroupId === group.id;
 
@@ -394,59 +400,59 @@ export default function AdminEduGroupsPage() {
                   key={group.id}
                   className="rounded-2xl border border-line bg-surface overflow-hidden transition-all duration-200 hover:border-brand/40 shadow-sm"
                 >
-                  {/* Group Main Row */}
-                  <div className="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div className="flex items-start sm:items-center gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-2xl bg-brand-soft text-brand-ink flex items-center justify-center shrink-0">
-                        <BookMarked size={22} />
+                  {/* Card Header & Details */}
+                  <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div className="flex items-start gap-3.5 min-w-0">
+                      <div className="w-12 h-12 rounded-2xl bg-brand-soft text-brand-ink flex items-center justify-center shrink-0">
+                        <BookMarked size={24} />
                       </div>
 
-                      <div className="min-w-0">
+                      <div className="min-w-0 space-y-2">
                         <div className="flex items-center gap-2.5 flex-wrap">
-                          <h3 className="font-black text-lg text-ink truncate">{group.name}</h3>
+                          <h3 className="font-black text-lg sm:text-xl text-ink truncate">{group.name}</h3>
                           <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-brand-soft text-brand-ink font-mono">
                             {group.studentsCount || 0} طالب
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-3 text-xs text-ink-mute mt-1.5 flex-wrap">
-                          <span className="flex items-center gap-1 text-ink-soft">
+                        {/* Teacher Info */}
+                        <div className="flex items-center gap-2 text-xs text-ink-mute">
+                          <span className="inline-flex items-center gap-1.5 text-ink-soft bg-bg-alt/80 px-2.5 py-1 rounded-xl border border-line/50">
                             <UserRound size={13} className="text-brand" />
-                            <strong>المعلم:</strong> {group.teacherName || "غير محدد"}
+                            <span>المعلم:</span>
+                            <strong className="text-ink">{group.teacherName || "غير محدد"}</strong>
                           </span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1 font-mono">
-                            <KeyRound size={12} className="text-ink-mute" />
-                            <strong>الدخول:</strong> {group.teacherUsername}
-                          </span>
-                          {group.teacherNationalId && (
-                            <>
-                              <span>•</span>
-                              <span className="font-mono">
-                                <strong>الرقم القومي:</strong> {group.teacherNationalId}
-                              </span>
-                            </>
-                          )}
-                          {group.teacherPhone && (
-                            <>
-                              <span>•</span>
-                              <span className="flex items-center gap-1 font-mono">
-                                <Phone size={12} />
-                                {group.teacherPhone}
-                              </span>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>
 
-                    {/* Group Action Buttons */}
-                    <div className="flex items-center gap-2 flex-wrap justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-line">
+                    {/* Quick Admin Actions (Edit / Delete) */}
+                    <div className="flex items-center gap-1.5 self-end md:self-start shrink-0 border border-line/60 bg-bg-alt/40 p-1 rounded-2xl">
+                      <button
+                        onClick={() => openEdit(group)}
+                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-xl transition-all"
+                        title="تعديل بيانات المجموعة"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteGroup(group)}
+                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-xl transition-all"
+                        title="حذف المجموعة"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Card Bottom: Organized Action Bar */}
+                  <div className="px-4 sm:px-5 py-3 bg-bg-alt/40 border-t border-line flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                    {/* Primary Operations */}
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Button
                         size="sm"
-                        variant="outline"
                         onClick={() => openStudentPickerForGroup(group)}
-                        className="flex items-center gap-1.5 !text-xs font-bold"
+                        className="flex items-center gap-1.5 !text-xs font-bold whitespace-nowrap !min-h-9 !py-1.5 !px-3.5"
                         title="اختيار وإضافة طلاب من حلقات التحفيظ"
                       >
                         <Plus size={14} />
@@ -457,7 +463,8 @@ export default function AdminEduGroupsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => openAttendanceForGroup(group)}
-                        className="flex items-center gap-1.5 !text-xs font-bold"
+                        className="flex items-center gap-1.5 !text-xs font-bold whitespace-nowrap !min-h-9 !py-1.5 !px-3.5"
+                        title="تسجيل الحضور والغياب"
                       >
                         <CalendarCheck size={14} />
                         <span>التحضير</span>
@@ -467,41 +474,25 @@ export default function AdminEduGroupsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleExportRoster(group.id, group.name)}
-                        className="flex items-center gap-1.5 !text-xs font-bold"
+                        className="flex items-center gap-1.5 !text-xs font-bold whitespace-nowrap !min-h-9 !py-1.5 !px-3.5"
                         title="تصدير كشف الطلاب إكسل"
                       >
                         <Download size={14} />
-                        <span className="hidden sm:inline">Excel</span>
+                        <span>تصدير Excel</span>
                       </Button>
-
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openGroupDetails(group.id)}
-                        className="flex items-center gap-1.5 !text-xs font-bold"
-                      >
-                        <Eye size={14} />
-                        <span>{isExpanded ? "إخفاء الطلاب" : "عرض الطلاب"}</span>
-                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                      </Button>
-
-                      <div className="flex items-center gap-1 mr-1 border-r border-line pr-1">
-                        <button
-                          onClick={() => openEdit(group)}
-                          className="p-2 text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-xl transition-all"
-                          title="تعديل بيانات المجموعة"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteGroup(group)}
-                          className="p-2 text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-xl transition-all"
-                          title="حذف المجموعة"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
                     </div>
+
+                    {/* View Students Toggle Button */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => openGroupDetails(group.id)}
+                      className="flex items-center justify-center gap-1.5 !text-xs font-bold whitespace-nowrap !min-h-9 !py-1.5 !px-3.5 border border-line bg-surface hover:border-brand/40 text-ink-soft hover:text-brand-ink"
+                    >
+                      <Eye size={14} />
+                      <span>{isExpanded ? "إخفاء الطلاب" : `عرض الطلاب (${group.studentsCount || 0})`}</span>
+                      {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </Button>
                   </div>
 
                   {/* Expanded View: Enrolled Students Sub-table */}
@@ -519,10 +510,10 @@ export default function AdminEduGroupsPage() {
                           <Button
                             size="sm"
                             onClick={() => openStudentPickerForGroup(group)}
-                            className="flex items-center gap-1.5 !text-xs font-bold"
+                            className="flex items-center gap-1.5 !text-xs font-bold whitespace-nowrap !min-h-9 !py-1.5 !px-3.5"
                           >
                             <Plus size={14} />
-                            <span>+ إضافة طلاب جدد من الحلقات</span>
+                            <span>إضافة طلاب جدد من الحلقات</span>
                           </Button>
                         </div>
                       </div>

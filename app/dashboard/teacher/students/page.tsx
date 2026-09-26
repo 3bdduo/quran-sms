@@ -18,6 +18,7 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { AddStudentWizardModal } from "@/components/wizards/AddStudentWizardModal";
 import type { Student } from "@/types";
 
 export default function TeacherStudentsPage() {
@@ -30,6 +31,7 @@ export default function TeacherStudentsPage() {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   // Modals & Forms
+  const [showAddWizard, setShowAddWizard] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [form, setForm] = useState({
@@ -135,16 +137,7 @@ export default function TeacherStudentsPage() {
 
         <Button
           onClick={() => {
-            setEditingStudent(null);
-            setForm({
-              name: "",
-              nationalId: "",
-              phone: "",
-              memorizedAmount: "0",
-              currentSurah: "غير محدد",
-              groupId: groups[0]?.id || "",
-            });
-            setShowAddModal(true);
+            setShowAddWizard(true);
           }}
           className="flex items-center gap-2"
         >
@@ -257,12 +250,25 @@ export default function TeacherStudentsPage() {
       )}
 
       {/* Modal: إضافة أو تعديل طالب */}
-      {showAddModal && (
+      {/* Wizard لإضافة طالب جديد للحلقة خطوة بخطوة */}
+      <AddStudentWizardModal
+        isOpen={showAddWizard}
+        onClose={() => setShowAddWizard(false)}
+        onSuccess={() => {
+          loadData();
+        }}
+        groups={groups}
+        defaultGroupId={groups[0]?.id}
+        isTeacherRole={true}
+      />
+
+      {/* Modal تعديل بيانات الطالب */}
+      {showAddModal && editingStudent && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full sh-float border border-line overflow-y-auto max-h-[90vh]">
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <h3 className="font-extrabold text-lg text-ink">
-                {editingStudent ? "تعديل بيانات الطالب" : "إضافة طالب جديد للحلقتي"}
+                تعديل بيانات الطالب
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}

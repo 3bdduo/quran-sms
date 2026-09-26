@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
-import { GraduationCap, ShieldCheck, UserRound, LogIn } from "lucide-react";
+import { GraduationCap, ShieldCheck, UserRound, LogIn, Eye, EyeOff } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
@@ -21,6 +21,7 @@ export default function LoginPage() {
   const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const { showToast } = useToast();
@@ -104,16 +105,27 @@ export default function LoginPage() {
             {role !== "student" && (
               <m.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
                 <label className="field-label">كلمة المرور</label>
-                <input
-                  type="password"
-                  data-vrule="loose"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="field"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    data-vrule="loose"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="field !pl-11"
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-mute hover:text-ink p-1 rounded-lg transition-colors"
+                    title={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </m.div>
             )}
 

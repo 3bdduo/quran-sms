@@ -212,7 +212,7 @@ export default function AdminPaymentsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line bg-bg-alt/70 text-right text-ink-mute">
-                  <th className="p-4 font-bold">#</th>
+                  <th className="p-4 font-bold text-center w-12">م</th>
                   <th className="p-4 font-bold">اسم الطالب</th>
                   <th className="p-4 font-bold">قيمة الاشتراك</th>
                   <th className="p-4 font-bold">تاريخ الدفع</th>

@@ -182,13 +182,13 @@ export default function WaitingListPage() {
                     <button
                       onClick={() => handleDelete(student)}
                       disabled={isDeleting || isMoving}
-                      className="h-8 w-8 flex items-center justify-center rounded-xl text-ink-muted hover:text-danger-solid hover:bg-danger-soft transition-colors shrink-0"
+                      className="h-9 w-9 flex items-center justify-center rounded-xl text-ink-muted hover:text-danger-solid hover:bg-danger-soft transition-colors shrink-0"
                       title="حذف الطالب"
                     >
                       {isDeleting ? (
                         <Loader2 size={16} className="animate-spin" />
                       ) : (
-                        <Trash2 size={16} />
+                        <Trash2 size={18} />
                       )}
                     </button>
                   </div>

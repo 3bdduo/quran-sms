@@ -19,8 +19,11 @@ import {
   X,
   FileSpreadsheet,
   Check,
-  Sparkles,
+  Calculator,
   AlertCircle,
+  ArrowRight,
+  ArrowLeft,
+  HelpCircle,
 } from "lucide-react";
 import { salariesApi } from "@/lib/resources";
 import { downloadFile } from "@/lib/download";
@@ -56,9 +59,10 @@ export default function AdminSalariesPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "unpaid" | "advance">("all");
   const [exportLoading, setExportLoading] = useState(false);
 
-  // نافذة تحديد / تعديل الراتب
+  // نافذة تحديد / تعديل الراتب (نظام الخطوات المتسلسلة)
   const [modalOpen, setModalOpen] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+  const [salaryStep, setSalaryStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedTeacherUsername, setSelectedTeacherUsername] = useState("");
   const [baseSalaryInput, setBaseSalaryInput] = useState<number | string>(0);
   const [incentiveAmountInput, setIncentiveAmountInput] = useState<number | string>(0);
@@ -124,10 +128,15 @@ export default function AdminSalariesPage() {
     });
   }, [summary, search, statusFilter]);
 
+  const selectedTeacherObj = useMemo(() => {
+    return allTeachers.find((t) => t.username === selectedTeacherUsername) || null;
+  }, [allTeachers, selectedTeacherUsername]);
+
   // فتح المودال لإضافة أو تعديل راتب معلم
   function openSalaryModal(targetUsername?: string) {
     const username = targetUsername || (allTeachers[0]?.username ?? "");
     setSelectedTeacherUsername(username);
+    setSalaryStep(1);
 
     // البحث عن السجل الحالي للشهر لهذا المعلم
     const existingRec = summary?.teachers.find((t) => t.username === username);
@@ -453,7 +462,7 @@ export default function AdminSalariesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line bg-bg-alt/70 text-right text-xs font-bold text-ink-mute">
-                  <th className="p-3.5 whitespace-nowrap">#</th>
+                  <th className="p-3.5 whitespace-nowrap text-center w-12">م</th>
                   <th className="p-3.5 whitespace-nowrap sticky right-0 bg-bg-alt/95 z-20 border-l border-line/50 shadow-sm">
                     المعلم
                   </th>
@@ -478,9 +487,9 @@ export default function AdminSalariesPage() {
                       key={t.username}
                       className="hover:bg-bg-alt/40 transition-colors group"
                     >
-                      <td className="p-3.5 text-xs text-ink-mute font-mono">{idx + 1}</td>
+                      <td className="p-3.5 text-xs text-ink-mute font-mono text-center">{idx + 1}</td>
 
-                      {/* بيانات المعلم - مثبتة عند التمرير الأفقي */}
+                      {/* بيانات المعلم - الاسم الكامل فقط */}
                       <td className="p-3.5 sticky right-0 bg-bg group-hover:bg-bg-alt/90 transition-colors z-10 border-l border-line/50 shadow-sm">
                         <div
                           className="font-bold text-ink hover:text-brand cursor-pointer transition-colors"
@@ -488,10 +497,6 @@ export default function AdminSalariesPage() {
                           title="اضغط لتحديد أو تعديل راتب هذا المعلم"
                         >
                           {t.full_name || t.username}
-                        </div>
-                        <div className="text-xs text-ink-mute font-mono flex items-center gap-2 mt-0.5">
-                          <span>@{t.username}</span>
-                          {t.national_id && <span>• {t.national_id}</span>}
                         </div>
                       </td>
 
@@ -657,22 +662,35 @@ export default function AdminSalariesPage() {
       {/* ============================================================== */}
       {/* نافذة مودال: تحديد وتعديل راتب معلم (الأساسي، الحوافز، الخصومات) */}
       {/* ============================================================== */}
+      {/* ============================================================== */}
+      {/* نافذة مودال: تحديد وتعديل راتب معلم (نظام خطوات سلس 4 مراحل) */}
+      {/* ============================================================== */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-bg border border-line rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-line flex items-center justify-between bg-bg-alt/50">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-surface border border-line rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden my-4 animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-line flex items-center justify-between bg-bg-alt/40">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center text-brand-ink">
+                <div className="w-10 h-10 rounded-2xl bg-brand-soft flex items-center justify-center text-brand-ink">
                   <Banknote className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-ink text-lg">تحديد راتب المعلم</h3>
+                  <h3 className="font-extrabold text-ink text-base sm:text-lg">
+                    {salaryStep === 1
+                      ? "الخطوة 1: تحديد الراتب الأساسي"
+                      : salaryStep === 2
+                      ? "الخطوة 2: الحوافز والمكافآت"
+                      : salaryStep === 3
+                      ? "الخطوة 3: الخصومات والاستقطاعات"
+                      : "الخطوة 4: مراجعة واعتماد الراتب"}
+                  </h3>
                   <p className="text-xs text-ink-mute">
-                    شهر {selectedMonth} — حساب الأساسي، الحوافز، والخصومات
+                    شهر {selectedMonth} {selectedTeacherObj ? `• للمعلم ${selectedTeacherObj.full_name || selectedTeacherObj.username}` : ""}
                   </p>
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setModalOpen(false)}
                 className="w-8 h-8 rounded-full flex items-center justify-center text-ink-mute hover:text-ink hover:bg-bg-alt transition-colors"
               >
@@ -680,243 +698,618 @@ export default function AdminSalariesPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveSalary} className="p-5 space-y-5">
-              {/* قائمة المعلمين لاختيار المعلم */}
-              <div>
-                <label className="block text-xs font-bold text-ink mb-1.5">
-                  اختيار المعلم <span className="text-rose-500">*</span>
-                </label>
-                <select
-                  value={selectedTeacherUsername}
-                  onChange={(e) => handleTeacherSelectChange(e.target.value)}
-                  className="input-text w-full text-sm font-bold bg-bg"
-                  required
-                >
-                  <option value="" disabled>
-                    -- اختر معلماً من القائمة --
-                  </option>
-                  {allTeachers.map((t) => (
-                    <option key={t.username} value={t.username}>
-                      {t.full_name || t.username} ({t.username})
-                    </option>
-                  ))}
-                </select>
+            {/* Stepper Navigation Bar */}
+            <div className="px-3 sm:px-5 py-3 border-b border-line bg-bg-alt/20">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                {[
+                  { num: 1, title: "الأساسي", icon: Banknote },
+                  { num: 2, title: "الحوافز (+)", icon: TrendingUp },
+                  { num: 3, title: "الخصومات (-)", icon: TrendingDown },
+                  { num: 4, title: "المراجعة (✓)", icon: CheckCircle2 },
+                ].map((step) => {
+                  const Icon = step.icon;
+                  const isActive = salaryStep === step.num;
+                  const isDone = salaryStep > step.num;
+                  const canClick = isDone || (step.num === 2 && liveBase > 0) || (step.num === 3 && liveBase > 0) || (step.num === 4 && liveBase > 0);
+
+                  return (
+                    <button
+                      key={step.num}
+                      type="button"
+                      disabled={!canClick && !isActive}
+                      onClick={() => {
+                        if (canClick) setSalaryStep(step.num as any);
+                      }}
+                      className={`flex items-center gap-1.5 p-2 rounded-xl text-right transition-all border ${
+                        isActive
+                          ? "bg-brand/10 border-brand text-brand-ink font-bold shadow-xs"
+                          : isDone
+                          ? "bg-surface border-line text-ink hover:border-brand/40 font-bold cursor-pointer"
+                          : "border-transparent text-ink-mute/40 cursor-not-allowed opacity-60"
+                      }`}
+                    >
+                      <div
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold ${
+                          isActive
+                            ? "bg-brand text-on-brand shadow-xs"
+                            : isDone
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                            : "bg-bg-alt text-ink-mute"
+                        }`}
+                      >
+                        {isDone ? <Check size={13} strokeWidth={3} /> : step.num}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] truncate leading-tight font-bold">{step.title}</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
-              {/* 1. الراتب الأساسي */}
-              <div className="bg-bg-alt/40 p-4 rounded-2xl border border-line space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-ink flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-brand"></span>
-                    الراتب الأساسي (ج.م) <span className="text-rose-500">*</span>
-                  </label>
-                  <span className="text-[11px] text-ink-mute">راتب المعلم المعتمد</span>
-                </div>
-                <div className="relative">
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={baseSalaryInput}
-                    onChange={(e) => setBaseSalaryInput(e.target.value)}
-                    placeholder="مثال: 3000"
-                    className="input-text w-full text-base font-extrabold !pl-12"
-                    required
-                  />
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-mute">
-                    جنيه
-                  </span>
-                </div>
-              </div>
-
-              {/* 2. الحوافز والمكافآت + السبب */}
-              <div className="bg-emerald-500/5 p-4 rounded-2xl border border-emerald-500/20 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    الحوافز والمكافآت (تُضاف للراتب)
-                  </label>
-                  <span className="text-[11px] text-emerald-600/80 font-bold">+ إضافة</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="relative sm:col-span-1">
-                    <input
-                      type="number"
-                      min="0"
-                      step="any"
-                      value={incentiveAmountInput}
-                      onChange={(e) => setIncentiveAmountInput(e.target.value)}
-                      placeholder="0"
-                      className="input-text w-full text-sm font-bold text-emerald-700 !pl-10"
-                    />
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-mute">
-                      ج.م
-                    </span>
+            {/* Form & Steps Content */}
+            <form onSubmit={handleSaveSalary} className="p-4 sm:p-6 space-y-5">
+              {/* ============================================================== */}
+              {/* الخطوة 1: اختيار المعلم والراتب الأساسي */}
+              {/* ============================================================== */}
+              {salaryStep === 1 && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-200">
+                  {/* اختيار المعلم */}
+                  <div>
+                    <label className="block text-xs font-bold text-ink mb-1.5">
+                      اختيار المعلم المستحق للراتب <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      value={selectedTeacherUsername}
+                      onChange={(e) => handleTeacherSelectChange(e.target.value)}
+                      className="field text-sm font-bold w-full"
+                      required
+                    >
+                      <option value="" disabled>
+                        -- اختر معلماً من القائمة --
+                      </option>
+                      {allTeachers.map((t) => (
+                        <option key={t.username} value={t.username}>
+                          {t.full_name || t.username}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="sm:col-span-2">
+
+                  {/* بطاقة معلومات المعلم المختار */}
+                  {selectedTeacherObj && (
+                    <div className="p-3 bg-bg-alt/60 rounded-2xl border border-line text-xs flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-brand-soft text-brand-ink flex items-center justify-center font-bold">
+                          <User size={16} />
+                        </div>
+                        <div>
+                          <strong className="text-ink block text-xs">{selectedTeacherObj.full_name || selectedTeacherObj.username}</strong>
+                        </div>
+                      </div>
+
+                      {selectedTeacherObj.base_salary && selectedTeacherObj.base_salary > 0 ? (
+                        <span className="bg-brand-soft text-brand-ink px-2.5 py-1 rounded-lg font-mono font-bold text-[11px]">
+                          الأساسي المسجل: {selectedTeacherObj.base_salary.toLocaleString()} ج.م
+                        </span>
+                      ) : (
+                        <span className="text-ink-mute text-[11px]">لم يُسجل راتب أساسي سابق</span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* الراتب الأساسي للشهر */}
+                  <div className="bg-surface p-4 sm:p-5 rounded-2xl border-2 border-brand/30 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <Banknote className="w-4 h-4 text-brand" />
+                        الراتب الأساسي لشهر {selectedMonth} <span className="text-rose-500">*</span>
+                      </label>
+                      <span className="text-[11px] text-brand-ink font-bold">المبلغ الثابت</span>
+                    </div>
+
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        step="any"
+                        value={baseSalaryInput}
+                        onChange={(e) => setBaseSalaryInput(e.target.value)}
+                        placeholder="أدخل مبلغ الراتب الأساسي..."
+                        className="field !pl-16 text-lg sm:text-xl font-black text-ink"
+                        required
+                        autoFocus
+                      />
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-mute">
+                        جنيه مصري
+                      </span>
+                    </div>
+
+                    {/* اختصارات مبالغ شائعة سريعة */}
+                    <div className="pt-1">
+                      <p className="text-[11px] text-ink-mute mb-1.5 font-bold">مبالغ سريعة بنقرة واحدة:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[1500, 2000, 2500, 3000, 3500, 4000, 5000].map((amt) => (
+                          <button
+                            type="button"
+                            key={amt}
+                            onClick={() => setBaseSalaryInput(amt)}
+                            className={`text-xs px-2.5 py-1 rounded-xl font-bold border transition-colors ${
+                              Number(baseSalaryInput) === amt
+                                ? "bg-brand text-on-brand border-brand"
+                                : "bg-bg-alt/70 border-line hover:border-brand/40 text-ink"
+                            }`}
+                          >
+                            {amt.toLocaleString()} ج.م
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* أزرار الخطوة 1 */}
+                  <div className="flex items-center justify-between pt-3 border-t border-line">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setModalOpen(false)}
+                      className="!min-h-10 px-4 text-xs font-bold"
+                    >
+                      إلغاء
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={liveBase <= 0 || !selectedTeacherUsername}
+                      onClick={() => {
+                        if (liveBase <= 0) {
+                          showToast("يرجى إدخال الراتب الأساسي (أكبر من 0)", "error");
+                          return;
+                        }
+                        setSalaryStep(2);
+                      }}
+                      className="!min-h-10 px-5 text-xs font-bold flex items-center gap-2"
+                    >
+                      <span>المتابعة للحوافز والمكافآت</span>
+                      <ArrowLeft size={15} />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* ============================================================== */}
+              {/* الخطوة 2: الحوافز والمكافآت (تُضاف للراتب) */}
+              {/* ============================================================== */}
+              {salaryStep === 2 && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-200">
+                  {/* بطاقة توجيهية */}
+                  <div className="p-3.5 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed flex items-start gap-2.5">
+                    <TrendingUp className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-xs">هل يستحق المعلم أي مكافأة أو حافز هذا الشهر؟</strong>
+                      <p className="text-[11px] opacity-80 mt-0.5">
+                        هذه الخطوة اختيارية. إذا لم يكن هناك أي حوافز، يمكنك الضغط على &quot;تخطي بدون حوافز&quot;.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* إدخال مبلغ الحافز */}
+                  <div className="bg-surface p-4 sm:p-5 rounded-2xl border border-line space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <TrendingUp className="w-4 h-4 text-emerald-600" />
+                        مبلغ الحافز أو المكافأة (ج.م)
+                      </label>
+                      {liveIncentive > 0 && (
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-lg">
+                          + {liveIncentive.toLocaleString()} ج.م يُضاف للراتب
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        value={incentiveAmountInput}
+                        onChange={(e) => setIncentiveAmountInput(e.target.value)}
+                        placeholder="0 (اتركه 0 إذا لم يوجد حافز)"
+                        className="field !pl-16 text-lg font-black text-emerald-600"
+                        autoFocus
+                      />
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-mute">
+                        جنيه
+                      </span>
+                    </div>
+
+                    {/* اختصارات مبالغ الحوافز السريعة */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="text-[10px] text-ink-mute font-bold">مبالغ سريعة:</span>
+                      {[100, 200, 300, 500, 1000].map((amt) => (
+                        <button
+                          type="button"
+                          key={amt}
+                          onClick={() => setIncentiveAmountInput(amt)}
+                          className={`text-xs px-2.5 py-0.5 rounded-lg font-bold border transition-colors ${
+                            Number(incentiveAmountInput) === amt
+                              ? "bg-emerald-600 text-white border-emerald-600"
+                              : "bg-emerald-500/5 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 hover:bg-emerald-500/15"
+                          }`}
+                        >
+                          +{amt} ج.م
+                        </button>
+                      ))}
+                      {Number(incentiveAmountInput) > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIncentiveAmountInput("");
+                            setIncentiveReasonInput("");
+                          }}
+                          className="text-xs px-2 py-0.5 rounded-lg font-bold text-rose-600 hover:bg-rose-50"
+                        >
+                          إلغاء الحافز (0)
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* سبب الحافز (يظهر دائماً، ومهم إذا وُجد مبلغ) */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-ink">
+                      سبب أو بند المكافأة {liveIncentive > 0 && <span className="text-emerald-600">*</span>}
+                    </label>
                     <input
                       type="text"
                       value={incentiveReasonInput}
                       onChange={(e) => setIncentiveReasonInput(e.target.value)}
-                      placeholder="سبب الحافز (مثلاً: تميز في التسميع، حلقات إضافية...)"
-                      className="input-text w-full text-xs"
+                      placeholder="مثال: تميز حلقة التحفيظ، التزام بالحضور، ساعات إضافية..."
+                      className="field text-xs"
                     />
+
+                    {/* اقتراحات سريعة لسبب الحافز */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                      <span className="text-[10px] text-ink-mute">اقتراحات شائعة:</span>
+                      {["التزام وانضباط بالحضور", "تميز حلقة التحفيظ", "ساعات إضافية", "مكافأة مسابقة القرآن"].map((s) => (
+                        <button
+                          type="button"
+                          key={s}
+                          onClick={() => setIncentiveReasonInput(s)}
+                          className="text-[10px] bg-bg-alt border border-line px-2 py-0.5 rounded-lg text-ink hover:border-emerald-500/40 hover:text-emerald-700 transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* معاينة الراتب حتى الآن */}
+                  <div className="p-3 bg-bg-alt/60 rounded-xl border border-line flex items-center justify-between text-xs">
+                    <span className="text-ink-mute">الإجمالي المرحلي (الأساسي + الحوافز):</span>
+                    <strong className="text-ink font-mono font-bold">
+                      {(liveBase + liveIncentive).toLocaleString()} ج.م
+                    </strong>
+                  </div>
+
+                  {/* أزرار الخطوة 2 */}
+                  <div className="flex items-center justify-between pt-3 border-t border-line">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSalaryStep(1)}
+                      className="!min-h-10 px-4 text-xs font-bold flex items-center gap-1.5"
+                    >
+                      <ArrowRight size={15} />
+                      <span>السابق (الأساسي)</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setSalaryStep(3)}
+                      className="!min-h-10 px-5 text-xs font-bold flex items-center gap-2"
+                    >
+                      <span>{liveIncentive > 0 ? "المتابعة للخصومات" : "تخطي بدون حوافز"}</span>
+                      <ArrowLeft size={15} />
+                    </Button>
                   </div>
                 </div>
+              )}
 
-                {/* اقتراحات سريعة لسبب الحافز */}
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] text-ink-mute">اقتراحات:</span>
-                  {["التزام وانضباط بالحضور", "تميز حلقة التحفيظ", "ساعات إضافية", "مكافأة مسابقة"].map(
-                    (s) => (
-                      <button
-                        type="button"
-                        key={s}
-                        onClick={() => setIncentiveReasonInput(s)}
-                        className="text-[10px] bg-white dark:bg-bg border border-emerald-500/20 px-2 py-0.5 rounded-lg text-emerald-800 dark:text-emerald-300 hover:bg-emerald-50 transition-colors"
-                      >
-                        {s}
-                      </button>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {/* 3. الخصومات والاستقطاعات + السبب */}
-              <div className="bg-rose-500/5 p-4 rounded-2xl border border-rose-500/20 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
-                    <TrendingDown className="w-4 h-4 text-rose-600" />
-                    الخصومات والاستقطاعات (تُخصم من الراتب)
-                  </label>
-                  <span className="text-[11px] text-rose-600/80 font-bold">- خصم</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="relative sm:col-span-1">
-                    <input
-                      type="number"
-                      min="0"
-                      step="any"
-                      value={deductionAmountInput}
-                      onChange={(e) => setDeductionAmountInput(e.target.value)}
-                      placeholder="0"
-                      className="input-text w-full text-sm font-bold text-rose-700 !pl-10"
-                    />
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-mute">
-                      ج.م
-                    </span>
+              {/* ============================================================== */}
+              {/* الخطوة 3: الخصومات والاستقطاعات (تُخصم من الراتب) */}
+              {/* ============================================================== */}
+              {salaryStep === 3 && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-200">
+                  {/* بطاقة توجيهية */}
+                  <div className="p-3.5 bg-rose-500/10 rounded-2xl border border-rose-500/20 text-xs text-rose-800 dark:text-rose-300 leading-relaxed flex items-start gap-2.5">
+                    <TrendingDown className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-xs">هل يوجد أي خصم أو استقطاع سلفة هذا الشهر؟</strong>
+                      <p className="text-[11px] opacity-80 mt-0.5">
+                        هذه الخطوة اختيارية. إذا لم يكن هناك أي خصومات، يمكنك الضغط على &quot;تخطي بدون خصم&quot;.
+                      </p>
+                    </div>
                   </div>
-                  <div className="sm:col-span-2">
+
+                  {/* إدخال مبلغ الخصم */}
+                  <div className="bg-surface p-4 sm:p-5 rounded-2xl border border-line space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <TrendingDown className="w-4 h-4 text-rose-600" />
+                        مبلغ الخصم أو الاستقطاع (ج.م)
+                      </label>
+                      {liveDeduction > 0 && (
+                        <span className="text-xs font-bold text-rose-600 bg-rose-500/10 px-2 py-0.5 rounded-lg">
+                          - {liveDeduction.toLocaleString()} ج.م يُخصم من الراتب
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        value={deductionAmountInput}
+                        onChange={(e) => setDeductionAmountInput(e.target.value)}
+                        placeholder="0 (اتركه 0 إذا لم يوجد خصم)"
+                        className="field !pl-16 text-lg font-black text-rose-600"
+                        autoFocus
+                      />
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-mute">
+                        جنيه
+                      </span>
+                    </div>
+
+                    {/* اختصارات مبالغ الخصومات السريعة */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="text-[10px] text-ink-mute font-bold">مبالغ سريعة:</span>
+                      {[50, 100, 200, 300, 500].map((amt) => (
+                        <button
+                          type="button"
+                          key={amt}
+                          onClick={() => setDeductionAmountInput(amt)}
+                          className={`text-xs px-2.5 py-0.5 rounded-lg font-bold border transition-colors ${
+                            Number(deductionAmountInput) === amt
+                              ? "bg-rose-600 text-white border-rose-600"
+                              : "bg-rose-500/5 text-rose-700 dark:text-rose-300 border-rose-500/20 hover:bg-rose-500/15"
+                          }`}
+                        >
+                          -{amt} ج.م
+                        </button>
+                      ))}
+                      {Number(deductionAmountInput) > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeductionAmountInput("");
+                            setDeductionReasonInput("");
+                          }}
+                          className="text-xs px-2 py-0.5 rounded-lg font-bold text-emerald-600 hover:bg-emerald-50"
+                        >
+                          إلغاء الخصم (0)
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* سبب الخصم */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-ink">
+                      سبب الخصم أو الاستقطاع {liveDeduction > 0 && <span className="text-rose-600">*</span>}
+                    </label>
                     <input
                       type="text"
                       value={deductionReasonInput}
                       onChange={(e) => setDeductionReasonInput(e.target.value)}
-                      placeholder="سبب الخصم (مثلاً: غياب يومين، تأخير متكرر...)"
-                      className="input-text w-full text-xs"
+                      placeholder="مثال: غياب يومين بدون عذر، تأخير، قسط سلفة..."
+                      className="field text-xs"
                     />
+
+                    {/* اقتراحات سريعة لسبب الخصم */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                      <span className="text-[10px] text-ink-mute">اقتراحات شائعة:</span>
+                      {["غياب بدون عذر", "تأخير متكرر", "استقطاع سلفة سابقة", "عدم إتمام ساعات العمل"].map((s) => (
+                        <button
+                          type="button"
+                          key={s}
+                          onClick={() => setDeductionReasonInput(s)}
+                          className="text-[10px] bg-bg-alt border border-line px-2 py-0.5 rounded-lg text-ink hover:border-rose-500/40 hover:text-rose-700 transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* معاينة الصافي المتوقع */}
+                  <div className="p-3 bg-bg-alt/60 rounded-xl border border-line flex items-center justify-between text-xs">
+                    <span className="text-ink-mute">الصافي المتوقع (الأساسي + الحوافز - الخصومات):</span>
+                    <strong className="text-ink font-mono font-bold">
+                      {liveNetSalary.toLocaleString()} ج.م
+                    </strong>
+                  </div>
+
+                  {/* أزرار الخطوة 3 */}
+                  <div className="flex items-center justify-between pt-3 border-t border-line">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSalaryStep(2)}
+                      className="!min-h-10 px-4 text-xs font-bold flex items-center gap-1.5"
+                    >
+                      <ArrowRight size={15} />
+                      <span>السابق (الحوافز)</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setSalaryStep(4)}
+                      className="!min-h-10 px-5 text-xs font-bold flex items-center gap-2"
+                    >
+                      <span>{liveDeduction > 0 ? "المتابعة للمراجعة والاعتماد" : "تخطي بدون خصم"}</span>
+                      <ArrowLeft size={15} />
+                    </Button>
                   </div>
                 </div>
+              )}
 
-                {/* اقتراحات سريعة لسبب الخصم */}
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] text-ink-mute">اقتراحات:</span>
-                  {["غياب بدون عذر", "تأخير متكرر", "استقطاع سلفة سابقة", "عدم إتمام الساعات"].map(
-                    (s) => (
-                      <button
-                        type="button"
-                        key={s}
-                        onClick={() => setDeductionReasonInput(s)}
-                        className="text-[10px] bg-white dark:bg-bg border border-rose-500/20 px-2 py-0.5 rounded-lg text-rose-800 dark:text-rose-300 hover:bg-rose-50 transition-colors"
-                      >
-                        {s}
-                      </button>
-                    )
-                  )}
+              {/* ============================================================== */}
+              {/* الخطوة 4: المراجعة النهائية وتأكيد الصرف */}
+              {/* ============================================================== */}
+              {salaryStep === 4 && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-200">
+                  {/* كشف الحساب والنتيجة النهائية التلقائية */}
+                  <div className="rounded-2xl border-2 border-brand/40 bg-gradient-to-br from-brand/10 via-surface to-surface overflow-hidden shadow-sm">
+                    <div className="p-4 border-b border-line/60 bg-brand/5 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Calculator className="w-4 h-4 text-brand" />
+                        <h4 className="font-black text-sm text-ink">كشف راتب المعلم: {selectedTeacherObj?.full_name || selectedTeacherUsername}</h4>
+                      </div>
+                      <span className="text-xs font-bold font-mono bg-brand-soft text-brand-ink px-2.5 py-0.5 rounded-full">
+                        شهر {selectedMonth}
+                      </span>
+                    </div>
+
+                    <div className="p-4 sm:p-5 space-y-3">
+                      {/* تفاصيل الحسبة */}
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center justify-between text-ink-soft py-1 border-b border-line/50">
+                          <span className="font-bold">1. الراتب الأساسي الشهري:</span>
+                          <span className="font-mono font-bold text-ink">{liveBase.toLocaleString()} ج.م</span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-1 border-b border-line/50">
+                          <span className="font-bold flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
+                            <TrendingUp size={14} />
+                            2. الحوافز والمكافآت الإضافية:
+                          </span>
+                          <span className="font-mono font-bold text-emerald-600">
+                            {liveIncentive > 0 ? `+ ${liveIncentive.toLocaleString()} ج.م` : "0 ج.م"}
+                          </span>
+                        </div>
+                        {liveIncentive > 0 && incentiveReasonInput && (
+                          <p className="text-[11px] text-ink-mute -mt-1 pr-5">سبب المكافأة: {incentiveReasonInput}</p>
+                        )}
+
+                        <div className="flex items-center justify-between py-1 border-b border-line/50">
+                          <span className="font-bold flex items-center gap-1.5 text-rose-700 dark:text-rose-400">
+                            <TrendingDown size={14} />
+                            3. الخصومات والاستقطاعات:
+                          </span>
+                          <span className="font-mono font-bold text-rose-600">
+                            {liveDeduction > 0 ? `- ${liveDeduction.toLocaleString()} ج.م` : "0 ج.م"}
+                          </span>
+                        </div>
+                        {liveDeduction > 0 && deductionReasonInput && (
+                          <p className="text-[11px] text-ink-mute -mt-1 pr-5">سبب الخصم: {deductionReasonInput}</p>
+                        )}
+                      </div>
+
+                      {/* الصافي المستحق النهائي */}
+                      <div className="mt-3 pt-3 border-t-2 border-dashed border-brand/30 flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-ink-mute font-bold">الصافي الكلي المستحق للصرف:</p>
+                          <p className="text-[11px] text-ink-mute">بعد إضافة الحوافز وخصم الاستقطاعات</p>
+                        </div>
+                        <div className="text-left">
+                          <span className="text-2xl sm:text-3xl font-black text-brand-ink tracking-tight">
+                            {liveNetSalary.toLocaleString()}
+                          </span>
+                          <span className="text-xs font-bold text-ink-mute mr-1.5">جنيه مصري</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* خيارات حالة وتاريخ الصرف */}
+                  <div className="bg-surface p-4 rounded-2xl border border-line space-y-3">
+                    <label className="block text-xs font-bold text-ink">حالة الصرف لهذا الراتب:</label>
+
+                    {/* خيارات الحالة كأزرار بطاقات سريعة */}
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { val: "paid", label: "تم الصرف (مدفوع)", icon: CheckCircle2, activeColor: "bg-emerald-600 text-white border-emerald-600" },
+                        { val: "unpaid", label: "بانتظار الصرف", icon: Clock, activeColor: "bg-amber-600 text-white border-amber-600" },
+                        { val: "advance", label: "سلفة", icon: Banknote, activeColor: "bg-blue-600 text-white border-blue-600" },
+                      ].map((item) => {
+                        const Icon = item.icon;
+                        const isSelected = salaryStatusInput === item.val;
+                        return (
+                          <button
+                            key={item.val}
+                            type="button"
+                            onClick={() => setSalaryStatusInput(item.val as any)}
+                            className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1.5 transition-all ${
+                              isSelected
+                                ? item.activeColor + " shadow-xs ring-1"
+                                : "bg-bg-alt/50 border-line text-ink-mute hover:text-ink hover:border-brand/40"
+                            }`}
+                          >
+                            <Icon size={16} />
+                            <span className="text-[11px]">{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      <div>
+                        <label className="block text-xs font-bold text-ink mb-1">تاريخ الصرف</label>
+                        <input
+                          type="date"
+                          value={paidDateInput}
+                          onChange={(e) => setPaidDateInput(e.target.value)}
+                          className="field text-xs font-mono !py-1.5"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-ink mb-1">ملاحظات إضافية (اختياري)</label>
+                        <input
+                          type="text"
+                          value={noteInput}
+                          onChange={(e) => setNoteInput(e.target.value)}
+                          placeholder="ملاحظات تظهر بسجل المعلم..."
+                          className="field text-xs !py-1.5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* أزرار الخطوة 4 النهائية */}
+                  <div className="flex items-center justify-between pt-3 border-t border-line">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSalaryStep(3)}
+                      className="!min-h-10 px-4 text-xs font-bold flex items-center gap-1.5"
+                    >
+                      <ArrowRight size={15} />
+                      <span>السابق (تعديل الخصومات)</span>
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      loading={modalLoading}
+                      size="sm"
+                      className="!min-h-10 px-6 text-xs font-bold flex items-center gap-2"
+                    >
+                      <Check size={16} />
+                      <span>تأكيد واعتماد الراتب رسميًا</span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-
-              {/* بطاقة الحساب التلقائي للراتب الكلي (صافي المستحق) */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-brand/10 via-brand/5 to-transparent border-2 border-brand/30">
-                <div className="flex items-center justify-between text-xs text-ink-mute mb-2">
-                  <span className="font-bold flex items-center gap-1 text-ink">
-                    <Sparkles className="w-3.5 h-3.5 text-brand" />
-                    معادلة الحساب التلقائي:
-                  </span>
-                  <span>(الأساسي + الحوافز - الخصومات)</span>
-                </div>
-
-                <div className="flex items-center justify-between text-xs font-mono border-b border-line/60 pb-2 mb-2 text-ink-soft">
-                  <span>الأساسي: {liveBase.toLocaleString()} ج.م</span>
-                  <span className="text-emerald-600">+ حوافز: {liveIncentive.toLocaleString()} ج.م</span>
-                  <span className="text-rose-600">- خصومات: {liveDeduction.toLocaleString()} ج.م</span>
-                </div>
-
-                <div className="flex items-center justify-between pt-1">
-                  <span className="font-extrabold text-sm text-ink">الراتب الكلي المستحق:</span>
-                  <span className="font-black text-xl text-brand-ink">
-                    {liveNetSalary.toLocaleString()} جنيه مصري
-                  </span>
-                </div>
-              </div>
-
-              {/* حالة وتاريخ الصرف والملاحظات */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-ink mb-1.5">حالة الصرف</label>
-                  <select
-                    value={salaryStatusInput}
-                    onChange={(e) => setSalaryStatusInput(e.target.value as any)}
-                    className="input-text w-full text-xs font-bold bg-bg"
-                  >
-                    <option value="paid">تم الصرف (مدفوع)</option>
-                    <option value="unpaid">بانتظار الصرف (غير مدفوع)</option>
-                    <option value="advance">سلفة</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-ink mb-1.5">تاريخ الصرف</label>
-                  <input
-                    type="date"
-                    value={paidDateInput}
-                    onChange={(e) => setPaidDateInput(e.target.value)}
-                    className="input-text w-full text-xs font-mono"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-ink mb-1.5">ملاحظات إضافية</label>
-                  <input
-                    type="text"
-                    value={noteInput}
-                    onChange={(e) => setNoteInput(e.target.value)}
-                    placeholder="أي ملاحظات للإدارة أو المعلم..."
-                    className="input-text w-full text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* أزرار الإجراءات */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-line">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="btn-outline text-xs !py-2.5 !px-4"
-                  disabled={modalLoading}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  disabled={modalLoading}
-                  className="btn-primary text-xs !py-2.5 !px-6 flex items-center gap-2 shadow-sm font-bold"
-                >
-                  {modalLoading ? <Loader size="sm" /> : <Check className="w-4 h-4" />}
-                  حفظ واعتماد الراتب
-                </button>
-              </div>
+              )}
             </form>
           </div>
         </div>

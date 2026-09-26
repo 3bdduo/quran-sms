@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { m, AnimatePresence } from "framer-motion";
-import { PlayCircle, Radio, X, Video, ExternalLink, Globe, Sparkles, BookOpen } from "lucide-react";
+import { PlayCircle, Radio, X, Video, ExternalLink, Globe, BookOpen } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Loader } from "@/components/ui/Loader";
@@ -170,7 +170,7 @@ export default function MediaPage() {
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-soft text-brand-ink text-xs font-bold mb-3">
-              <Sparkles size={14} />
+              <BookOpen size={14} />
               ترشيحات قرآنية موثوقة
             </div>
             <h2 className="font-ruqaa font-bold text-3xl sm:text-4xl text-ink leading-snug">

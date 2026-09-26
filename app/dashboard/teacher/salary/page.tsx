@@ -10,7 +10,7 @@ import {
   TrendingDown,
   TrendingUp,
   AlertCircle,
-  Sparkles,
+  Wallet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { salariesApi } from "@/lib/resources";
@@ -106,7 +106,7 @@ export default function TeacherSalaryPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
             <div className="flex items-center gap-2.5">
               <div className="w-10 h-10 rounded-2xl bg-brand-soft flex items-center justify-center text-brand-ink">
-                <Sparkles className="w-5 h-5" />
+                <Wallet className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="font-extrabold text-ink text-base sm:text-lg">

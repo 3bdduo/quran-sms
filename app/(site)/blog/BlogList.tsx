@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { BookText, ExternalLink, Globe, Sparkles, ArrowLeft } from "lucide-react";
+import { BookText, ExternalLink, Globe, BookOpen, ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Loader } from "@/components/ui/Loader";
 import { Reveal } from "@/components/ui/Reveal";
@@ -117,7 +117,7 @@ export default function BlogList() {
       <div className="mt-20 pt-14 border-t border-line/60">
         <div className="text-center max-w-xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-soft text-brand-ink text-xs font-bold mb-3">
-            <Sparkles size={14} />
+            <BookOpen size={14} />
             روابط ومراجع موصى بها
           </div>
           <h2 className="font-ruqaa font-bold text-2xl sm:text-3xl text-ink leading-snug">

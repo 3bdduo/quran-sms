@@ -13,8 +13,12 @@ import {
   UserMinus,
   X,
   ShieldAlert,
+  Download,
+  ArrowLeftRight,
+  UserCog,
 } from "lucide-react";
 import { groupsApi, eduGroupsApi, studentsApi, teachersApi } from "@/lib/resources";
+import { exportToCsv } from "@/lib/exportTable";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
@@ -36,6 +40,27 @@ export default function AdminGroupsPage() {
   const [editingGroup, setEditingGroup] = useState<GroupItem | EduGroupItem | null>(null);
   const [showAddStudentToEduModal, setShowAddStudentToEduModal] = useState(false);
   const [selectedStudentToAdd, setSelectedStudentToAdd] = useState("");
+
+  // Transfer student modal
+  const [transferStudentModal, setTransferStudentModal] = useState<{
+    open: boolean;
+    studentId: string;
+    studentName: string;
+    fromGroupId: string;
+    type: "ring" | "edu";
+  }>({ open: false, studentId: "", studentName: "", fromGroupId: "", type: "ring" });
+  const [transferTargetGroupId, setTransferTargetGroupId] = useState("");
+  const [transferLoading, setTransferLoading] = useState(false);
+
+  // Change teacher modal
+  const [changeTeacherModal, setChangeTeacherModal] = useState<{
+    open: boolean;
+    groupId: string;
+    groupName: string;
+    type: "ring" | "edu";
+  }>({ open: false, groupId: "", groupName: "", type: "ring" });
+  const [changeTeacherTargetId, setChangeTeacherTargetId] = useState("");
+  const [changeTeacherLoading, setChangeTeacherLoading] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -206,6 +231,110 @@ export default function AdminGroupsPage() {
     });
   }
 
+  function handleExportRingStudents(details: any) {
+    if (!details?.students?.length) return;
+    const headers = ["م", "اسم الطالب", "الرقم القومي", "المحفوظ", "الهاتف"];
+    const rows = details.students.map((s: any, i: number) => [
+      i + 1,
+      s.name,
+      s.national_id || "-",
+      s.memorized_amount || "0",
+      s.phone || "-",
+    ]);
+    exportToCsv(`طلاب-حلقة-${details.name}`, headers, rows);
+    showToast("تم تصدير كشف الطلاب بنجاح", "success");
+  }
+
+  function handleExportEduStudents(details: any) {
+    if (!details?.students?.length) return;
+    const headers = ["م", "اسم الطالب", "حالات الحضور المسجلة", "الاختبارات المرصودة"];
+    const rows = details.students.map((s: any, i: number) => [
+      i + 1,
+      s.studentName || s.studentId,
+      s.attendanceRecords?.length || 0,
+      s.examRecords?.length || 0,
+    ]);
+    exportToCsv(`طلاب-مجموعة-${details.name}`, headers, rows);
+    showToast("تم تصدير كشف الطلاب بنجاح", "success");
+  }
+
+  function getTeacherDisplayName(item: any) {
+    if (!item) return "غير محدد";
+    if (item.teacherName) return item.teacherName;
+    const found = teachersList.find(
+      (t) =>
+        (item.teacherId && t.id === item.teacherId) ||
+        (item.teacherUsername && t.username === item.teacherUsername)
+    );
+    return found?.full_name || item.teacherUsername || "غير محدد";
+  }
+
+  function handleExportGroupsList() {
+    const currentList = tab === "groups" ? groups : eduGroups;
+    if (!currentList.length) return;
+    const headers = ["م", "اسم المجموعة", "المعلم المسؤول", "عدد الطلاب"];
+    const rows = currentList.map((item, i) => [
+      i + 1,
+      item.name,
+      getTeacherDisplayName(item),
+      item.studentsCount ?? 0,
+    ]);
+    exportToCsv(
+      tab === "groups" ? "قائمة-حلقات-القرآن" : "قائمة-المجموعات-التعليمية",
+      headers,
+      rows
+    );
+    showToast("تم تصدير القائمة بنجاح", "success");
+  }
+
+  async function handleTransferStudent() {
+    if (!transferStudentModal.studentId || !transferTargetGroupId) return;
+    setTransferLoading(true);
+    try {
+      if (transferStudentModal.type === "ring") {
+        await groupsApi.transferStudent(transferStudentModal.studentId, transferTargetGroupId);
+      } else {
+        await eduGroupsApi.transferStudent(
+          transferStudentModal.fromGroupId,
+          transferStudentModal.studentId,
+          transferTargetGroupId
+        );
+      }
+      showToast("تم نقل الطالب بنجاح ✓", "success");
+      setTransferStudentModal({ open: false, studentId: "", studentName: "", fromGroupId: "", type: "ring" });
+      setTransferTargetGroupId("");
+      // تحديث التفاصيل إن كان المستخدم يشاهد الحلقة
+      if (transferStudentModal.fromGroupId) {
+        await viewGroupDetails(transferStudentModal.fromGroupId);
+      }
+      await loadData();
+    } catch (err: any) {
+      showToast(err.message || "فشل نقل الطالب", "error");
+    } finally {
+      setTransferLoading(false);
+    }
+  }
+
+  async function handleChangeTeacher() {
+    if (!changeTeacherModal.groupId || !changeTeacherTargetId) return;
+    setChangeTeacherLoading(true);
+    try {
+      if (changeTeacherModal.type === "ring") {
+        await groupsApi.changeTeacher(changeTeacherModal.groupId, changeTeacherTargetId);
+      } else {
+        await eduGroupsApi.changeTeacher(changeTeacherModal.groupId, changeTeacherTargetId);
+      }
+      showToast("تم تغيير المعلم بنجاح ✓", "success");
+      setChangeTeacherModal({ open: false, groupId: "", groupName: "", type: "ring" });
+      setChangeTeacherTargetId("");
+      await loadData();
+    } catch (err: any) {
+      showToast(err.message || "فشل تغيير المعلم", "error");
+    } finally {
+      setChangeTeacherLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-6 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -216,16 +345,26 @@ export default function AdminGroupsPage() {
           </p>
         </div>
 
-        <Button
-          onClick={() => {
-            resetForm();
-            setShowAddGroupModal(true);
-          }}
-          className="flex items-center gap-2"
-        >
-          <Plus size={17} />
-          <span>{tab === "groups" ? "حلقة تحفيظ جديدة" : "مجموعة تعليمية جديدة"}</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleExportGroupsList}
+            className="flex items-center gap-2"
+          >
+            <Download size={17} />
+            <span>تصدير Excel</span>
+          </Button>
+          <Button
+            onClick={() => {
+              resetForm();
+              setShowAddGroupModal(true);
+            }}
+            className="flex items-center gap-2"
+          >
+            <Plus size={17} />
+            <span>{tab === "groups" ? "حلقة تحفيظ جديدة" : "مجموعة تعليمية جديدة"}</span>
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -281,16 +420,16 @@ export default function AdminGroupsPage() {
                     <button
                       onClick={() => openEdit(item)}
                       title="تعديل"
-                      className="p-2 text-ink-mute hover:text-brand-ink rounded-lg"
+                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-lg transition-colors"
                     >
-                      <Edit2 size={16} />
+                      <Edit2 size={18} />
                     </button>
                     <button
                       onClick={() => handleDeleteGroup(item.id, item.name)}
                       title="حذف"
-                      className="p-2 text-ink-mute hover:text-danger-ink rounded-lg"
+                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-lg transition-colors"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 </div>
@@ -298,24 +437,38 @@ export default function AdminGroupsPage() {
                 <h3 className="font-extrabold text-lg text-ink">{item.name}</h3>
                 <p className="text-xs text-ink-mute mt-1">
                   المعلم المسؤول:{" "}
-                  <span className="font-bold text-ink-soft">{item.teacherUsername}</span>
+                  <span className="font-bold text-ink-soft">{getTeacherDisplayName(item)}</span>
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-line flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-line flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-xs font-bold text-ink-soft flex items-center gap-1.5">
                   <Users size={14} className="text-brand-ink" />
                   {item.studentsCount ?? 0} طالب مسجل
                 </span>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => viewGroupDetails(item.id)}
-                  className="text-xs"
-                >
-                  عرض الطلاب
-                </Button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setChangeTeacherModal({
+                      open: true,
+                      groupId: item.id,
+                      groupName: item.name,
+                      type: tab === "groups" ? "ring" : "edu",
+                    })}
+                    title="تغيير المعلم"
+                    className="p-2 min-w-[34px] min-h-[34px] flex items-center justify-center text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-lg transition-colors"
+                  >
+                    <UserCog size={17} />
+                  </button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => viewGroupDetails(item.id)}
+                    className="text-xs"
+                  >
+                    عرض الطلاب
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
@@ -331,15 +484,26 @@ export default function AdminGroupsPage() {
                 طلاب حلقة: {activeGroupDetails.name}
               </h3>
               <p className="text-xs text-ink-mute">
-                معلم الحلقة: {activeGroupDetails.teacherUsername}
+                معلم الحلقة: {getTeacherDisplayName(activeGroupDetails)}
               </p>
             </div>
-            <button
-              onClick={() => setActiveGroupDetails(null)}
-              className="p-2 text-ink-mute hover:text-ink rounded-lg"
-            >
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExportRingStudents(activeGroupDetails)}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <Download size={15} />
+                <span>تصدير Excel</span>
+              </Button>
+              <button
+                onClick={() => setActiveGroupDetails(null)}
+                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           {!activeGroupDetails.students?.length ? (
@@ -349,19 +513,37 @@ export default function AdminGroupsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-line bg-bg-alt/60 text-right text-ink-mute">
+                    <th className="p-3 font-bold text-center w-12">م</th>
                     <th className="p-3 font-bold">الاسم</th>
                     <th className="p-3 font-bold">الرقم القومي</th>
                     <th className="p-3 font-bold">المحفوظ</th>
                     <th className="p-3 font-bold">الهاتف</th>
+                    <th className="p-3 font-bold text-center">نقل</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {activeGroupDetails.students.map((s) => (
+                  {activeGroupDetails.students.map((s, index) => (
                     <tr key={s.id} className="border-b border-line last:border-0 hover:bg-bg-alt/40">
+                      <td className="p-3 text-center font-bold text-ink-mute">{index + 1}</td>
                       <td className="p-3 font-bold text-ink">{s.name}</td>
                       <td className="p-3 font-mono text-xs text-ink-soft">{s.national_id}</td>
                       <td className="p-3 text-ink-soft">{s.memorized_amount || "0"}</td>
                       <td className="p-3 text-ink-soft">{s.phone || "-"}</td>
+                      <td className="p-3 text-center">
+                        <button
+                          onClick={() => setTransferStudentModal({
+                            open: true,
+                            studentId: s.id,
+                            studentName: s.name,
+                            fromGroupId: activeGroupDetails.id,
+                            type: "ring",
+                          })}
+                          className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg text-brand-ink hover:bg-brand-soft transition-colors"
+                          title="نقل الطالب لحلقة أخرى"
+                        >
+                          <ArrowLeftRight size={15} />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -380,10 +562,19 @@ export default function AdminGroupsPage() {
                 طلاب المجموعة التعليمية: {activeEduGroupDetails.name}
               </h3>
               <p className="text-xs text-ink-mute">
-                معلم المجموعة: {activeEduGroupDetails.teacherUsername}
+                معلم المجموعة: {getTeacherDisplayName(activeEduGroupDetails)}
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExportEduStudents(activeEduGroupDetails)}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <Download size={15} />
+                <span>تصدير Excel</span>
+              </Button>
               <Button
                 size="sm"
                 onClick={() => setShowAddStudentToEduModal(true)}
@@ -410,6 +601,7 @@ export default function AdminGroupsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-line bg-bg-alt/60 text-right text-ink-mute">
+                    <th className="p-3 font-bold text-center w-12">م</th>
                     <th className="p-3 font-bold">اسم الطالب</th>
                     <th className="p-3 font-bold">حالات الحضور المسجلة</th>
                     <th className="p-3 font-bold">الاختبارات المرصودة</th>
@@ -417,11 +609,12 @@ export default function AdminGroupsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {activeEduGroupDetails.students.map((st) => (
+                  {activeEduGroupDetails.students.map((st, index) => (
                     <tr
                       key={st.studentId}
                       className="border-b border-line last:border-0 hover:bg-bg-alt/40"
                     >
+                      <td className="p-3 text-center font-bold text-ink-mute">{index + 1}</td>
                       <td className="p-3 font-bold text-ink">{st.studentName || st.studentId}</td>
                       <td className="p-3 text-xs text-ink-soft">
                         {st.attendanceRecords?.length || 0} تسجيل حضور
@@ -430,13 +623,28 @@ export default function AdminGroupsPage() {
                         {st.examRecords?.length || 0} اختبار
                       </td>
                       <td className="p-3 text-center">
-                        <button
-                          onClick={() => handleRemoveStudentFromEduGroup(st.studentId)}
-                          className="p-1.5 rounded-lg text-danger-ink hover:bg-danger-soft transition-colors"
-                          title="إزالة الطالب من المجموعة"
-                        >
-                          <UserMinus size={16} />
-                        </button>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => setTransferStudentModal({
+                              open: true,
+                              studentId: st.studentId,
+                              studentName: st.studentName || st.studentId,
+                              fromGroupId: activeEduGroupDetails.id,
+                              type: "edu",
+                            })}
+                            className="p-1.5 min-w-[30px] min-h-[30px] flex items-center justify-center rounded-lg text-brand-ink hover:bg-brand-soft transition-colors"
+                            title="نقل الطالب لمجموعة أخرى"
+                          >
+                            <ArrowLeftRight size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleRemoveStudentFromEduGroup(st.studentId)}
+                            className="p-1.5 min-w-[30px] min-h-[30px] flex items-center justify-center rounded-lg text-danger-ink hover:bg-danger-soft transition-colors"
+                            title="إزالة الطالب من المجموعة"
+                          >
+                            <UserMinus size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -495,7 +703,7 @@ export default function AdminGroupsPage() {
                     <option value="">-- يرجى اختيار المعلم --</option>
                     {teachersList.map((t) => (
                       <option key={t.id} value={t.id}>
-                        {t.full_name} ({t.username})
+                        {t.full_name}
                       </option>
                     ))}
                   </select>
@@ -579,6 +787,136 @@ export default function AdminGroupsPage() {
                   إضافة
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: نقل طالب */}
+      {transferStudentModal.open && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full sh-float border border-line space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-extrabold text-lg text-ink flex items-center gap-2">
+                  <ArrowLeftRight size={20} className="text-brand-ink" />
+                  نقل الطالب
+                </h3>
+                <p className="text-xs text-ink-mute mt-0.5">
+                  الطالب: <span className="font-bold text-ink">{transferStudentModal.studentName}</span>
+                </p>
+              </div>
+              <button
+                onClick={() => { setTransferStudentModal({ open: false, studentId: "", studentName: "", fromGroupId: "", type: "ring" }); setTransferTargetGroupId(""); }}
+                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div>
+              <label className="field-label">
+                {transferStudentModal.type === "ring" ? "اختر الحلقة المستهدفة" : "اختر المجموعة التعليمية المستهدفة"}
+              </label>
+              <select
+                value={transferTargetGroupId}
+                onChange={(e) => setTransferTargetGroupId(e.target.value)}
+                className="field field-select text-sm"
+              >
+                <option value="">-- اختر --</option>
+                {(transferStudentModal.type === "ring" ? groups : eduGroups)
+                  .filter((g) => g.id !== transferStudentModal.fromGroupId)
+                  .map((g) => (
+                    <option key={g.id} value={g.id}>
+                      {g.name} — {getTeacherDisplayName(g)}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => { setTransferStudentModal({ open: false, studentId: "", studentName: "", fromGroupId: "", type: "ring" }); setTransferTargetGroupId(""); }}
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={handleTransferStudent}
+                loading={transferLoading}
+                disabled={!transferTargetGroupId}
+              >
+                نقل الطالب
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: تغيير معلم المجموعة */}
+      {changeTeacherModal.open && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full sh-float border border-line space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-extrabold text-lg text-ink flex items-center gap-2">
+                  <UserCog size={20} className="text-brand-ink" />
+                  تغيير المعلم
+                </h3>
+                <p className="text-xs text-ink-mute mt-0.5">
+                  {changeTeacherModal.type === "ring" ? "الحلقة" : "المجموعة"}:{" "}
+                  <span className="font-bold text-ink">{changeTeacherModal.groupName}</span>
+                </p>
+              </div>
+              <button
+                onClick={() => { setChangeTeacherModal({ open: false, groupId: "", groupName: "", type: "ring" }); setChangeTeacherTargetId(""); }}
+                className="p-2 text-ink-mute hover:text-ink rounded-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div>
+              <label className="field-label">
+                اختر المعلم الجديد
+                {changeTeacherModal.type === "ring" && (
+                  <span className="text-ink-mute font-normal"> (معلمو الحلقات فقط)</span>
+                )}
+              </label>
+              <select
+                value={changeTeacherTargetId}
+                onChange={(e) => setChangeTeacherTargetId(e.target.value)}
+                className="field field-select text-sm"
+              >
+                <option value="">-- اختر المعلم الجديد --</option>
+                {teachersList
+                  .filter((t) => changeTeacherModal.type !== "ring" || t.teacher_type === "group")
+                  .map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.full_name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-300">
+              ⚠️ سيتم تغيير المعلم المسؤول. الطلاب يظلون في نفس {changeTeacherModal.type === "ring" ? "الحلقة" : "المجموعة"}.
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => { setChangeTeacherModal({ open: false, groupId: "", groupName: "", type: "ring" }); setChangeTeacherTargetId(""); }}
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={handleChangeTeacher}
+                loading={changeTeacherLoading}
+                disabled={!changeTeacherTargetId}
+              >
+                تغيير المعلم
+              </Button>
             </div>
           </div>
         </div>

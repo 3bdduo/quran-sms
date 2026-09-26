@@ -324,16 +324,16 @@ export default function AdminCompetitionsPage() {
                             });
                           }}
                           title="تعديل المسابقة"
-                          className="p-2 text-ink-mute hover:text-brand-ink rounded-lg"
+                          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-brand-ink hover:bg-brand-soft rounded-lg transition-colors"
                         >
-                          <Edit2 size={16} />
+                          <Edit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDeleteCompetition(comp.id, comp.name)}
                           title="حذف المسابقة"
-                          className="p-2 text-ink-mute hover:text-danger-ink rounded-lg"
+                          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-lg transition-colors"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </div>
@@ -553,10 +553,10 @@ export default function AdminCompetitionsPage() {
 
                     <button
                       onClick={() => handleDeleteExam(ex.examId)}
-                      className="p-2 text-ink-mute hover:text-danger-ink rounded-lg"
+                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-ink-mute hover:text-danger-ink hover:bg-danger-soft rounded-lg transition-colors"
                       title="حذف الامتحان"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={18} />
                     </button>
                   </div>
 

@@ -102,6 +102,14 @@ export const groupsApi = {
     body: { name?: string; teacherId?: string }
   ) => api.put<GroupItem>(`/groups/${id}`, body, true),
   remove: (id: string) => api.delete(`/groups/${id}`, true),
+  transferStudent: (studentId: string, toGroupId: string) =>
+    api.post<{ message: string }>("/groups/transfer-student", { studentId, toGroupId }, true),
+  changeTeacher: (groupId: string, newTeacherId: string) =>
+    api.post<{ message: string; teacherName: string; teacherUsername: string }>(
+      `/groups/${groupId}/change-teacher`,
+      { newTeacherId },
+      true
+    ),
 };
 
 // 4. المجموعات التربوية والتعليمية
@@ -134,6 +142,18 @@ export const eduGroupsApi = {
     api.post<{ message: string; count: number }>(`/edu-groups/${eduGroupId}/students/bulk`, { studentIds }, true),
   removeStudent: (eduGroupId: string, studentId: string) =>
     api.delete(`/edu-groups/${eduGroupId}/students/${studentId}`, true),
+  transferStudent: (fromGroupId: string, studentId: string, toGroupId: string) =>
+    api.post<{ message: string }>(
+      `/edu-groups/${fromGroupId}/transfer-student`,
+      { studentId, toGroupId },
+      true
+    ),
+  changeTeacher: (groupId: string, newTeacherId: string) =>
+    api.post<{ message: string; teacherName: string; teacherUsername: string }>(
+      `/edu-groups/${groupId}/change-teacher`,
+      { newTeacherId },
+      true
+    ),
 };
 
 // 5. الحضور والغياب (حلقات القرآن)

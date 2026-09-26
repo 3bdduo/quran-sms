@@ -150,10 +150,10 @@ export default function AdminMessagesPage() {
                     e.stopPropagation();
                     handleDeleteMessage(msg.id);
                   }}
-                  className="p-1 rounded text-ink-mute hover:text-danger-ink"
+                  className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg text-ink-mute hover:text-danger-ink hover:bg-danger-soft transition-colors"
                   title="حذف الرسالة"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>
