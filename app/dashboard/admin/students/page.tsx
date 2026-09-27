@@ -290,7 +290,7 @@ export default function AdminStudentsPage() {
             </Button>
 
             {showExportMenu && (
-              <div className="absolute left-0 mt-2 w-64 bg-surface border border-line rounded-2xl sh-float z-30 overflow-hidden">
+              <div className="absolute left-0 mt-2 w-64 bg-surface border border-line rounded-2xl shadow-float z-30 overflow-hidden">
                 <button
                   onClick={handleExportAllGrouped}
                   className="w-full text-right px-4 py-3 text-sm font-bold text-ink hover:bg-bg-alt transition-colors flex items-center gap-2"
@@ -476,7 +476,7 @@ export default function AdminStudentsPage() {
       {/* Modal: تعديل بيانات طالب */}
       {editingStudent && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowExportMenu(false)}>
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full sh-float border border-line overflow-y-auto max-h-[90vh]">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-float border border-line overflow-y-auto max-h-[90vh]">
             <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
               <h3 className="font-extrabold text-lg text-ink">
                 تعديل بيانات الطالب

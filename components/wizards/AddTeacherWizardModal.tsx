@@ -177,7 +177,7 @@ export function AddTeacherWizardModal({
         if (e.target === e.currentTarget && currentStep !== 5) onClose();
       }}
     >
-      <div className="bg-surface rounded-3xl w-full max-w-lg sh-float border border-line relative overflow-hidden my-auto">
+      <div className="bg-surface rounded-3xl w-full max-w-lg shadow-float border border-line relative overflow-hidden my-auto">
         {/* شريط الإغلاق والعنوان */}
         <div className="p-5 sm:p-6 pb-4 border-b border-line flex items-center justify-between">
           <div className="flex items-center gap-2.5">

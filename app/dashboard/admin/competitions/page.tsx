@@ -583,7 +583,7 @@ export default function AdminCompetitionsPage() {
       {/* Modal: إضافة / تعديل مسابقة */}
       {(showAddCompModal || editingComp) && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full sh-float border border-line">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-float border border-line">
             <h3 className="font-extrabold text-lg text-ink mb-4">
               {editingComp ? "تعديل المسابقة" : "إنشاء مسابقة جديدة"}
             </h3>
@@ -645,7 +645,7 @@ export default function AdminCompetitionsPage() {
       {/* Modal: إضافة مشارك لمسابقة */}
       {showAddParticipantModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full sh-float border border-line">
+          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-float border border-line">
             <h3 className="font-extrabold text-lg text-ink mb-4">إضافة مشارك للمسابقة</h3>
             <div className="space-y-4">
               <div>
@@ -681,7 +681,7 @@ export default function AdminCompetitionsPage() {
       {/* Modal: رصد النتائج والمراكز */}
       {showResultsModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full sh-float border border-line max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-float border border-line max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <h3 className="font-extrabold text-lg text-ink">رصد درجات المشاركين</h3>
               <button
@@ -739,7 +739,7 @@ export default function AdminCompetitionsPage() {
       {/* Modal: رصد امتحان جديد للمجموعة */}
       {showAddExamModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full sh-float border border-line max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-float border border-line max-h-[90vh] overflow-y-auto">
             <h3 className="font-extrabold text-lg text-ink mb-4">رصد امتحان جديد للمجموعة</h3>
             <form onSubmit={handleCreateExam} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

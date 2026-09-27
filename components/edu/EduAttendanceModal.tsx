@@ -99,7 +99,7 @@ export function EduAttendanceModal({ isOpen, onClose, eduGroup }: EduAttendanceM
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-      <div className="bg-surface rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col sh-float border border-line overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-surface rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-float border border-line overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="p-5 sm:p-6 border-b border-line flex items-center justify-between bg-bg-alt/40">

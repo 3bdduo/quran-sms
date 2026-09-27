@@ -46,24 +46,26 @@ export function Hero() {
         className="absolute inset-0 pattern-star opacity-[0.16] pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_72%)]"
       />
 
-      {/* نجمة عملاقة بتلف ببطء ورا العنوان في حاوية مركزة لمنع تضارب transform */}
+      {/* نجمة عملاقة بتلف ببطء ورا العنوان — الـ animation على div داخلي منفصل عن الـ translate عشان ميتعارضوش */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-[-6%] h-[34rem] w-[34rem] sm:h-[46rem] sm:w-[46rem] -translate-x-1/2"
       >
-        <svg
-          viewBox="0 0 400 400"
-          className="w-full h-full text-gold opacity-[0.16] animate-spin-slower"
-        >
-          <g fill="none" stroke="currentColor" strokeWidth="1.2">
-            <rect x="60" y="60" width="280" height="280" />
-            <rect x="60" y="60" width="280" height="280" transform="rotate(45 200 200)" />
-            <rect x="100" y="100" width="200" height="200" />
-            <rect x="100" y="100" width="200" height="200" transform="rotate(45 200 200)" />
-            <circle cx="200" cy="200" r="140" />
-            <circle cx="200" cy="200" r="60" />
-          </g>
-        </svg>
+        <div className="w-full h-full animate-spin-slower" style={{ willChange: "transform" }}>
+          <svg
+            viewBox="0 0 400 400"
+            className="w-full h-full text-gold opacity-[0.16]"
+          >
+            <g fill="none" stroke="currentColor" strokeWidth="1.2">
+              <rect x="60" y="60" width="280" height="280" />
+              <rect x="60" y="60" width="280" height="280" transform="rotate(45 200 200)" />
+              <rect x="100" y="100" width="200" height="200" />
+              <rect x="100" y="100" width="200" height="200" transform="rotate(45 200 200)" />
+              <circle cx="200" cy="200" r="140" />
+              <circle cx="200" cy="200" r="60" />
+            </g>
+          </svg>
+        </div>
       </div>
 
       {/* توهجات طايرة */}

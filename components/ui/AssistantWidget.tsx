@@ -39,13 +39,21 @@ export function AssistantWidget() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // منع تمرير الصفحة الخلفية أثناء فتح الشات
+  // منع تمرير الصفحة الخلفية أثناء فتح الشات — بنستخدم overflow-y:scroll بدل hidden
+  // عشان نحافظ على مكان الـ scrollbar ونمنع الـ layout shift (الوميض)
   useEffect(() => {
     if (open) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
+      const scrollY = window.scrollY;
+      document.body.style.overflowY = "scroll";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
       return () => {
-        document.body.style.overflow = prev;
+        document.body.style.overflowY = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        window.scrollTo(0, scrollY);
       };
     }
   }, [open]);
@@ -154,9 +162,8 @@ export function AssistantWidget() {
         aria-label="المساعد الذكي لموقع مدرسة التربية بالقرءان الكريم"
         aria-hidden={open}
         tabIndex={open ? -1 : 0}
-        className={`fixed bottom-5 left-5 z-40 w-14 h-14 rounded-full bg-brand text-on-brand flex items-center justify-center sh-float hover:sh-brand transition-all duration-200 cursor-pointer group ${
-          open ? "opacity-0 pointer-events-none scale-90" : "opacity-100 pointer-events-auto scale-100"
-        }`}
+        className={`fixed bottom-5 left-5 z-40 w-14 h-14 rounded-full bg-brand text-on-brand flex items-center justify-center sh-float hover:sh-brand transition-all duration-200 cursor-pointer group ${open ? "opacity-0 pointer-events-none scale-90" : "opacity-100 pointer-events-auto scale-100"
+          }`}
         style={{
           boxShadow: "0 10px 30px -8px color-mix(in oklab, var(--brand) 60%, transparent)",
         }}
@@ -171,6 +178,7 @@ export function AssistantWidget() {
             {/* خلفية شبه شفافة تغطي الصفحة بالكامل — الضغط في أي مكان يغلق الشات بسلاسة وبدون لاج الـ blur */}
             <m.div
               key="chat-backdrop"
+              data-motion-el
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -247,11 +255,10 @@ export function AssistantWidget() {
                     >
                       {/* فقاعة الرسالة */}
                       <div
-                        className={`max-w-[84%] rounded-2xl px-4 py-3 text-[14px] sm:text-[14.5px] leading-relaxed shadow-xs transition-colors ${
-                          isUser
+                        className={`max-w-[84%] rounded-2xl px-4 py-3 text-[14px] sm:text-[14.5px] leading-relaxed shadow-xs transition-colors ${isUser
                             ? "bg-[#f2eee6] dark:bg-[#25201b] text-[#1a251c] dark:text-[#f5ede3] border border-[#dad2c3] dark:border-[#42372c] rounded-tr-sm"
                             : "bg-[#eef7ef] dark:bg-[#152e1c] text-[#0d2a14] dark:text-[#f2fbf4] border border-[#b8deb9] dark:border-[#2b5936] rounded-tl-sm"
-                        }`}
+                          }`}
                       >
                         {/* تمييز المصدر بنص صغير */}
                         <div className={`text-[10px] font-semibold mb-1 ${isUser ? "text-right text-[#7a6e60]" : "text-right text-emerald-700 dark:text-emerald-400"}`}>
@@ -360,4 +367,3 @@ export function AssistantWidget() {
     </>
   );
 }
-
