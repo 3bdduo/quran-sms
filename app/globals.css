@@ -407,6 +407,20 @@ html.theme-anim a {
   background: color-mix(in oklab, var(--surface) 94%, transparent);
 }
 
+/* غطاء المودالات — كان متكرر بنفس الشكل في أكتر من 10 ملفات، دلوقتي مكان واحد بس */
+@utility modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
 @utility btn-shine {
   position: relative;
   overflow: hidden;
@@ -524,7 +538,7 @@ html.theme-anim a {
   a, button, input, select, textarea, [role="button"], [role="switch"], .card-interactive {
     transition-duration: 150ms !important;
   }
-  .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl, .backdrop-blur {
+  .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl, .backdrop-blur, .modal-overlay {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }

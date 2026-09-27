@@ -253,7 +253,7 @@ export default function TeacherMemorizationPage() {
 
       {/* Modal: تسجيل أو تعديل تسميع */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-float border border-line">
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <h3 className="font-extrabold text-lg text-ink">

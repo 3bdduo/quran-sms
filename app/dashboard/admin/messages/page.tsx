@@ -110,18 +110,16 @@ export default function AdminMessagesPage() {
                   handleMarkRead(msg);
                 }
               }}
-              className={`card !rounded-2xl p-5 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                msg.status === "unread" ? "ring-2 ring-brand/40 bg-brand-soft/20" : ""
-              }`}
+              className={`card !rounded-2xl p-5 cursor-pointer transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-md ${msg.status === "unread" ? "ring-2 ring-brand/40 bg-brand-soft/20" : ""
+                }`}
             >
               <div className="flex items-start justify-between gap-2 mb-2">
                 <span className="font-extrabold text-base text-ink line-clamp-1">{msg.name}</span>
                 <span
-                  className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                    msg.status === "unread"
+                  className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${msg.status === "unread"
                       ? "bg-danger-soft text-danger-ink"
                       : "bg-bg-alt text-ink-mute"
-                  }`}
+                    }`}
                 >
                   {msg.status === "unread" ? <Mail size={12} /> : <MailOpen size={12} />}
                   {msg.status === "unread" ? "جديدة" : "مقروءة"}
@@ -163,7 +161,7 @@ export default function AdminMessagesPage() {
 
       {/* Modal: تفاصيل الرسالة الكاملة */}
       {activeMessage && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-float border border-line">
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>

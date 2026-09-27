@@ -8,6 +8,7 @@ import { AppBootstrap } from "@/components/ui/AppBootstrap";
 import { FormValidator } from "@/components/ui/FormValidator";
 import { AssistantWidget } from "@/components/ui/AssistantWidget";
 import { API_URL } from "@/lib/api";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const API_ORIGIN = (() => {
@@ -33,16 +34,36 @@ const ruqaa = Aref_Ruqaa({
   display: "swap",
 });
 
+const SITE_TITLE = "مدرسة التربية بالقرآن الكريم";
+const SITE_DESCRIPTION =
+  "منصة تعليمية شاملة لتحفيظ القرآن الكريم والتفسير والتجويد والعلوم الشرعية، مع متابعة مستمرة لتقدم الطلاب.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "مدرسة التربية بالقرآن الكريم",
-    template: "%s | مدرسة التربية بالقرآن الكريم",
+    default: SITE_TITLE,
+    template: "%s | " + SITE_TITLE,
   },
-  description:
-    "منصة تعليمية شاملة لتحفيظ القرآن الكريم والتفسير والتجويد والعلوم الشرعية، مع متابعة مستمرة لتقدم الطلاب.",
-  applicationName: "مدرسة التربية بالقرآن الكريم",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_TITLE,
   appleWebApp: { capable: true, title: "مدرسة التربية", statusBarStyle: "default" },
   formatDetection: { telephone: false, email: false, address: false },
+  // معاينة المشاركة على واتساب/فيسبوك/تويتر — من غيرها اللينك بيظهر عاري من غير عنوان ولا صورة
+  openGraph: {
+    type: "website",
+    locale: "ar_EG",
+    url: "/",
+    siteName: SITE_TITLE,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/final-logo.jpeg", width: 1024, height: 1034, alt: SITE_TITLE }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/final-logo.jpeg"],
+  },
 };
 
 // viewport-fit=cover عشان الـ safe-area يشتغل صح في الآيفون والأندرويد (الـ notch وشريط الجيستشر)

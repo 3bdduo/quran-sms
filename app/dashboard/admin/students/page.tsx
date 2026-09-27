@@ -475,7 +475,7 @@ export default function AdminStudentsPage() {
 
       {/* Modal: تعديل بيانات طالب */}
       {editingStudent && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowExportMenu(false)}>
+        <div className="modal-overlay" onClick={() => setShowExportMenu(false)}>
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-float border border-line overflow-y-auto max-h-[90vh]">
             <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
               <h3 className="font-extrabold text-lg text-ink">

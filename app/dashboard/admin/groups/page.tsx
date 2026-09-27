@@ -657,7 +657,7 @@ export default function AdminGroupsPage() {
 
       {/* Modal: إضافة أو تعديل حلقة / مجموعة */}
       {(showAddGroupModal || editingGroup) && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-float border border-line">
             <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
               <h3 className="font-extrabold text-lg text-ink">
@@ -759,7 +759,7 @@ export default function AdminGroupsPage() {
 
       {/* Modal: إضافة طالب لمجموعة تعليمية */}
       {showAddStudentToEduModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-float border border-line">
             <h3 className="font-extrabold text-lg text-ink mb-4">إضافة طالب للمجموعة</h3>
             <div className="space-y-4">
@@ -794,7 +794,7 @@ export default function AdminGroupsPage() {
 
       {/* Modal: نقل طالب */}
       {transferStudentModal.open && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-float border border-line space-y-5">
             <div className="flex items-center justify-between">
               <div>
@@ -855,7 +855,7 @@ export default function AdminGroupsPage() {
 
       {/* Modal: تغيير معلم المجموعة */}
       {changeTeacherModal.open && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-float border border-line space-y-5">
             <div className="flex items-center justify-between">
               <div>

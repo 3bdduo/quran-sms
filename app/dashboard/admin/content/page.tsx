@@ -511,7 +511,7 @@ export default function AdminContentPage() {
 
       {/* Modal: إضافة / تعديل مقال */}
       {showAddPostModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-float border border-line max-h-[90vh] overflow-y-auto">
             <h3 className="font-extrabold text-lg text-ink mb-4">
               {editingPost ? "تعديل المقال" : "إضافة مقال جديد"}
@@ -614,7 +614,7 @@ export default function AdminContentPage() {
 
       {/* Modal: إضافة / تعديل وسائط */}
       {showAddMediaModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-float border border-line max-h-[90vh] overflow-y-auto">
             <h3 className="font-extrabold text-lg text-ink mb-4">
               {editingMedia ? "تعديل عنصر الميديا" : "إضافة فيديو أو بث مباشر"}
@@ -715,7 +715,7 @@ export default function AdminContentPage() {
 
       {/* Modal: إضافة / تعديل بروفايل معلم */}
       {showAddTeacherModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-float border border-line max-h-[90vh] overflow-y-auto">
             <h3 className="font-extrabold text-lg text-ink mb-4">
               {editingTeacher ? "تعديل بروفايل المعلم" : "إضافة بروفايل معلم بالموقع"}

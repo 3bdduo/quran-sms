@@ -284,7 +284,7 @@ export default function AdminTeachersPage() {
 
       {/* Modal تعديل بيانات المعلم فقط */}
       {showModal && editingTeacher && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-float border border-line">
             <h3 className="font-extrabold text-lg text-ink mb-5 pb-4 border-b border-line">
               تعديل بيانات المعلم
@@ -363,7 +363,7 @@ export default function AdminTeachersPage() {
       )}
 
       {typeTeacher && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-float border border-line">
             <h3 className="font-extrabold text-lg text-ink mb-2">تحديد نوع المعلم</h3>
             <p className="text-ink-mute text-sm mb-5">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, LogIn, LayoutDashboard } from "lucide-react";
-import { m, AnimatePresence } from "framer-motion";
+import { m } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -160,16 +160,19 @@ export function Header() {
           </div>
         </Container>
 
-        {/* قائمة الموبايل */}
-        <AnimatePresence>
-          {open && (
-            <m.nav
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:hidden overflow-hidden border-t border-line bg-surface/98"
-              aria-label="قائمة الموبايل"
+        {/* قائمة الموبايل — CSS Grid بدل ما إن الـ JS يقيس الـ height في كل فريم (أخف وأسرع على الموبايل) */}
+        <nav
+          aria-label="قائمة الموبايل"
+          className={`lg:hidden grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div
+              inert={!open}
+              className={`border-t border-line bg-surface/98 transition-opacity duration-200 ${
+                open ? "opacity-100 delay-100" : "opacity-0"
+              }`}
             >
               <Container className="flex flex-col gap-1.5 py-4 max-h-[calc(100dvh-5rem)] overflow-y-auto">
                 {links.map((link) => {
@@ -202,9 +205,9 @@ export function Header() {
                   )}
                 </div>
               </Container>
-            </m.nav>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        </nav>
       </header>
 
       <LogoModal open={logoModal} onClose={() => setLogoModal(false)} />

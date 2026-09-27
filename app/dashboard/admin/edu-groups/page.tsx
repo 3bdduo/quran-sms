@@ -601,7 +601,7 @@ export default function AdminEduGroupsPage() {
 
       {/* Modal: Create or Edit Educational Group */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-float border border-line animate-in fade-in zoom-in-95 duration-200">
             <h3 className="font-black text-xl text-ink mb-1">
               {editingGroup ? "تعديل بيانات مجموعة التربوي" : "إنشاء مجموعة تربوي جديدة"}
