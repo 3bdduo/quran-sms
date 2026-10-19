@@ -7,7 +7,7 @@ import { MotionProvider } from "@/components/ui/MotionProvider";
 import { AppBootstrap } from "@/components/ui/AppBootstrap";
 import { FormValidator } from "@/components/ui/FormValidator";
 import { AssistantWidget } from "@/components/ui/AssistantWidget";
-import { SplashScreen } from "@/components/ui/SplashScreen";
+import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { API_URL } from "@/lib/api";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -119,7 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider>
             <AuthProvider>
               <ToastProvider>
-                <SplashScreen />
+                <RouteProgressBar />
                 {children}
                 <AppBootstrap />
                 <FormValidator />

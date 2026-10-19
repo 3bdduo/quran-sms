@@ -213,6 +213,21 @@
   from { width: 0%; }
   to { width: 100%; }
 }
+@keyframes page-loader-bar {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes loader-progress-flow {
+  0%   { width: 12%; }
+  25%  { width: 45%; }
+  60%  { width: 78%; }
+  85%  { width: 91%; }
+  100% { width: 97%; }
+}
+@keyframes rainbow-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 /* ============================================================================
    4) Base HTML Resets
@@ -510,30 +525,55 @@ html.theme-anim a {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  background: conic-gradient(from 0deg, transparent 0deg, var(--gold) 150deg, var(--brand) 320deg, transparent 360deg);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3.5px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3.5px));
-  animation: qs-spin 1.15s linear infinite;
+  background: conic-gradient(
+    from 0deg,
+    #10b981 0deg,
+    #06b6d4 72deg,
+    #3b82f6 144deg,
+    #f59e0b 216deg,
+    #ec4899 288deg,
+    #10b981 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4.5px), #000 calc(100% - 4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4.5px), #000 calc(100% - 4px));
+  animation: qs-spin 1s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.3));
 }
 
 @utility loader-dash {
   position: absolute;
-  inset: -9px;
+  inset: -8px;
   border-radius: 9999px;
-  border: 1.5px dashed color-mix(in oklab, var(--gold) 65%, transparent);
-  animation: qs-spin 14s linear infinite reverse;
+  border: 2px dashed rgba(245, 158, 11, 0.65);
+  animation: qs-spin 8s linear infinite reverse;
+}
+
+@utility loader-glow {
+  position: absolute;
+  inset: -18px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.28) 0%, rgba(245, 158, 11, 0.22) 40%, rgba(6, 182, 212, 0.16) 70%, transparent 85%);
+  animation: qs-pulse-soft 2s ease-in-out infinite;
+}
+
+@utility loader-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #10b981 0%, #06b6d4 25%, #f59e0b 50%, #ec4899 75%, #10b981 100%);
+  background-size: 200% 100%;
+  animation: loader-progress-flow 2.2s cubic-bezier(0.15, 0.85, 0.25, 1) infinite, rainbow-shimmer 1.4s linear infinite;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4), 0 0 5px rgba(245, 158, 11, 0.4);
 }
 
 @utility skeleton {
-  background: linear-gradient(100deg, var(--line) 30%, var(--bg-alt) 50%, var(--line) 70%);
+  background: linear-gradient(100deg, var(--line) 20%, color-mix(in oklab, var(--brand-soft) 40%, var(--bg-alt)) 50%, var(--line) 80%);
   background-size: 200% 100%;
-  animation: qs-shimmer 1.6s linear infinite;
+  animation: qs-shimmer 1.5s linear infinite;
   border-radius: 0.75rem;
 }
 
 @utility qs-delay {
-  opacity: 0;
-  animation: qs-fade-in 0.6s ease 0.28s forwards;
+  animation: qs-fade-in 0.2s ease forwards;
 }
 
 /* ============================================================================
@@ -544,9 +584,13 @@ html.theme-anim a {
     transition-duration: 150ms !important;
   }
   /* إيقاف backdrop-filter على الموبايل — بيأكل GPU وبيسبب تقل */
-  .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl, .backdrop-blur, .modal-overlay {
+  .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl, .backdrop-blur, .modal-overlay, .glass {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+  /* تسريع فتح/قفل navbar على الموبايل */
+  nav[aria-label="قائمة الموبايل"] {
+    transition-duration: 200ms !important;
   }
   /* إيقاف الأنيميشنات الثقيلة على الموبايل */
   .animate-float, .animate-float-slow, .animate-spin-slower, .animate-spin-slow {

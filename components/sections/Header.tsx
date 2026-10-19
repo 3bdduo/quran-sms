@@ -52,20 +52,15 @@ export function Header() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // امنع سكرول الصفحة والقائمة مفتوحة (بدون layout shift — position:fixed مع حفظ موضع السكرول)
+  // منع سكرول الصفحة أثناء فتح القائمة بدون التسبب في أي layout reflow على الموبايل
   useEffect(() => {
-    if (!open) return;
-    const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
-    document.body.style.overflowY = "scroll";
+    if (open) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+    }
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflowY = "";
-      window.scrollTo(0, scrollY);
+      document.documentElement.style.overflow = "";
     };
   }, [open]);
 
@@ -76,10 +71,10 @@ export function Header() {
       <ScrollProgress />
 
       <header
-        className={`sticky top-0 z-50 pt-[env(safe-area-inset-top)] border-b transition-[background-color,box-shadow,border-color] duration-300 ${
+        className={`sticky top-0 z-50 pt-[env(safe-area-inset-top)] border-b transition-colors duration-200 ${
           scrolled || open
-            ? "glass border-line sh-lift"
-            : "bg-bg/80 border-transparent shadow-none"
+            ? "bg-surface border-line shadow-sm lg:glass"
+            : "bg-bg/90 border-transparent shadow-none"
         }`}
       >
         <Container className="flex items-center justify-between gap-3 h-16 sm:h-20">
@@ -139,11 +134,11 @@ export function Header() {
             )}
           </div>
 
-          {/* موبايل / تابلت: زر المود + البرجر */}
+          {/* موبايل / تابلت: زر المود + البرجر فائق الخفة */}
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <button
-              className="relative h-11 w-11 grid place-items-center text-ink rounded-2xl bg-surface border border-line sh-soft active:scale-90 transition-transform duration-150"
+              className="relative h-11 w-11 grid place-items-center text-ink rounded-2xl bg-surface border border-line sh-soft active:scale-95 transition-transform duration-100"
               onClick={() => setOpen((o) => !o)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
@@ -151,14 +146,14 @@ export function Header() {
             >
               <span className="relative h-5 w-5 flex items-center justify-center pointer-events-none">
                 <span
-                  className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-150 ${
                     open ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
                   }`}
                 >
                   <X size={22} />
                 </span>
                 <span
-                  className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-150 ${
                     !open ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-50"
                   }`}
                 >
@@ -169,19 +164,18 @@ export function Header() {
           </div>
         </Container>
 
-        {/* قائمة الموبايل — CSS Grid بدل ما إن الـ JS يقيس الـ height في كل فريم (أخف وأسرع على الموبايل) */}
+        {/* قائمة الموبايل — فائقة السرعة والسلاسة مع تسريع الأجهزة */}
         <nav
           aria-label="قائمة الموبايل"
-          className={`lg:hidden grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          className={`lg:hidden grid transition-[grid-template-rows,opacity] duration-200 ease-out ${
+            open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 pointer-events-none"
           }`}
+          style={{ willChange: "grid-template-rows" }}
         >
-          <div className="overflow-hidden">
+          <div className="overflow-hidden min-h-0">
             <div
               inert={!open}
-              className={`border-t border-line bg-surface/98 transition-opacity duration-200 ${
-                open ? "opacity-100 delay-100" : "opacity-0"
-              }`}
+              className="border-t border-line bg-surface"
             >
               <Container className="flex flex-col gap-1.5 py-4 max-h-[calc(100dvh-5rem)] overflow-y-auto">
                 {links.map((link) => {
