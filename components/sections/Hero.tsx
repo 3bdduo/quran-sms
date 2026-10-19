@@ -46,10 +46,11 @@ export function Hero() {
         className="absolute inset-0 pattern-star opacity-[0.16] pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_72%)]"
       />
 
-      {/* نجمة عملاقة بتلف ببطء ورا العنوان — الـ animation على div داخلي منفصل عن الـ translate عشان ميتعارضوش */}
+      {/* نجمة عملاقة بتلف ببطء ورا العنوان — موقوفة على الموبايل في globals.css */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-[-6%] h-[34rem] w-[34rem] sm:h-[46rem] sm:w-[46rem] -translate-x-1/2"
+        style={{ contain: "strict" }}
       >
         <div className="w-full h-full animate-spin-slower" style={{ willChange: "transform" }}>
           <svg
@@ -68,9 +69,9 @@ export function Hero() {
         </div>
       </div>
 
-      {/* توهجات طايرة */}
-      <div aria-hidden="true" className="absolute -top-24 -right-16 h-80 w-80 sm:h-[30rem] sm:w-[30rem] rounded-full orb-1 animate-float-slow" />
-      <div aria-hidden="true" className="absolute -bottom-28 -left-16 h-80 w-80 sm:h-[30rem] sm:w-[30rem] rounded-full orb-2 animate-float" />
+      {/* توهجات طايرة — موقوفة على الموبايل في CSS، contain:strict تمنع الـ repaint */}
+      <div aria-hidden="true" className="absolute -top-24 -right-16 h-80 w-80 sm:h-[30rem] sm:w-[30rem] rounded-full orb-1 animate-float-slow" style={{ contain: "strict", willChange: "transform" }} />
+      <div aria-hidden="true" className="absolute -bottom-28 -left-16 h-80 w-80 sm:h-[30rem] sm:w-[30rem] rounded-full orb-2 animate-float" style={{ contain: "strict", willChange: "transform" }} />
 
       <Container className="relative py-16 sm:py-24 lg:py-28 text-center">
         <m.span

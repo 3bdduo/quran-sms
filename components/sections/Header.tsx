@@ -52,11 +52,20 @@ export function Header() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // امنع سكرول الصفحة والقائمة مفتوحة (مهم في الموبايل)
+  // امنع سكرول الصفحة والقائمة مفتوحة (بدون layout shift — position:fixed مع حفظ موضع السكرول)
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflowY = "scroll";
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflowY = "";
+      window.scrollTo(0, scrollY);
     };
   }, [open]);
 

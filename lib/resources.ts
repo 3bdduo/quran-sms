@@ -18,6 +18,9 @@ import {
   ActivityLogItem,
   ContactMessageItem,
   MemorizationEntry,
+  RayhanaData,
+  RayhanaStudent,
+  RayhanaLevel,
 } from "@/types";
 
 // ============================================================================
@@ -422,6 +425,37 @@ export const contactApi = {
 // 20. فحص الصحة
 export const healthApi = {
   check: () => api.get<{ status: string; database: string; timestamp: string }>("/health"),
+};
+
+// 22. ريحانة المدينة
+export const rayhanaApi = {
+  // جلب كل بيانات المسابقة (الطلاب + مستوياتهم)
+  getData: (year?: string) =>
+    api.get<RayhanaData>("/rayhana", { year }, true),
+
+  // إضافة طلاب للمسابقة (كل الطلاب المسجلين أو قائمة محددة)
+  initStudents: (year: string) =>
+    api.post<{ message: string; added: number }>("/rayhana/init", { year }, true),
+
+  // تحديث مستوى طالب (ترقية أو تراجع)
+  updateStudent: (
+    studentId: string,
+    body: { currentLevel: RayhanaLevel; passed: boolean; notes?: string }
+  ) => api.patch<RayhanaStudent>(`/rayhana/student/${studentId}`, body, true),
+
+  // ترقية مجموعة طلاب (bulk promote)
+  bulkPromote: (
+    studentIds: string[],
+    toLevel: RayhanaLevel
+  ) => api.post<{ message: string; updated: number }>("/rayhana/bulk-promote", { studentIds, toLevel }, true),
+
+  // حذف طالب من المسابقة
+  removeStudent: (studentId: string) =>
+    api.delete(`/rayhana/student/${studentId}`, true),
+
+  // تصدير Excel
+  exportExcel: (year?: string) =>
+    api.get<Blob>("/rayhana/export", { year }, true),
 };
 
 // 21. المساعد الذكي

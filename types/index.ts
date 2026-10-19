@@ -233,3 +233,35 @@ export interface DashboardStats {
   totalAttendanceRecords: number;
   paidThisMonth: number;
 }
+
+// ريحانة المدينة
+export type RayhanaLevel =
+  | "level_3"
+  | "level_5"
+  | "level_10"
+  | "level_20"
+  | "level_full";
+
+export const RAYHANA_LEVELS: { key: RayhanaLevel; label: string; parts: string }[] = [
+  { key: "level_3",    label: "المستوى الأول",   parts: "3 أجزاء" },
+  { key: "level_5",    label: "المستوى الثاني",  parts: "5 أجزاء" },
+  { key: "level_10",   label: "المستوى الثالث", parts: "10 أجزاء" },
+  { key: "level_20",   label: "المستوى الرابع",  parts: "20 جزءاً" },
+  { key: "level_full", label: "المستوى الخامس", parts: "القرآن كامل" },
+];
+
+export interface RayhanaStudent {
+  studentId: string;
+  studentName: string;
+  nationalId?: string;
+  groupName?: string;
+  currentLevel: RayhanaLevel;
+  passed: boolean;        // نجح في مستواه الحالي
+  promotedAt?: string;    // تاريخ آخر ترقية
+  notes?: string;
+}
+
+export interface RayhanaData {
+  year: string;
+  students: RayhanaStudent[];
+}
