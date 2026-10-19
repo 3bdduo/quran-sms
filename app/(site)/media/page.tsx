@@ -31,35 +31,26 @@ function toEmbedUrl(url: string) {
   return url;
 }
 
+import { useData } from "@/hooks/useData";
+
 export default function MediaPage() {
-  const [items, setItems] = useState<MediaItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [track, setTrack] = useState<string | undefined>(undefined);
   const [active, setActive] = useState<MediaItem | null>(null);
 
-  useEffect(() => {
-    setLoading(true);
-    mediaApi
-      .list(track)
-      .then((res) => {
-        if (Array.isArray(res) && res.length > 0) {
-          setItems(res);
-        } else {
-          // استخدام التسجيلات الموصى بها افتراضياً
-          const filtered = track
-            ? DEFAULT_MEDIA_ITEMS.filter((m) => m.track === track)
-            : DEFAULT_MEDIA_ITEMS;
-          setItems(filtered);
-        }
-      })
-      .catch(() => {
-        const filtered = track
-          ? DEFAULT_MEDIA_ITEMS.filter((m) => m.track === track)
-          : DEFAULT_MEDIA_ITEMS;
-        setItems(filtered);
-      })
-      .finally(() => setLoading(false));
-  }, [track]);
+  const defaultList = track
+    ? DEFAULT_MEDIA_ITEMS.filter((m) => m.track === track)
+    : DEFAULT_MEDIA_ITEMS;
+
+  const cacheKey = track ? `public:media:${track}` : "public:media";
+  const { data: items = defaultList, loading } = useData<MediaItem[]>(
+    cacheKey,
+    async () => {
+      const res = await mediaApi.list(track);
+      if (Array.isArray(res) && res.length > 0) return res;
+      return defaultList;
+    },
+    { initialData: defaultList }
+  );
 
   // منع سكرول الصفحة والفيديو مفتوح
   useEffect(() => {
@@ -74,7 +65,7 @@ export default function MediaPage() {
     };
   }, [active]);
 
-  const displayItems = items.length > 0 ? items : (track ? DEFAULT_MEDIA_ITEMS.filter((m) => m.track === track) : DEFAULT_MEDIA_ITEMS);
+  const displayItems = items.length > 0 ? items : defaultList;
 
   return (
     <div className="py-14 sm:py-24 space-y-20">

@@ -22,14 +22,35 @@ import { exportToCsv } from "@/lib/exportTable";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import type { GroupItem, EduGroupItem, Student } from "@/types";
 
 export default function AdminGroupsPage() {
   const [tab, setTab] = useState<"groups" | "eduGroups">("groups");
-  const [groups, setGroups] = useState<GroupItem[]>([]);
-  const [eduGroups, setEduGroups] = useState<EduGroupItem[]>([]);
-  const [allStudents, setAllStudents] = useState<Student[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // الكاش يملأ البيانات فوراً لو كانت محملة مسبقاً — صفر لودر وصفر انتظار
+  const { data: groups = [], loading: gLoading, refetch: refetchGroups, mutate: setGroups } = useData<GroupItem[]>(
+    "admin:groups",
+    () => groupsApi.list(),
+    { initialData: [] }
+  );
+  const { data: eduGroups = [], loading: egLoading, refetch: refetchEduGroups, mutate: setEduGroups } = useData<EduGroupItem[]>(
+    "admin:eduGroups",
+    () => eduGroupsApi.list(),
+    { initialData: [] }
+  );
+  const { data: allStudents = [], loading: sLoading, refetch: refetchStudents, mutate: setAllStudents } = useData<Student[]>(
+    "admin:students",
+    () => studentsApi.list(),
+    { initialData: [] }
+  );
+  const { data: teachersList = [], loading: tLoading, refetch: refetchTeachers, mutate: setTeachersList } = useData<any[]>(
+    "admin:teachers",
+    () => teachersApi.list(),
+    { initialData: [] }
+  );
+
+  const loading = gLoading || egLoading || sLoading || tLoading;
 
   // Group Details View
   const [activeGroupDetails, setActiveGroupDetails] = useState<GroupItem | null>(null);
@@ -70,33 +91,15 @@ export default function AdminGroupsPage() {
     teacherPassword: "",
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [teachersList, setTeachersList] = useState<any[]>([]);
 
   const { showToast } = useToast();
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const [gList, egList, sList, tList] = await Promise.all([
-        groupsApi.list(),
-        eduGroupsApi.list(),
-        studentsApi.list(),
-        teachersApi.list(),
-      ]);
-      setGroups(gList);
-      setEduGroups(egList);
-      setAllStudents(sList);
-      setTeachersList(tList);
-    } catch {
-      showToast("تعذّر تحميل بيانات الحلقات والمجموعات", "error");
-    } finally {
-      setLoading(false);
-    }
+  function loadData() {
+    refetchGroups();
+    refetchEduGroups();
+    refetchStudents();
+    refetchTeachers();
   }
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   async function handleCreateGroup(e: React.FormEvent) {
     e.preventDefault();

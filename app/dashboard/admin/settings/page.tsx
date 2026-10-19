@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Save,
   ShieldAlert,
@@ -11,32 +11,24 @@ import { settingsApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import type { SchoolSettings } from "@/types";
 
 export default function AdminSettingsPage() {
-  const [settings, setSettings] = useState<SchoolSettings | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [monthlyFee, setMonthlyFee] = useState(200);
 
   const { showToast } = useToast();
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const sData = await settingsApi.get();
-      setSettings(sData);
-      setMonthlyFee(sData.monthlyFee || 200);
-    } catch {
-      showToast("تعذّر تحميل إعدادات المدرسة", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { data: settings, loading, mutate: setSettings } = useData<SchoolSettings>(
+    "admin:settings",
+    () => settingsApi.get()
+  );
 
+  // مزامنة monthlyFee مع أول بيانات تيجي
   useEffect(() => {
-    loadData();
-  }, []);
+    if (settings) setMonthlyFee(settings.monthlyFee || 200);
+  }, [settings]);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();

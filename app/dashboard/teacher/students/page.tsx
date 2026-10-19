@@ -19,14 +19,26 @@ import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
 import { AddStudentWizardModal } from "@/components/wizards/AddStudentWizardModal";
+import { useData } from "@/hooks/useData";
 import type { Student } from "@/types";
 
 export default function TeacherStudentsPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [students, setStudents] = useState<Student[]>([]);
-  const [groups, setGroups] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // الكاش يعرض طلاب الحلقة فوراً لو اتحملوا مسبقاً
+  const { data: students = [], loading: sLoading, refetch: refetchStudents, mutate: setStudents } = useData<Student[]>(
+    "teacher:students",
+    () => studentsApi.listMine(),
+    { initialData: [] }
+  );
+  const { data: groups = [], loading: gLoading, refetch: refetchGroups, mutate: setGroups } = useData<any[]>(
+    "teacher:groups",
+    () => groupsApi.mine(),
+    { initialData: [] }
+  );
+
+  const loading = sLoading || gLoading;
   const [search, setSearch] = useState("");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
@@ -56,25 +68,10 @@ export default function TeacherStudentsPage() {
     }
   }, [isEduTeacher, router]);
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const [sData, gData] = await Promise.all([
-        studentsApi.listMine(),
-        groupsApi.mine()
-      ]);
-      setStudents(sData);
-      setGroups(gData);
-    } catch {
-      showToast("تعذّر تحميل بيانات طلاب الحلقة", "error");
-    } finally {
-      setLoading(false);
-    }
+  function loadData() {
+    refetchStudents();
+    refetchGroups();
   }
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   async function handleSaveStudent(e: React.FormEvent) {
     e.preventDefault();

@@ -17,38 +17,37 @@ import { studentsApi, groupsApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import type { Student, GroupItem } from "@/types";
 
 export default function WaitingListPage() {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [groups, setGroups] = useState<GroupItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
+
+  const { data: students = [], loading: sLoading, refetch: refetchStudents, mutate: setStudents } = useData<Student[]>(
+    "admin:students:waiting",
+    () => studentsApi.listWaiting(),
+    { initialData: [] }
+  );
+
+  const { data: rawGroups = [], loading: gLoading, refetch: refetchGroups } = useData<GroupItem[]>(
+    "admin:groups",
+    () => groupsApi.list(),
+    { initialData: [] }
+  );
+
+  const groups = rawGroups.filter((g) => g.id !== "waiting");
+  const loading = sLoading || gLoading;
+
   const [searchQuery, setSearchQuery] = useState("");
   const [movingId, setMovingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<Record<string, string>>({});
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const { showToast } = useToast();
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const [waitingList, groupList] = await Promise.all([
-        studentsApi.listWaiting(),
-        groupsApi.list(),
-      ]);
-      setStudents(waitingList);
-      setGroups(groupList.filter((g) => g.id !== "waiting"));
-    } catch {
-      showToast("تعذّر تحميل قائمة الانتظار", "error");
-    } finally {
-      setLoading(false);
-    }
+  function loadData() {
+    refetchStudents();
+    refetchGroups();
   }
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const filtered = students.filter((s) => {
     const q = searchQuery.toLowerCase().trim();

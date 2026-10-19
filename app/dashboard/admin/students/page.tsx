@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Users,
   UserPlus,
@@ -22,12 +22,10 @@ import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
 import { AddStudentWizardModal } from "@/components/wizards/AddStudentWizardModal";
+import { useData } from "@/hooks/useData";
 import type { Student, GroupItem } from "@/types";
 
 export default function AdminStudentsPage() {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [groups, setGroups] = useState<GroupItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [exportingType, setExportingType] = useState<string | null>(null);
@@ -51,25 +49,23 @@ export default function AdminStudentsPage() {
 
   const { showToast } = useToast();
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const [stList, grList] = await Promise.all([
-        studentsApi.list(),
-        groupsApi.list(),
-      ]);
-      setStudents(stList);
-      setGroups(grList);
-    } catch {
-      showToast("تعذّر تحميل بيانات الطلاب", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // الكاش بيرجّع البيانات فوراً لو اتحمّلت مسبقًا — صفر loading
+  const { data: students = [], loading, refetch: refetchStudents } = useData<Student[]>(
+    "admin:students",
+    () => studentsApi.list(),
+    { initialData: [] }
+  );
+  const { data: groups = [], refetch: refetchGroups } = useData<GroupItem[]>(
+    "admin:groups",
+    () => groupsApi.list(),
+    { initialData: [] }
+  );
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  function reloadData() {
+    refetchStudents();
+    refetchGroups();
+  }
+  const loadData = reloadData;
 
   // تجميع الطلاب حسب الحلقة
   const groupedStudents = useMemo(() => {
@@ -129,7 +125,7 @@ export default function AdminStudentsPage() {
       showToast("تمت إضافة الطالب بنجاح", "success");
       setShowAddModal(false);
       resetForm();
-      loadData();
+      reloadData();
     } catch (err: any) {
       showToast(err.message || "فشلت إضافة الطالب", "error");
     } finally {
@@ -153,7 +149,7 @@ export default function AdminStudentsPage() {
       showToast("تم تحديث بيانات الطالب", "success");
       setEditingStudent(null);
       resetForm();
-      loadData();
+      reloadData();
     } catch (err: any) {
       showToast(err.message || "فشل التحديث", "error");
     } finally {
@@ -166,7 +162,7 @@ export default function AdminStudentsPage() {
     try {
       await studentsApi.remove(id);
       showToast("تم حذف الطالب بنجاح", "success");
-      setStudents((prev) => prev.filter((s) => s.id !== id));
+      reloadData();
     } catch {
       showToast("تعذّر حذف الطالب", "error");
     }

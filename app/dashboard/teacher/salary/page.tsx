@@ -17,36 +17,27 @@ import { salariesApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { useData } from "@/hooks/useData";
 
 export default function TeacherSalaryPage() {
   const { user } = useAuth();
-  const [config, setConfig] = useState<{ username: string; base_salary: number; notes?: string } | null>(
-    null
+
+  // الكاش يعرض الراتب وتاريخه فوراً لو اتحمّلوا مسبقاً
+  const { data: config = null } = useData<{ username: string; base_salary: number; notes?: string } | null>(
+    "teacher:salary:me",
+    () => salariesApi.me(),
+    { enabled: Boolean(user?.username) }
   );
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  const { data: history = [], loading } = useData<any[]>(
+    user?.username ? `teacher:salary:history:${user.username}` : "",
+    () => (user?.username ? salariesApi.history(user.username) : Promise.resolve([])),
+    { enabled: Boolean(user?.username), initialData: [] }
+  );
 
   const { showToast } = useToast();
 
-  useEffect(() => {
-    if (!user?.username) return;
-    Promise.allSettled([salariesApi.me(), salariesApi.history(user.username)])
-      .then(([cfgRes, histRes]) => {
-        if (cfgRes.status === "fulfilled") {
-          setConfig(cfgRes.value);
-        }
-        if (histRes.status === "fulfilled") {
-          setHistory(histRes.value || []);
-        }
-        if (cfgRes.status === "rejected" && histRes.status === "rejected") {
-          showToast("تعذّر تحميل بيانات الراتب", "error");
-        }
-      })
-      .catch(() => showToast("تعذّر تحميل بيانات الراتب", "error"))
-      .finally(() => setLoading(false));
-  }, [user?.username]);
-
-  if (loading) return <Loader size="lg" />;
+  if (loading && !config && history.length === 0) return <Loader size="lg" />;
 
   const paidRecords = history.filter((r) => r.status === "paid");
   const totalReceived = paidRecords.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);

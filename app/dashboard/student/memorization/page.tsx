@@ -6,27 +6,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { memorizationApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
+import { useData } from "@/hooks/useData";
 import type { MemorizationEntry } from "@/types";
 
 export default function StudentMemorizationPage() {
   const { user } = useAuth();
-  const [logs, setLogs] = useState<MemorizationEntry[]>([]);
-  const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    if (!user?.studentId) {
-      setLoading(false);
-      return;
-    }
-    memorizationApi
-      .findByStudent(user.studentId)
-      .then(setLogs)
-      .catch(() => showToast("تعذّر تحميل سجل الحفظ", "error"))
-      .finally(() => setLoading(false));
-  }, [user?.studentId]);
+  // الكاش يعرض سجل الحفظ فوراً لو اتحمّل مسبقاً
+  const { data: logs = [], loading } = useData<MemorizationEntry[]>(
+    user?.studentId ? `student:memorization:${user.studentId}` : "",
+    () => (user?.studentId ? memorizationApi.findByStudent(user.studentId) : Promise.resolve([])),
+    { enabled: Boolean(user?.studentId), initialData: [] }
+  );
 
-  if (loading) return <Loader size="lg" />;
+  if (loading && logs.length === 0) return <Loader size="lg" />;
 
   const latestAmount = logs[0]?.total_after || "0";
 

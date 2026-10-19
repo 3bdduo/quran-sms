@@ -8,29 +8,23 @@ import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Badge } from "@/components/ui/Badge";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { useData } from "@/hooks/useData";
 
 export default function StudentPaymentsPage() {
   const { user } = useAuth();
-  const [data, setData] = useState<{
-    monthlyFee: number;
-    months: Record<string, { status: "paid" | "unpaid" | "exempt"; amount?: number; paidDate?: string; note?: string }>;
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    if (!user?.studentId) {
-      setLoading(false);
-      return;
-    }
-    paymentsApi
-      .byStudent(user.studentId)
-      .then(setData)
-      .catch(() => showToast("تعذّر تحميل بيانات الاشتراكات", "error"))
-      .finally(() => setLoading(false));
-  }, [user?.studentId]);
+  const cacheKey = user?.studentId ? `student:payments:${user.studentId}` : "";
+  const { data = null, loading } = useData<{
+    monthlyFee: number;
+    months: Record<string, { status: "paid" | "unpaid" | "exempt"; amount?: number; paidDate?: string; note?: string }>;
+  } | null>(
+    cacheKey,
+    () => (user?.studentId ? paymentsApi.byStudent(user.studentId) : Promise.resolve(null)),
+    { enabled: Boolean(user?.studentId) }
+  );
 
-  if (loading) return <Loader size="lg" />;
+  if (loading && !data) return <Loader size="lg" />;
 
   const statusLabel: Record<string, string> = {
     paid: "تم السداد",

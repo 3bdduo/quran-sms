@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import { Plus, Edit2, Trash2, Download, Search, Users, CircleHelp } from "lucide-react";
 import { AddTeacherWizardModal } from "@/components/wizards/AddTeacherWizardModal";
 import { teachersApi } from "@/lib/resources";
@@ -8,12 +8,10 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import { Teacher } from "@/types";
 
 export default function AdminTeachersPage() {
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [filteredTeachers, setFilteredTeachers] = useState<Teacher[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
   const [showAddWizard, setShowAddWizard] = useState(false);
@@ -33,37 +31,22 @@ export default function AdminTeachersPage() {
 
   const { showToast } = useToast();
 
-  async function loadTeachers() {
-    setLoading(true);
-    try {
-      const data = await teachersApi.list();
-      setTeachers(data);
-      setFilteredTeachers(data);
-    } catch {
-      showToast("تعذّر تحميل بيانات المعلمين", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // الكاش بيرجّع المعلمين فوراً لو اتحمّلوا مسبقاً — صفر loading وصفر flicker
+  const { data: teachers = [], loading, refetch: loadTeachers, mutate: setTeachers } = useData<Teacher[]>(
+    "admin:teachers",
+    () => teachersApi.list(),
+    { initialData: [] }
+  );
 
-  useEffect(() => {
-    loadTeachers();
-  }, []);
-
-  useEffect(() => {
-    if (!search) {
-      setFilteredTeachers(teachers);
-      return;
-    }
+  const filteredTeachers = useMemo(() => {
+    if (!search) return teachers;
     const lower = search.toLowerCase();
-    setFilteredTeachers(
-      teachers.filter(
-        (t) =>
-          t.full_name.toLowerCase().includes(lower) ||
-          t.national_id.includes(lower) ||
-          t.username.toLowerCase().includes(lower) ||
-          (t.phone && t.phone.includes(lower))
-      )
+    return teachers.filter(
+      (t) =>
+        t.full_name.toLowerCase().includes(lower) ||
+        t.national_id.includes(lower) ||
+        t.username.toLowerCase().includes(lower) ||
+        (t.phone && t.phone.includes(lower))
     );
   }, [search, teachers]);
 

@@ -9,8 +9,9 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { useData } from "@/hooks/useData";
 
-import type { DashboardStats } from "@/types";
+import type { DashboardStats, ContactMessageItem } from "@/types";
 
 const currentMonthKey = new Date().toISOString().slice(0, 7);
 
@@ -22,18 +23,21 @@ const exportButtons = [
 ];
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [unreadMessages, setUnreadMessages] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    Promise.all([
-      reportsApi.dashboard(currentMonthKey).then(setStats).catch(() => undefined),
-      contactApi.listForAdmin("unread").then((msgs) => setUnreadMessages(msgs.length)).catch(() => undefined),
-    ]).finally(() => setLoading(false));
-  }, []);
+  // الكاش بيرجّع البيانات فوراً لو اتحمّلت مسبقًا — صفر loading
+  const { data: stats, loading: statsLoading } = useData<DashboardStats>(
+    `admin:dashboard:${currentMonthKey}`,
+    () => reportsApi.dashboard(currentMonthKey)
+  );
+  const { data: messages, loading: msgsLoading } = useData<ContactMessageItem[]>(
+    "admin:messages:unread",
+    () => contactApi.listForAdmin("unread")
+  );
+
+  const loading = statsLoading || msgsLoading;
+  const unreadMessages = messages?.length ?? 0;
 
   async function handleDownload(path: string, filename: string) {
     setDownloadingKey(path);

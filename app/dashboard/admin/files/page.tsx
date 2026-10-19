@@ -74,9 +74,9 @@ function getFileIcon(category: FileCategory, ext?: string) {
   }
 }
 
+import { useData } from "@/hooks/useData";
+
 export default function FilesVaultPage() {
-  const [data, setData] = useState<FilesVaultData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
 
   // الفلاتر والمجلدات
@@ -109,22 +109,11 @@ export default function FilesVaultPage() {
 
   const { showToast } = useToast();
 
-  // ── تحميل البيانات ─────────────────────────────────────────────────
-  async function loadFiles() {
-    setLoading(true);
-    try {
-      const res = await filesVaultApi.list();
-      setData(res);
-    } catch {
-      showToast("تعذّر تحميل ملفات الخزينة", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadFiles();
-  }, []);
+  // تحميل فوري من الكاش — صفر لودر عند العودة للصفحة
+  const { data = null, loading, refetch: loadFiles, mutate: setData } = useData<FilesVaultData>(
+    "admin:files",
+    () => filesVaultApi.list()
+  );
 
   // ── اختيار ملف من المتصفح للرفع ───────────────────────────────────
   function handleFileSelect(file: File) {

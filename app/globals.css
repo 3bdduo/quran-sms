@@ -209,6 +209,10 @@
   from { opacity: 0; transform: translate3d(0, -6px, 0); max-height: 0; }
   to { opacity: 1; transform: none; max-height: 4rem; }
 }
+@keyframes splash-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
 
 /* ============================================================================
    4) Base HTML Resets

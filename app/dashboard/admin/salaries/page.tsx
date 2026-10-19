@@ -41,20 +41,33 @@ interface TeacherOption {
   base_salary?: number;
 }
 
+import { useData } from "@/hooks/useData";
+
 export default function AdminSalariesPage() {
   const currentMonthKey = new Date().toISOString().slice(0, 7); // "YYYY-MM"
   const [selectedMonth, setSelectedMonth] = useState(currentMonthKey);
-  const [summary, setSummary] = useState<{
+
+  // الكاش يعرض الرواتب فوراً على أول رسمة لو اتحمّلت مسبقاً
+  const { data: summary = null, loading: summaryLoading, refetch: refetchSummary, mutate: setSummary } = useData<{
     totalTeachers: number;
     paidCount: number;
     unpaidCount: number;
     advanceCount: number;
     totalPaidAmount: number;
     teachers: TeacherSalaryRecord[];
-  } | null>(null);
+  }>(
+    `admin:salaries:${selectedMonth}`,
+    () => salariesApi.byMonth(selectedMonth)
+  );
 
-  const [allTeachers, setAllTeachers] = useState<TeacherOption[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: allTeachers = [], loading: teachersLoading, refetch: refetchTeachers, mutate: setAllTeachers } = useData<TeacherOption[]>(
+    "admin:salaries:teachers",
+    () => salariesApi.teachers(),
+    { initialData: [] }
+  );
+
+  const loading = summaryLoading || teachersLoading;
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "unpaid" | "advance">("all");
   const [exportLoading, setExportLoading] = useState(false);
@@ -80,26 +93,13 @@ export default function AdminSalariesPage() {
 
   const { showToast } = useToast();
 
-  // تحميل بيانات الشهر والمعلمين
-  async function loadData(month: string) {
-    setLoading(true);
-    try {
-      const [monthData, teachersData] = await Promise.all([
-        salariesApi.byMonth(month),
-        salariesApi.teachers(),
-      ]);
-      setSummary(monthData);
-      setAllTeachers(teachersData || []);
-    } catch {
-      showToast("تعذّر تحميل بيانات الرواتب", "error");
-    } finally {
-      setLoading(false);
+  function loadData(month?: string) {
+    if (month && month !== selectedMonth) {
+      setSelectedMonth(month);
     }
+    refetchSummary();
+    refetchTeachers();
   }
-
-  useEffect(() => {
-    loadData(selectedMonth);
-  }, [selectedMonth]);
 
   // الحساب المباشر للراتب الكلي داخل المودال: الأساسي + الحوافز - الخصومات
   const liveBase = Number(baseSalaryInput) || 0;

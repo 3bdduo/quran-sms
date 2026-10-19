@@ -10,48 +10,45 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { Button } from "@/components/ui/Button";
 import type { Student, EduGroupItem, ExamItem } from "@/types";
 
+import { useData } from "@/hooks/useData";
+
 export default function TeacherDashboard() {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-
-  // حالة معلم الحلقة
-  const [ringStudents, setRingStudents] = useState<Student[]>([]);
-
-  // حالة معلم التربوي
-  const [eduGroup, setEduGroup] = useState<EduGroupItem | null>(null);
-  const [todayPresentCount, setTodayPresentCount] = useState<number>(0);
-  const [examsCount, setExamsCount] = useState<number>(0);
 
   const isEduTeacher =
     user?.role === "teacher" &&
     (user.teacherType === "edu" || (Boolean(user.eduGroupId) && (!user.groupIds || user.groupIds.length === 0)));
 
+  // كاش فوري لمعلم الحلقة ومعلم التربوي
+  const { data: ringStudents = [], loading: ringLoading } = useData<Student[]>(
+    "teacher:students",
+    () => studentsApi.listMine(),
+    { enabled: !isEduTeacher, initialData: [] }
+  );
+
+  const { data: eduGroup = null, loading: eduLoading } = useData<EduGroupItem | null>(
+    user?.eduGroupId ? `teacher:eduGroup:${user.eduGroupId}` : "",
+    () => (user?.eduGroupId ? eduGroupsApi.byId(user.eduGroupId) : Promise.resolve(null)),
+    { enabled: Boolean(isEduTeacher && user?.eduGroupId) }
+  );
+
+  const [todayPresentCount, setTodayPresentCount] = useState<number>(0);
+  const [examsCount, setExamsCount] = useState<number>(0);
+
   useEffect(() => {
-    async function init() {
-      setLoading(true);
-      try {
-        if (isEduTeacher && user?.eduGroupId) {
-          // جلب بيانات معلم التربوي
-          const today = new Date().toISOString().slice(0, 10);
-          const [gData, attData, exData] = await Promise.all([
-            eduGroupsApi.byId(user.eduGroupId).catch(() => null),
-            eduAttendanceApi.find(user.eduGroupId, today).catch(() => []),
-            examsApi.findByEduGroup(user.eduGroupId).catch(() => []),
-          ]);
-          setEduGroup(gData);
-          setTodayPresentCount(attData.filter((a) => a.status === "حاضر").length);
-          setExamsCount(exData.length);
-        } else {
-          // جلب بيانات معلم الحلقة
-          const data = await studentsApi.listMine().catch(() => []);
-          setRingStudents(data);
-        }
-      } finally {
-        setLoading(false);
-      }
+    if (isEduTeacher && user?.eduGroupId) {
+      const today = new Date().toISOString().slice(0, 10);
+      eduAttendanceApi.find(user.eduGroupId, today).then((att) => {
+        setTodayPresentCount(att.filter((a) => a.status === "حاضر").length);
+      }).catch(() => undefined);
+
+      examsApi.findByEduGroup(user.eduGroupId).then((ex) => {
+        setExamsCount(ex.length);
+      }).catch(() => undefined);
     }
-    init();
   }, [isEduTeacher, user?.eduGroupId]);
+
+  const loading = isEduTeacher ? eduLoading && !eduGroup : ringLoading && ringStudents.length === 0;
 
   if (loading) return <Loader size="lg" className="my-16" />;
 

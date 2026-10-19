@@ -21,16 +21,32 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import type { CompetitionItem, EduGroupItem, Student, ExamItem } from "@/types";
 
 export default function AdminCompetitionsPage() {
   const [tab, setTab] = useState<"competitions" | "exams">("competitions");
 
-  // Competitions state
-  const [competitions, setCompetitions] = useState<CompetitionItem[]>([]);
+  // الكاش يعرض المسابقات والمجموعات فوراً لو اتحمّلت مسبقاً
+  const { data: competitions = [], loading: compLoading, refetch: refetchCompetitions, mutate: setCompetitions } = useData<CompetitionItem[]>(
+    "admin:competitions",
+    () => competitionsApi.list(),
+    { initialData: [] }
+  );
+  const { data: eduGroups = [], loading: egLoading, refetch: refetchEduGroups, mutate: setEduGroups } = useData<EduGroupItem[]>(
+    "admin:eduGroups",
+    () => eduGroupsApi.list(),
+    { initialData: [] }
+  );
+  const { data: allStudents = [], loading: sLoading, refetch: refetchStudents, mutate: setAllStudents } = useData<Student[]>(
+    "admin:students",
+    () => studentsApi.list(),
+    { initialData: [] }
+  );
+
+  const loading = compLoading || egLoading || sLoading;
+
   const [activeComp, setActiveComp] = useState<CompetitionItem | null>(null);
-  const [allStudents, setAllStudents] = useState<Student[]>([]);
-  const [loading, setLoading] = useState(true);
 
   // Modals for Competitions
   const [showAddCompModal, setShowAddCompModal] = useState(false);
@@ -46,7 +62,6 @@ export default function AdminCompetitionsPage() {
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
 
   // Exams state
-  const [eduGroups, setEduGroups] = useState<EduGroupItem[]>([]);
   const [selectedEduGroupId, setSelectedEduGroupId] = useState("");
   const [exams, setExams] = useState<ExamItem[]>([]);
   const [activeEduGroupStudents, setActiveEduGroupStudents] = useState<Student[]>([]);
@@ -60,28 +75,17 @@ export default function AdminCompetitionsPage() {
 
   const { showToast } = useToast();
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      const [compList, egList, sList] = await Promise.all([
-        competitionsApi.list(),
-        eduGroupsApi.list(),
-        studentsApi.list(),
-      ]);
-      setCompetitions(compList);
-      setEduGroups(egList);
-      setAllStudents(sList);
-      if (egList.length) setSelectedEduGroupId(egList[0].id);
-    } catch {
-      showToast("تعذّر تحميل البيانات", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadData();
-  }, []);
+    if (eduGroups.length && !selectedEduGroupId) {
+      setSelectedEduGroupId(eduGroups[0].id);
+    }
+  }, [eduGroups, selectedEduGroupId]);
+
+  function loadData() {
+    refetchCompetitions();
+    refetchEduGroups();
+    refetchStudents();
+  }
 
   // Exams loader
   useEffect(() => {

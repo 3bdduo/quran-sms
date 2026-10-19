@@ -8,34 +8,26 @@ import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { useData } from "@/hooks/useData";
 
 export default function StudentAttendancePage() {
   const { user } = useAuth();
-  const [records, setRecords] = useState<{ date: string; status: string }[]>([]);
-  const [rateInfo, setRateInfo] = useState<{ rate: number; present: number; total: number } | null>(
-    null
-  );
-  const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    if (!user?.studentId) {
-      setLoading(false);
-      return;
-    }
-    Promise.all([
-      attendanceApi.byStudent(user.studentId),
-      attendanceApi.rate(user.studentId),
-    ])
-      .then(([recList, rateRes]) => {
-        setRecords(recList);
-        setRateInfo(rateRes);
-      })
-      .catch(() => showToast("تعذّر تحميل كشف الحضور", "error"))
-      .finally(() => setLoading(false));
-  }, [user?.studentId]);
+  // الكاش يعرض الحضور والنسبة فوراً لو اتحملوا مسبقاً
+  const { data: records = [] } = useData<{ date: string; status: string }[]>(
+    user?.studentId ? `student:attendance:${user.studentId}` : "",
+    () => (user?.studentId ? attendanceApi.byStudent(user.studentId) : Promise.resolve([])),
+    { enabled: Boolean(user?.studentId), initialData: [] }
+  );
 
-  if (loading) return <Loader size="lg" />;
+  const { data: rateInfo = null, loading } = useData<{ rate: number; present: number; total: number } | null>(
+    user?.studentId ? `student:attendanceRate:${user.studentId}` : "",
+    () => (user?.studentId ? attendanceApi.rate(user.studentId) : Promise.resolve(null)),
+    { enabled: Boolean(user?.studentId) }
+  );
+
+  if (loading && !rateInfo && records.length === 0) return <Loader size="lg" />;
 
   const absentDays = (rateInfo?.total ?? 0) - (rateInfo?.present ?? 0);
 

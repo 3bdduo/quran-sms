@@ -131,27 +131,31 @@ function EditGroupFeeModal({
   );
 }
 
+import { useData } from "@/hooks/useData";
+import type { SchoolSettings } from "@/types";
+
 /* ================================================================
    الصفحة الرئيسية
 ================================================================ */
 export default function AdminPaymentsPage() {
   const currentMonthKey = new Date().toISOString().slice(0, 7);
   const [monthKey, setMonthKey] = useState(currentMonthKey);
-  const [groups, setGroups] = useState<GroupItem[]>([]);
-  const [teachers, setTeachers] = useState<any[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [selectedGroupName, setSelectedGroupName] = useState("");
 
-  // القيمة الافتراضية من الإعدادات
-  const [defaultFee, setDefaultFee] = useState(200);
+  const { data: groups = [] } = useData<GroupItem[]>("admin:groups", () => groupsApi.list(), { initialData: [] });
+  const { data: teachers = [] } = useData<any[]>("admin:teachers", () => teachersApi.list(), { initialData: [] });
+  const { data: settings } = useData<SchoolSettings>("admin:settings", () => settingsApi.get());
 
-  const [summary, setSummary] = useState<{
+  const defaultFee = settings?.monthlyFee || 200;
+
+  const { data: summary = null, refetch: refetchSummary, mutate: setSummary } = useData<{
     paid: number;
     unpaid: number;
     exempt: number;
     total: number;
     totalAmount: number;
-  } | null>(null);
+  }>(`admin:payments:${monthKey}`, () => paymentsApi.summary(monthKey));
 
   const [studentsPayments, setStudentsPayments] = useState<
     {
@@ -163,7 +167,7 @@ export default function AdminPaymentsPage() {
     }[]
   >([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
 
   // Modal states
@@ -176,6 +180,13 @@ export default function AdminPaymentsPage() {
   const [bulkUpdating, setBulkUpdating] = useState(false);
 
   const { showToast } = useToast();
+
+  // اختيار أول حلقة تلقائيًا لو لم يتم اختيار واحدة
+  useEffect(() => {
+    if (groups.length && !selectedGroupId) {
+      setSelectedGroupId(groups[0].id);
+    }
+  }, [groups, selectedGroupId]);
 
   // دالة توليد اسم الحلقة مميزاً باسم مستخدم المعلم
   function getGroupOptionLabel(g: GroupItem) {
@@ -197,22 +208,6 @@ export default function AdminPaymentsPage() {
     return label;
   }
 
-  // تحميل الإعدادات والمجموعات وقائمة المعلمين
-  useEffect(() => {
-    Promise.all([
-      groupsApi.list(),
-      settingsApi.get().catch(() => null),
-      teachersApi.list().catch(() => []),
-    ]).then(([list, settings, teachersList]) => {
-      setGroups(list);
-      setTeachers(teachersList || []);
-      if (list.length) {
-        setSelectedGroupId(list[0].id);
-      }
-      if (settings?.monthlyFee) setDefaultFee(settings.monthlyFee);
-    });
-  }, []);
-
   // تحديث اسم المجموعة المختارة عند تغييرها
   useEffect(() => {
     const g = groups.find((g) => g.id === selectedGroupId);
@@ -221,15 +216,11 @@ export default function AdminPaymentsPage() {
 
   async function loadData() {
     if (!monthKey) return;
+    refetchSummary();
+    if (!selectedGroupId) return;
     setLoading(true);
     try {
-      const sumPromise = paymentsApi.summary(monthKey);
-      const listPromise = selectedGroupId
-        ? paymentsApi.byGroup(selectedGroupId, monthKey)
-        : Promise.resolve([]);
-
-      const [sumRes, listRes] = await Promise.all([sumPromise, listPromise]);
-      setSummary(sumRes);
+      const listRes = await paymentsApi.byGroup(selectedGroupId, monthKey);
       setStudentsPayments(listRes);
     } catch {
       showToast("تعذّر تحميل بيانات الاشتراكات", "error");

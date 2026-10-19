@@ -21,37 +21,28 @@ const chip = (active: boolean) =>
       : "bg-surface text-ink-soft border border-line sh-soft hover:border-brand hover:text-brand-ink"
   }`;
 
+import { useData } from "@/hooks/useData";
+
 export default function BlogList() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category") || undefined;
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setLoading(true);
-    blogApi
-      .list(category)
-      .then((res) => {
-        if (Array.isArray(res) && res.length > 0) {
-          setPosts(res);
-        } else {
-          // استخدام المقالات الموصى بها افتراضياً
-          const filtered = category
-            ? DEFAULT_BLOG_POSTS.filter((p) => p.category === category)
-            : DEFAULT_BLOG_POSTS;
-          setPosts(filtered);
-        }
-      })
-      .catch(() => {
-        const filtered = category
-          ? DEFAULT_BLOG_POSTS.filter((p) => p.category === category)
-          : DEFAULT_BLOG_POSTS;
-        setPosts(filtered);
-      })
-      .finally(() => setLoading(false));
-  }, [category]);
+  const defaultList = category
+    ? DEFAULT_BLOG_POSTS.filter((p) => p.category === category)
+    : DEFAULT_BLOG_POSTS;
 
-  const displayPosts = posts.length > 0 ? posts : (category ? DEFAULT_BLOG_POSTS.filter((p) => p.category === category) : DEFAULT_BLOG_POSTS);
+  const cacheKey = category ? `public:blog:${category}` : "public:blog";
+  const { data: posts = defaultList, loading } = useData<BlogPost[]>(
+    cacheKey,
+    async () => {
+      const res = await blogApi.list(category);
+      if (Array.isArray(res) && res.length > 0) return res;
+      return defaultList;
+    },
+    { initialData: defaultList }
+  );
+
+  const displayPosts = posts.length > 0 ? posts : defaultList;
 
   return (
     <>

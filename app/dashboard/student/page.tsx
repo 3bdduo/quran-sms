@@ -14,22 +14,21 @@ import { StatCard } from "@/components/dashboard/StatCard";
 
 import type { Student } from "@/types";
 
+import { useData } from "@/hooks/useData";
+
 type StudentReport = Student & { stats: { attendanceRate: number; present: number; total: number; paidMonths: number; unpaidMonths: number } };
 
 export default function StudentDashboard() {
   const { user } = useAuth();
-  const [data, setData] = useState<StudentReport | null>(null);
-  const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    if (!user?.studentId) return;
-    reportsApi
-      .student(user.studentId)
-      .then((r) => setData(r as StudentReport))
-      .finally(() => setLoading(false));
-  }, [user]);
+  const cacheKey = user?.studentId ? `student:report:${user.studentId}` : "";
+  const { data = null, loading } = useData<StudentReport | null>(
+    cacheKey,
+    () => (user?.studentId ? (reportsApi.student(user.studentId) as Promise<StudentReport>) : Promise.resolve(null)),
+    { enabled: Boolean(user?.studentId) }
+  );
 
   async function handleExportWord() {
     if (!data?.id) return;

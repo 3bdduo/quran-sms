@@ -16,6 +16,7 @@ import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import type { GroupItem, EduGroupItem, AttendanceGroupRecord } from "@/types";
 
 export default function AdminAttendancePage() {
@@ -23,10 +24,11 @@ export default function AdminAttendancePage() {
   const today = new Date().toISOString().slice(0, 10);
   const [selectedDate, setSelectedDate] = useState(today);
 
-  // Groups
-  const [groups, setGroups] = useState<GroupItem[]>([]);
+  // Groups من الكاش فوراً
+  const { data: groups = [] } = useData<GroupItem[]>("admin:groups", () => groupsApi.list(), { initialData: [] });
+  const { data: eduGroups = [] } = useData<EduGroupItem[]>("admin:eduGroups", () => eduGroupsApi.list(), { initialData: [] });
+
   const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [eduGroups, setEduGroups] = useState<EduGroupItem[]>([]);
   const [selectedEduGroupId, setSelectedEduGroupId] = useState("");
 
   // Records state
@@ -41,13 +43,9 @@ export default function AdminAttendancePage() {
   const { showToast } = useToast();
 
   useEffect(() => {
-    Promise.all([groupsApi.list(), eduGroupsApi.list()]).then(([gList, egList]) => {
-      setGroups(gList);
-      if (gList.length) setSelectedGroupId(gList[0].id);
-      setEduGroups(egList);
-      if (egList.length) setSelectedEduGroupId(egList[0].id);
-    });
-  }, []);
+    if (groups.length && !selectedGroupId) setSelectedGroupId(groups[0].id);
+    if (eduGroups.length && !selectedEduGroupId) setSelectedEduGroupId(eduGroups[0].id);
+  }, [groups, eduGroups, selectedGroupId, selectedEduGroupId]);
 
   async function loadRegularAttendance() {
     if (!selectedGroupId || !selectedDate) return;

@@ -21,12 +21,29 @@ import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
 import type { BlogPost, MediaItem, TeacherProfile } from "@/types";
 
+import { useData } from "@/hooks/useData";
+
 export default function AdminContentPage() {
   const [tab, setTab] = useState<"blog" | "media" | "teachers">("blog");
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [mediaList, setMediaList] = useState<MediaItem[]>([]);
-  const [teacherProfiles, setTeacherProfiles] = useState<TeacherProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // الكاش يعرض المقالات والوسائط وملفات المعلمين فوراً لو اتحمّلت مسبقاً
+  const { data: posts = [], loading: blogLoading, refetch: refetchBlog, mutate: setPosts } = useData<BlogPost[]>(
+    "admin:blog",
+    () => blogApi.adminAll(),
+    { initialData: [] }
+  );
+  const { data: mediaList = [], loading: mediaLoading, refetch: refetchMedia, mutate: setMediaList } = useData<MediaItem[]>(
+    "admin:media",
+    () => mediaApi.adminAll(),
+    { initialData: [] }
+  );
+  const { data: teacherProfiles = [], loading: teachersLoading, refetch: refetchTeacherProfiles, mutate: setTeacherProfiles } = useData<TeacherProfile[]>(
+    "admin:teacherProfiles",
+    () => teacherProfilesApi.adminAll(),
+    { initialData: [] }
+  );
+
+  const loading = tab === "blog" ? blogLoading : tab === "media" ? mediaLoading : teachersLoading;
 
   // Blog Modals & Forms
   const [showAddPostModal, setShowAddPostModal] = useState(false);
@@ -73,29 +90,11 @@ export default function AdminContentPage() {
   const [formLoading, setFormLoading] = useState(false);
   const { showToast } = useToast();
 
-  async function loadData() {
-    setLoading(true);
-    try {
-      if (tab === "blog") {
-        const data = await blogApi.adminAll();
-        setPosts(data);
-      } else if (tab === "media") {
-        const data = await mediaApi.adminAll();
-        setMediaList(data);
-      } else {
-        const data = await teacherProfilesApi.adminAll();
-        setTeacherProfiles(data);
-      }
-    } catch {
-      showToast("تعذّر تحميل المحتوى", "error");
-    } finally {
-      setLoading(false);
-    }
+  function loadData() {
+    if (tab === "blog") refetchBlog();
+    else if (tab === "media") refetchMedia();
+    else refetchTeacherProfiles();
   }
-
-  useEffect(() => {
-    loadData();
-  }, [tab]);
 
   // Blog Handlers
   async function handleSavePost(e: React.FormEvent) {

@@ -15,31 +15,21 @@ import { contactApi } from "@/lib/resources";
 import { useToast } from "@/components/ui/Toast";
 import { Loader } from "@/components/ui/Loader";
 import { Button } from "@/components/ui/Button";
+import { useData } from "@/hooks/useData";
 import type { ContactMessageItem } from "@/types";
 
 export default function AdminMessagesPage() {
-  const [messages, setMessages] = useState<ContactMessageItem[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [loading, setLoading] = useState(true);
   const [activeMessage, setActiveMessage] = useState<ContactMessageItem | null>(null);
 
+  const cacheKey = statusFilter ? `admin:messages:${statusFilter}` : "admin:messages:all";
+  const { data: messages = [], loading, refetch: loadData, mutate: setMessages } = useData<ContactMessageItem[]>(
+    cacheKey,
+    () => contactApi.listForAdmin(statusFilter || undefined),
+    { initialData: [] }
+  );
+
   const { showToast } = useToast();
-
-  async function loadData() {
-    setLoading(true);
-    try {
-      const data = await contactApi.listForAdmin(statusFilter || undefined);
-      setMessages(data);
-    } catch {
-      showToast("تعذّر تحميل رسائل التواصل", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadData();
-  }, [statusFilter]);
 
   async function handleMarkRead(msg: ContactMessageItem) {
     try {

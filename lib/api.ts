@@ -31,8 +31,8 @@ export function clearToken() {
 //  • أي طلب تعديل (POST/PUT/PATCH/DELETE) بيمسح الكاش كله، فالبيانات دايمًا صح بعد التعديل.
 //  • الطلبات المتكررة في نفس اللحظة بتتجمّع في طلب واحد.
 // ============================================================================
-const CACHE_TTL = 30_000; // البيانات "طازة" لمدة 30 ثانية
-const REFRESH_AFTER = 8_000; // بعد 8 ثواني بنجدد الكاش في الخلفية عشان الزيارة الجاية
+const CACHE_TTL = 600_000;    // البيانات "طازة" لمدة 10 دقايق — يعني مدخل ومخرج 100 مرة من غير تحميل
+const REFRESH_AFTER = 180_000; // بعد 3 دقايق بنجدد الكاش في الخلفية للزيارة الجاية
 const cache = new Map<string, { data: unknown; time: number }>();
 const inflight = new Map<string, Promise<unknown>>();
 const isBrowser = typeof window !== "undefined";
