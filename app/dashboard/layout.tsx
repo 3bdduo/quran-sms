@@ -27,6 +27,7 @@ import {
   BookMarked,
   Clock,
   Flower2,
+  FolderArchive,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader } from "@/components/ui/Loader";
@@ -58,6 +59,7 @@ const navItemsByRole: Record<string, NavItem[]> = {
     { href: "/dashboard/admin/salaries", label: "رواتب المعلمين", icon: Banknote },
     { href: "/dashboard/admin/competitions", label: "المسابقات والامتحانات", icon: Trophy },
     { href: "/dashboard/admin/rayhana", label: "ريحانة المدينة", icon: Flower2 },
+    { href: "/dashboard/admin/files", label: "مركز الملفات والمستندات", icon: FolderArchive },
     { href: "/dashboard/admin/content", label: "إدارة المحتوى والموقع", icon: Globe },
     { href: "/dashboard/admin/messages", label: "رسائل التواصل", icon: Mail },
     { href: "/dashboard/admin/settings", label: "إعدادات المدرسة", icon: Settings },

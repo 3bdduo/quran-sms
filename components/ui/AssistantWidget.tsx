@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, m } from "framer-motion";
-import { MessageCircle, X, Send, RotateCcw, ArrowLeft } from "lucide-react";
+import { MessageCircle, X, Send, RotateCcw, ArrowLeft, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { assistantApi } from "@/lib/resources";
 import { ApiError } from "@/lib/api";
@@ -35,6 +35,10 @@ export function AssistantWidget() {
   const [loading, setLoading] = useState(false);
   // isMobile: true = bottom-sheet (mobile), false = side drawer (desktop)
   const [isMobile, setIsMobile] = useState(true);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+  const [viewportOffsetTop, setViewportOffsetTop] = useState(0);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
@@ -50,20 +54,50 @@ export function AssistantWidget() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Body lock بدون layout shift
+  // تتبع visualViewport في الموبايل لضبط الارتفاع مع الكيبورد تماماً مثل واتساب
   useEffect(() => {
     if (!open) return;
-    const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
-    document.body.style.overflowY = "scroll";
+
+    const updateViewport = () => {
+      const vv = window.visualViewport;
+      if (vv) {
+        setViewportHeight(vv.height);
+        setViewportOffsetTop(vv.offsetTop);
+        // لو الارتفاع أقل من ارتفاع الشاشة بأكثر من 120px يبقى الكيبورد مفتوحة
+        const keyboardActive = window.innerHeight - vv.height > 120;
+        setIsKeyboardOpen(keyboardActive);
+      } else {
+        setViewportHeight(window.innerHeight);
+        setViewportOffsetTop(0);
+        setIsKeyboardOpen(false);
+      }
+    };
+
+    updateViewport();
+
+    const vv = window.visualViewport;
+    if (vv) {
+      vv.addEventListener("resize", updateViewport);
+      vv.addEventListener("scroll", updateViewport);
+    }
+    window.addEventListener("resize", updateViewport);
+
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflowY = "";
-      window.scrollTo(0, scrollY);
+      if (vv) {
+        vv.removeEventListener("resize", updateViewport);
+        vv.removeEventListener("scroll", updateViewport);
+      }
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, [open]);
+
+  // منع تمرير الصفحة بالخلفية بدون كسر الفيو-بورت
+  useEffect(() => {
+    if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
     };
   }, [open]);
 
@@ -72,16 +106,16 @@ export function AssistantWidget() {
     setOpen(false);
   };
 
-  // تمرير تلقائي لأسفل
+  // تمرير تلقائي لأسفل عند وصول رسائل جديدة أو فتح الكيبورد
   useEffect(() => {
     if (!open) return;
     const el = scrollRef.current;
     if (!el) return;
-    const raf = requestAnimationFrame(() => {
+    const t = setTimeout(() => {
       el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [messages, loading, open]);
+    }, 50);
+    return () => clearTimeout(t);
+  }, [messages, loading, open, viewportHeight]);
 
   // Escape key + focus
   useEffect(() => {
@@ -200,17 +234,39 @@ export function AssistantWidget() {
               initial={isMobile ? { y: "100%" } : { x: "-100%" }}
               animate={isMobile ? { y: 0 } : { x: 0 }}
               exit={isMobile ? { y: "100%" } : { x: "-100%" }}
-              transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
-              className="fixed inset-x-0 bottom-0 z-50 h-[100dvh] rounded-t-3xl overflow-hidden flex flex-col bg-surface text-ink will-change-transform sm:inset-y-0 sm:left-0 sm:bottom-auto sm:rounded-none sm:w-[440px] md:w-[480px] sm:max-w-full sm:border-r sm:border-line sm:shadow-2xl"
+              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+              style={
+                isMobile && viewportHeight
+                  ? {
+                      height: `${viewportHeight}px`,
+                      maxHeight: `${viewportHeight}px`,
+                      top: viewportOffsetTop > 0 ? `${viewportOffsetTop}px` : "auto",
+                      bottom: 0,
+                    }
+                  : undefined
+              }
+              className="fixed inset-x-0 bottom-0 z-50 h-[100dvh] overflow-hidden flex flex-col bg-surface text-ink will-change-transform sm:inset-y-0 sm:left-0 sm:bottom-auto sm:rounded-none sm:w-[440px] md:w-[480px] sm:max-w-full sm:border-r sm:border-line sm:shadow-2xl"
             >
               {/* رأس المحادثة - واتساب style */}
               <div
-                className="flex items-center gap-3 px-4 py-3 shrink-0"
+                className="flex items-center gap-2.5 px-3.5 py-3 shrink-0"
                 style={{
                   background: "var(--deep)",
                   paddingTop: "calc(0.75rem + env(safe-area-inset-top, 0px))",
                 }}
               >
+                {/* زر الرجوع في الموبايل زي واتساب */}
+                {isMobile && (
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    aria-label="رجوع"
+                    className="w-9 h-9 -mr-1 rounded-full flex items-center justify-center text-on-deep-soft hover:text-on-deep hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+                  >
+                    <ArrowRight size={20} />
+                  </button>
+                )}
+
                 <div className="w-10 h-10 rounded-full bg-[#f7f9ef] border-2 border-gold/70 shrink-0 flex items-center justify-center overflow-hidden">
                   <Image
                     src="/logo-mark.png"
@@ -253,14 +309,12 @@ export function AssistantWidget() {
                 </div>
               </div>
 
-              {/* منطقة الرسائل */}
+              {/* منطقة الرسائل - خلفية هادئة ولون واحد مريح للعين */}
               <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-3 flex flex-col gap-1"
+                className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-3 flex flex-col gap-1.5"
                 style={{
                   background: "var(--bg)",
-                  backgroundImage: "var(--pattern-star)",
-                  backgroundSize: "72px 72px",
                 }}
               >
                 {messages.map((msg, i) => {
@@ -380,7 +434,9 @@ export function AssistantWidget() {
                 className="shrink-0 px-3 py-2 border-t border-line"
                 style={{
                   background: "var(--surface-2)",
-                  paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom, 0px))",
+                  paddingBottom: isKeyboardOpen
+                    ? "8px"
+                    : "calc(0.5rem + env(safe-area-inset-bottom, 0px))",
                 }}
               >
                 <form onSubmit={handleSend} className="flex items-center gap-2">
@@ -399,8 +455,15 @@ export function AssistantWidget() {
                       color: "var(--ink)",
                       minHeight: "44px",
                     }}
-                    onFocus={(e) => {
-                      setTimeout(() => e.target.scrollIntoView({ block: "nearest", behavior: "smooth" }), 300);
+                    onFocus={() => {
+                      setTimeout(() => {
+                        if (scrollRef.current) {
+                          scrollRef.current.scrollTo({
+                            top: scrollRef.current.scrollHeight,
+                            behavior: "smooth",
+                          });
+                        }
+                      }, 100);
                     }}
                   />
                   <button

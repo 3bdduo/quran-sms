@@ -67,10 +67,12 @@ export const metadata: Metadata = {
 };
 
 // viewport-fit=cover عشان الـ safe-area يشتغل صح في الآيفون والأندرويد (الـ notch وشريط الجيستشر)
+// interactive-widget=resizes-content عشان الكيبورد في الموبايل يرفع المحتوى وما يغطيش حقل الكتابة زي واتساب
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 // بيضبط المود قبل أول رسمة ويمنع أخطاء الـ hydration الناتجة عن إضافات المتصفح (مثل إضافات التحميل والتعبئة التلقائية)

@@ -1,4 +1,4 @@
-import { api } from "./api";
+import { api, API_URL, getToken } from "./api";
 import {
   AuthUser,
   BlogPost,
@@ -21,6 +21,8 @@ import {
   RayhanaData,
   RayhanaStudent,
   RayhanaLevel,
+  StoredFileItem,
+  FilesVaultData,
 } from "@/types";
 
 // ============================================================================
@@ -470,4 +472,38 @@ export const assistantApi = {
     role?: "guest" | "admin" | "teacher" | "student";
     currentPath?: string;
   }) => api.post<AssistantReply>("/assistant/ask", body),
+};
+
+// 23. مركز الملفات والمستندات (Files Vault)
+export const filesVaultApi = {
+  list: (params?: { category?: string; year?: string; month?: string; search?: string }) =>
+    api.get<FilesVaultData>("/files", params, true),
+
+  upload: async (formData: FormData): Promise<StoredFileItem> => {
+    const token = getToken();
+    const res = await fetch(`${API_URL}/files/upload`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+    if (!res.ok) {
+      let msg = "تعذّر رفع الملف";
+      try {
+        const data = await res.json();
+        msg = data.message || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+    return await res.json();
+  },
+
+  getDownloadUrl: (id: string) => `${API_URL}/files/${id}/download`,
+  getPreviewUrl: (id: string) => `${API_URL}/files/${id}/preview`,
+
+  update: (
+    id: string,
+    body: { name?: string; notes?: string; category?: string; isPublic?: boolean }
+  ) => api.patch<StoredFileItem>(`/files/${id}`, body, true),
+
+  remove: (id: string) => api.delete<{ message: string }>(`/files/${id}`, true),
 };
