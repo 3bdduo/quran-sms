@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookMarked, CalendarCheck, Wallet, TrendingUp, Hand, FileText } from "lucide-react";
+import { BookMarked, CalendarCheck, Wallet, TrendingUp, Hand, FileText, Trophy, Award, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { reportsApi } from "@/lib/resources";
+import { reportsApi, competitionsApi } from "@/lib/resources";
 import { downloadFile } from "@/lib/download";
 import { useToast } from "@/components/ui/Toast";
 import { Loader, Spinner } from "@/components/ui/Loader";
@@ -11,8 +11,9 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { CompetitionCelebrationModal } from "@/components/competitions/CompetitionCelebrationModal";
 
-import type { Student } from "@/types";
+import type { Student, SingleCompetitionResult } from "@/types";
 
 import { useData } from "@/hooks/useData";
 
@@ -22,6 +23,23 @@ export default function StudentDashboard() {
   const { user } = useAuth();
   const [exporting, setExporting] = useState(false);
   const { showToast } = useToast();
+
+  const [compResults, setCompResults] = useState<SingleCompetitionResult[]>([]);
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    if (user?.username) {
+      competitionsApi
+        .publicResultByNationalId(user.username)
+        .then((res) => {
+          if (res.hasResult && res.results && res.results.length > 0) {
+            setCompResults(res.results);
+            setShowCelebration(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user?.username]);
 
   const cacheKey = user?.studentId ? `student:report:${user.studentId}` : "";
   const { data = null, loading } = useData<StudentReport | null>(
@@ -74,6 +92,50 @@ export default function StudentDashboard() {
           <span>تحميل تقريري الرسمي (Word)</span>
         </Button>
       </div>
+
+      {/* شاشة التهنئة المنبثقة */}
+      <CompetitionCelebrationModal
+        studentName={data.name}
+        nationalId={user?.username}
+        results={compResults}
+        isOpen={showCelebration}
+        onClose={() => setShowCelebration(false)}
+      />
+
+      {/* بنر النتائج والمسابقات إن وجدت */}
+      {compResults.length > 0 && (
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-r from-amber-500/15 via-yellow-400/10 to-amber-600/15 border border-amber-400/30 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-400/40 shadow-inner">
+              <Trophy size={28} className="animate-bounce" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-full">
+                  نتائج معتمدة 🎉
+                </span>
+                <span className="text-xs font-bold text-ink-mute">
+                  {compResults[0].competitionType === "external" ? "مسابقة خارج المدرسة" : "اختبار داخل المدرسة"}
+                </span>
+              </div>
+              <h3 className="font-extrabold text-lg text-ink mt-1">
+                {compResults[0].title} — {compResults[0].competitionName}
+              </h3>
+              <p className="text-xs text-ink-soft mt-0.5">
+                الدرجة: <span className="font-black text-amber-600 dark:text-amber-400 text-sm">{compResults[0].score}/{compResults[0].maxScore}</span> ({compResults[0].percentage}%) • الترتيب: #{compResults[0].rank}
+              </p>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => setShowCelebration(true)}
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black hover:opacity-95 shadow-md shrink-0"
+          >
+            <Sparkles size={16} />
+            <span>عرض شاشة التهنئة والشهادة</span>
+          </Button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard icon={BookMarked} label="إجمالي المحفوظ" value={data.memorized_amount} />

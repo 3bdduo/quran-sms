@@ -3,13 +3,16 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
-import { GraduationCap, ShieldCheck, UserRound, LogIn, Eye, EyeOff } from "lucide-react";
+import { GraduationCap, ShieldCheck, UserRound, LogIn, Eye, EyeOff, Trophy, Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { ApiError } from "@/lib/api";
+import { competitionsApi } from "@/lib/resources";
+import { CompetitionCelebrationModal } from "@/components/competitions/CompetitionCelebrationModal";
+import type { SingleCompetitionResult } from "@/types";
 
 const roles = [
   { value: "student", label: "طالب", icon: GraduationCap },
@@ -23,9 +26,38 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkingResult, setCheckingResult] = useState(false);
+  const [celebrationData, setCelebrationData] = useState<{
+    studentName: string;
+    results: SingleCompetitionResult[];
+  } | null>(null);
+
   const { login } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
+
+  async function handleQuickCheckResult() {
+    if (!username.trim()) {
+      showToast("يرجى إدخال الرقم القومي أولاً", "error");
+      return;
+    }
+    setCheckingResult(true);
+    try {
+      const res = await competitionsApi.publicResultByNationalId(username.trim());
+      if (!res.hasResult || !res.results || res.results.length === 0) {
+        showToast("لا توجد نتائج مسابقات أو اختبارات معتمدة لهذا الرقم القومي حالياً", "error");
+      } else {
+        setCelebrationData({
+          studentName: res.student?.name || "الطالب",
+          results: res.results,
+        });
+      }
+    } catch (err: any) {
+      showToast(err.message || "تعذّر الاستعلام عن النتيجة", "error");
+    } finally {
+      setCheckingResult(false);
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -133,7 +165,34 @@ export default function LoginPage() {
               {!loading && <LogIn size={18} />}
               {loading ? "جاري الدخول..." : "تسجيل الدخول"}
             </Button>
+
+            {role === "student" && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={handleQuickCheckResult}
+                  disabled={checkingResult}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 font-bold text-xs flex items-center justify-center gap-2 border border-amber-500/25 transition-all active:scale-98"
+                >
+                  <Trophy size={16} className="text-amber-500 animate-pulse" />
+                  <span>
+                    {checkingResult
+                      ? "جاري فحص النتيجة..."
+                      : "استعلام سريع عن نتيجة مسابقة أو اختبار بالرقم القومي"}
+                  </span>
+                </button>
+              </div>
+            )}
           </form>
+
+          {celebrationData && (
+            <CompetitionCelebrationModal
+              studentName={celebrationData.studentName}
+              results={celebrationData.results}
+              isOpen={Boolean(celebrationData)}
+              onClose={() => setCelebrationData(null)}
+            />
+          )}
         </m.div>
       </Container>
     </div>
